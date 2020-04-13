@@ -9,6 +9,9 @@ pylint = "*"
 [packages]
 flask = "*"
 flask-login = "*"
+requests = "*"
+json = "*"
+urllib = "*"
 
 [requires]
 python_version = "3.7"

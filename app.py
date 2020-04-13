@@ -1,5 +1,5 @@
 """
-Invoke to start up a development server.
+Invoke to Start up a Development Server.
 """
 from application import app
 

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamically Change Form Action Using Javascript</title>
+  <!-- Include jQuery Library and File Here -->
+  <script type="text/javascript" src="js/getWeather.js"></script>
+  <!-- Include CSS File Here -->
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+  <div class="container">
+    <div class="main">
+      <h2>Dynamically Change Form Action Using Javascript</h2>
+      <form id="form_id" method="post" name="myform">
+        <label>Name :</label>
+        <input type="text" name="name" id="name"/>
+        <label>Email :</label>
+        <input type="text" name="email" id="email"/>
+        <label>Set Form Action :</label>
+        <select id="form_action" onChange="select_change()" >
+          <option value="">--- Set Form Action ---</option>
+          <option value="first.php">first.php</option>
+          <option value="second.php">second.php</option>
+          <option value="third.php">third.php</option>
+        </select>
+        <input type="button" value="Submit" onclick="myfunction()"/>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -194,6 +194,8 @@ def daily():
     "Get daily updates"
     return str(weather.get_daily(10, 10, 'si', ['temp', 'temp:F'], "now",
                "2020-04-14T21:30:50Z"))
+if __name__ == '__main__':
+  app.run(host="0.0.0.0",port=8000,debug=True)
 # Testing
 # weather = Weather()
 # weather.get_realtime(10, 10, 'si', ['temp', 'temp:F'])

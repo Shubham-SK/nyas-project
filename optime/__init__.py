@@ -7,10 +7,10 @@ from climacell import Weather
 
 def create_app(test_config=None):
     "Create and configure app"
-    app = flask.Flask(__name__, static_url_path='/templates', instance_relative_config=True)
+    app = flask.Flask(__name__, static_url_path='/static', instance_relative_config=True)
     if test_config is None:
         # load secret keys
-        app.config.from_object("config")
+        #app.config.from_object("config")
         app.config.from_pyfile("config.py")
     else:
         app.config.from_mapping(test_config)
@@ -22,7 +22,7 @@ def create_app(test_config=None):
 
     return app
 
-app = flask.Flask(__name__, static_url_path='/static') #, instance_relative_config=True)
+app = create_app()
 weather = Weather()
 
 @app.route('/')

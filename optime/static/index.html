@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dynamically Change Form Action Using Javascript</title>
+  <title>OpTime</title>
   <!-- Include jQuery Library and File Here -->
-  <script type="text/javascript" src="js/getWeather.js"></script>
+  <script type="text/javascript" src="static/js/getWeather.js"></script>
   <!-- Include CSS File Here -->
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="static/css/style.css"/>
 </head>
 <body>
   <div class="container">
     <div class="main">
-      <h2>Dynamically Change Form Action Using Javascript</h2>
-      <form id="form_id" method="post" name="myform">
-        <label>Name :</label>
-        <input type="text" name="name" id="name"/>
-        <label>Email :</label>
-        <input type="text" name="email" id="email"/>
-        <label>Set Form Action :</label>
+      <h2>OpTime Type Beat</h2>
+      <form id="form_id" method="get" name="myform">
+        <label>What weather do you want? :</label>
         <select id="form_action" onChange="select_change()" >
-          <option value="">--- Set Form Action ---</option>
-          <option value="first.php">first.php</option>
-          <option value="second.php">second.php</option>
-          <option value="third.php">third.php</option>
+          <option value="">--- Weather Data ---</option>
+          <option value="http://localhost:8000/realtime">Real Time</option>
+          <option value="http://localhost:8000/hourly">Hourly</option>
+          <option value="http://localhost:8000/nowcast">Now Cast</option>
+          <option value="http://localhost:8000/daily">Daily</option>
         </select>
         <input type="button" value="Submit" onclick="myfunction()"/>
       </form>

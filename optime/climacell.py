@@ -4,6 +4,7 @@ Calls the ClimaCell Weather API & Obtains Forecast Data.
 import urllib
 import requests
 import flask
+#from optime.instance import config
 from instance import config
 
 class Weather:

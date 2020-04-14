@@ -3,6 +3,7 @@ Calls the ClimaCell Weather API & Obtains Forecast Data.
 """
 import urllib
 import requests
+import flask
 from instance import config
 
 class Weather:
@@ -166,6 +167,33 @@ class Weather:
 
         return response
 
+
+weather = Weather()
+
+bp = flask.Blueprint("weather", __name__, url_prefix="/weather")
+
+@bp.route('/realtime')
+def forecast():
+    "Get real time updates"
+    return str(weather.get_realtime(10, 10, 'si', ['temp', 'temp:F']))
+
+@bp.route('/nowcast')
+def nowcast():
+    "Get updates for a 6 hour range"
+    return str(weather.get_nowcast(10, 10, 5, 'si', ['temp', 'temp:F'], "now",
+               "2020-04-13T21:30:50Z"))
+
+@bp.route('/hourly')
+def hourly():
+    "Get hourly updates"
+    return str(weather.get_hourly(10, 10, 'si', ['temp', 'temp:F'], "now",
+               "2020-04-14T21:30:50Z"))
+
+@bp.route('/daily')
+def daily():
+    "Get daily updates"
+    return str(weather.get_daily(10, 10, 'si', ['temp', 'temp:F'], "now",
+               "2020-04-14T21:30:50Z"))
 # Testing
 # weather = Weather()
 # weather.get_realtime(10, 10, 'si', ['temp', 'temp:F'])

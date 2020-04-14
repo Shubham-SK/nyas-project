@@ -14,7 +14,7 @@ weather = climacell.Weather()
 
 @app.route('/')
 def home():
-  return app.send_static_file('index.html'),200
+    return app.send_static_file('index.html'),200
 
 @app.route('/realtime')
 def forecast():
@@ -40,4 +40,4 @@ def daily():
                "2020-04-14T21:30:50Z"))
 
 if __name__ == '__main__':
-  app.run(host="0.0.0.0",port=8000,debug=True)
+    app.run(host="0.0.0.0",port=8000,debug=True)

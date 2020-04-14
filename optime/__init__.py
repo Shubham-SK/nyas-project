@@ -1,11 +1,22 @@
 """
 Initialize the Application.
 """
-from flask import Flask
+import os
+import flask
 
-# initialize app
-app = Flask(__name__) # pylint: disable=C0103
+def create_app(test_config=None):
+    "Create and configure app"
+    app = flask.Flask(__name__, instance_relative_config=True)
+    if test_config is None:
+        # load secret keys
+        app.config.from_object("config")
+        app.config.from_pyfile("config.py")
+    else:
+        app.config.from_mapping(test_config)
 
-# load third party secret keys
-app.config.from_object('config')
-app.config.from_pyfile('config.py')
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
+
+    return app

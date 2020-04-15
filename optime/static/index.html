@@ -11,18 +11,43 @@
   <div class="container">
     <div class="main">
       <h2>OpTime Type Beat</h2>
-      <form id="form_id" method="get" name="myform">
-        <label>What weather do you want? :</label>
-        <select id="form_action" onChange="select_change()" >
-          <option value="">--- Weather Data ---</option>
-          <option value="http://localhost:8000/realtime">Real Time</option>
-          <option value="http://localhost:8000/hourly">Hourly</option>
-          <option value="http://localhost:8000/nowcast">Now Cast</option>
-          <option value="http://localhost:8000/daily">Daily</option>
+      <form id="form_id" action="http://localhost:8000/schedule" method="GET" name="myform">
+        <label>How long do you want to go out for? :</label>
+        <div class="slidecontainer">
+          <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration">
+          <p>Value: <span id="val"></span></p>
+        </div>
+        <script>
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("val");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+        }
+        </script>
+
+        <select id="form_action" name="count">
+          <option value="">--- Count ---</option>
+          <option>Minutes</option>
+          <option>Hours</option>
+          <option>Days</option>
         </select>
-        <input type="button" value="Submit" onclick="myfunction()"/>
+
+        <label for="start">Start date:</label>
+        <input type="date" id="start" name="start">
+        <br>
+        <label for="end">End date:</label>
+        <input type="date" id="end" name="end">
+        <input type="hidden" id="lat" name="lat" value="">
+        <input type="hidden" id="long" name="long" value="">
+        <br><br>
+        <button onclick="getLocation()">Submit</button>
       </form>
-    </div>
+      <!-- <button onclick="getLocation()">Get Location</button> -->
+
+      <p id="demo"></p>
   </div>
+</div>
 </body>
 </html>

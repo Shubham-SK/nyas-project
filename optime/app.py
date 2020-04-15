@@ -1,9 +1,11 @@
 """
 Initialize the Application.
 """
-from flask import Flask
-#from optime
+from flask import Flask, request
+from scheduling import schedule
 import climacell
+from datetime import datetime
+import pytz
 
 app = Flask(__name__, static_url_path='/static') # pylint: disable=C0103
 # Load third party secret keys
@@ -38,6 +40,32 @@ def daily():
     "Get daily updates"
     return str(weather.get_daily(10, 10, 'si', ['temp', 'temp:F'], "now",
                "2020-04-14T21:30:50Z"))
+
+@app.route('/schedule')
+def scheduleTime():
+    "Give the best time to go out"
+    args = request.args
+    # lat, lon, start_time, end_time, duration
+    start_time = datetime.strptime(args["start"], '%Y-%m-%d').replace(tzinfo=pytz.utc)
+    now = datetime.utcnow().replace(tzinfo=pytz.utc)
+
+    # If the user specified today as the starting date
+    if (start_time.strftime('%x') == now.strftime('%x')):
+        start_time = now
+    end_time = datetime.strptime(args["end"], '%Y-%m-%d').replace(tzinfo=pytz.utc)
+    count = args["count"]
+    duration = int(args["duration"])
+    if (count == "Minutes"):
+        duration *= 60
+    elif (count == "Hours"):
+        duration *= 3600
+    elif (count == "Days"):
+        duration *= 86400
+    lat = args["lat"]
+    long = args["long"]
+
+    return schedule(lat, long, start_time, end_time, duration)
+    #return "cool guy"
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8000,debug=True)

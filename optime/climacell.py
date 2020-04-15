@@ -4,7 +4,6 @@ Calls the ClimaCell Weather API & Obtains Forecast Data.
 import urllib
 import requests
 import flask
-#from optime.instance import config
 from instance import config
 
 class Weather:
@@ -18,6 +17,9 @@ class Weather:
     """
     base_url = "https://api.climacell.co/v3"
     api_key = config.CLIMACELL_API_KEY
+    nowcast_end = 6*60*60
+    hourly_end = 96*60*60
+    daily_end = 15*24*60*60
 
     def __init__(self):
         pass
@@ -160,10 +162,7 @@ class Weather:
         f'&apikey={self.api_key}'
         )
 
-        print(url)
-
         # get response as JSON
         response = requests.get(url).json()
-        print(response)
 
         return response

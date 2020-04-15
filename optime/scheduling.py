@@ -22,14 +22,14 @@ def schedule(lat, lon, start_time, end_time, duration):
     """
     # calculate time difference to make correct API call
     now_time = dt.utcnow().replace(tzinfo=pytz.utc)
-    start_time_delta = (start_time-now_time).seconds
-    total_time_delta = (end_time-start_time).seconds
+    start_time_delta = (start_time-now_time).total_seconds()
+    total_time_delta = (end_time-start_time).total_seconds()
 
     # make sure paramters are valid
     try:
         assert(now_time <= start_time < end_time) # chronology
         assert(end_time <= now_time+timedelta(days=15)) # ensure 15 day scope
-        assert(duration <= (start_time-end_time).seconds) # duration check
+        assert(duration <= (end_time-start_time).total_seconds()) # duration check
     except AssertionError:
         print(f'invalid parameters provided.')
 
@@ -38,44 +38,62 @@ def schedule(lat, lon, start_time, end_time, duration):
     hourly_end = now_time+timedelta(seconds=weather.hourly_end)
     daily_end = now_time+timedelta(seconds=weather.daily_end)
 
-    # get ISO formatted timestamps
-    iso_start_time = start_time.isoformat()
-    iso_end_time = end_time.isoformat()
-    iso_nowcast_end = nowcast_end.isoformat()
-    iso_hourly_end = hourly_end.isoformat()
-    iso_daily_end = daily_end.isoformat()
-
     # array to store raw data obtained the API
     weather_data = []
     fields = ['temp', 'humidity', 'humidity:%']
 
-    # populate weather_data array
-    if total_time_delta > 0:
+    print(total_time_delta)
+
+    # populate weather_data array with nowcast
+    if total_time_delta > 0 and start_time < nowcast_end:
+        relative_start_time = start_time
         relative_end_time = min(end_time, nowcast_end)
-        # ADD API CALL
-        total_time_delta -= (relative_end_time-start_time).seconds
-    if total_time_delta > 0:
-        relative_start_time = nowcast_end
+        data = weather.get_nowcast(
+        lat, lon, 5, 'us', fields,
+        relative_start_time.isoformat(), relative_end_time.isoformat()
+        )
+        weather_data.append(data)
+        total_time_delta -= round((relative_end_time-start_time).total_seconds())
+        relative_start_time = relative_end_time
+
+    print(f'after nowcast: {total_time_delta} secs')
+
+    # populate weather_data array with hourly
+    if total_time_delta > 0 and relative_start_time < hourly_end:
         relative_end_time = min(end_time, hourly_end)
-        # ADD API CALL
-        total_time_delta -= (relative_end_time-relative_start_time).seconds
-    if total_time_delta > 0:
-        relative_start_time = hourly_end
+        data = weather.get_hourly(
+        lat, lon, 'us', fields,
+        relative_start_time.isoformat(), relative_end_time.isoformat()
+        )
+        weather_data.append(data)
+        total_time_delta -= round((relative_end_time-relative_start_time).total_seconds())
+        relative_start_time = relative_end_time
+
+    print(f'after hourly: {total_time_delta} secs')
+
+    # populate weather_data array with daily
+    if total_time_delta > 0 and relative_start_time < daily_end:
         relative_end_time = min(end_time, daily_end)
-        # ADD API CALL
-        total_time_delta -= (relative_end_time-relative_start_time).seconds
+        data = weather.get_daily(
+        lat, lon, 'us', fields,
+        relative_start_time.isoformat(), relative_end_time.isoformat()
+        )
+        weather_data.append(data)
+        total_time_delta -= round((relative_end_time-relative_start_time).total_seconds())
+
+    print(f'after daily: {total_time_delta} secs')
 
     try:
-        assert(total_time_delta < 0)
+        assert(total_time_delta <= 0)
     except AssertionError:
         print("error in time processing.")
 
-
+    return weather_data
 
 # Testing
-# start_time = dt.utcnow().replace(tzinfo=pytz.utc) + timedelta(hours=1)
-# end_time = dt.utcnow().replace(tzinfo=pytz.utc) + timedelta(hours=4)
-#
-# print(start_time, end_time)
-
-print(schedule(10, 10, start_time, end_time, 10800))
+# now_time = dt.utcnow().replace(tzinfo=pytz.utc)
+# start_time = now_time + timedelta(hours=1)
+# end_time = now_time + timedelta(days=10)
+# print(f'start: {start_time}')
+# print(f'end: {end_time}')
+# print(schedule(10, 10, start_time, end_time, 10800))

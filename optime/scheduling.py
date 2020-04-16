@@ -72,9 +72,9 @@ def schedule(lat, lon, start_time, end_time, duration):
         print(f'invalid parameters provided.')
 
     # get datetime objects for API time bounds
-    nowcast_end = now_time+timedelta(seconds=weather.nowcast_end)
-    hourly_end = now_time+timedelta(seconds=weather.hourly_end)
-    daily_end = now_time+timedelta(seconds=weather.daily_end-86400)
+    nowcast_end = now_time+timedelta(seconds=WEATHER.nowcast_end)
+    hourly_end = now_time+timedelta(seconds=WEATHER.hourly_end)
+    daily_end = now_time+timedelta(seconds=WEATHER.daily_end-86400)
 
     # array for fields
     fields = ['temp', 'humidity', 'humidity:%']

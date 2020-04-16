@@ -8,7 +8,7 @@ import pytz
 import dateutil.parser as parser
 from climacell import Weather
 
-weather = Weather() # pylint: disable=C0103
+WEATHER = Weather()
 WEATHER_VALS = {}
 
 def clean_data(dictionary):
@@ -80,6 +80,8 @@ def schedule(lat, lon, start_time, end_time, duration):
     fields = ['temp', 'humidity', 'humidity:%']
 
     print(f'total time delta: {total_time_delta} secs')
+
+    # setting relatives to prevent conflict
     relative_start_time = start_time
 
     # populate weather_data array with nowcast
@@ -87,7 +89,7 @@ def schedule(lat, lon, start_time, end_time, duration):
         # determine relative bounds
         relative_end_time = min(end_time, nowcast_end)
         # call API
-        data = weather.get_nowcast(
+        data = WEATHER.get_nowcast(
             lat, lon, 1, 'us', fields,
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
@@ -106,7 +108,7 @@ def schedule(lat, lon, start_time, end_time, duration):
         # determine relative bounds
         relative_end_time = min(end_time, hourly_end)
         # call API
-        data = weather.get_hourly(
+        data = WEATHER.get_hourly(
             lat, lon, 'us', fields,
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
@@ -125,7 +127,7 @@ def schedule(lat, lon, start_time, end_time, duration):
         # determine relative bounds
         relative_end_time = daily_end
         # call API
-        data = weather.get_daily(
+        data = WEATHER.get_daily(
             lat, lon, 'us', fields,
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
@@ -153,7 +155,7 @@ def window_slider(duration, alpha=-1, beta=1, theta=1.01):
     duration: (num) seconds
     alpha: (num) weather weight
     beta: (num) humidity weight
-    theta: (num) duration weight *** NEED TO PREDETERMINE FOR SPECIFC RANGES
+    theta: (num) duration weight *** NEED TO PREDETERMINE FOR SPECIFIC RANGES
     """
     best_start_time = dt.utcnow().replace(tzinfo=pytz.utc)
     best_end_time = dt.utcnow().replace(tzinfo=pytz.utc)

@@ -3,8 +3,6 @@ Calls the ClimaCell Weather API & Obtains Forecast Data.
 """
 import urllib
 import requests
-import flask
-#from optime.instance import config
 from instance import config
 
 class Weather:
@@ -16,8 +14,14 @@ class Weather:
     get_hourly
     get_daily
     """
+    # url construction attributes
     base_url = "https://api.climacell.co/v3"
     api_key = config.CLIMACELL_API_KEY
+
+    # API info
+    nowcast_end = 6*60*60
+    hourly_end = 96*60*60
+    daily_end = 15*24*60*60
 
     def __init__(self):
         pass
@@ -39,11 +43,11 @@ class Weather:
 
         # construct URL
         url = (
-        f'{self.base_url}/weather/realtime?'
-        f'lat={lat}l&lon={lon}'
-        f'&unit_system={unit_system}'
-        f'&fields={fields}'
-        f'&apikey={self.api_key}'
+            f'{self.base_url}/weather/realtime?'
+            f'lat={lat}l&lon={lon}'
+            f'&unit_system={unit_system}'
+            f'&fields={fields}'
+            f'&apikey={self.api_key}'
         )
 
         # get response as JSON
@@ -51,7 +55,7 @@ class Weather:
 
         return response
 
-    def get_nowcast(self, lat, lon, timestep, unit_system, fields,
+    def get_nowcast(self, lat, lon, timestep, unit_system, fields, # pylint: disable=R0913
                     start_time, end_time):
         """
         Minutely updates for 6 hour range in US, 3 hour range
@@ -76,14 +80,14 @@ class Weather:
 
         # construct URL
         url = (
-        f'{self.base_url}/weather/nowcast?'
-        f'lat={lat}l&lon={lon}'
-        f'timestep={timestep}'
-        f'&unit_system={unit_system}'
-        f'&fields={fields}'
-        f'&start_time={start_time}'
-        f'&end_time={end_time}'
-        f'&apikey={self.api_key}'
+            f'{self.base_url}/weather/nowcast?'
+            f'lat={lat}l&lon={lon}'
+            f'timestep={timestep}'
+            f'&unit_system={unit_system}'
+            f'&fields={fields}'
+            f'&start_time={start_time}'
+            f'&end_time={end_time}'
+            f'&apikey={self.api_key}'
         )
 
         # get response as JSON
@@ -91,8 +95,8 @@ class Weather:
 
         return response
 
-    def get_hourly(self, lat, lon, unit_system, fields,
-                    start_time, end_time):
+    def get_hourly(self, lat, lon, unit_system, fields, # pylint: disable=R0913
+                   start_time, end_time):
         """
         Hourly updates for global forecast up to 96 hours.
         ---
@@ -114,13 +118,13 @@ class Weather:
 
         # construct URL
         url = (
-        f'{self.base_url}/weather/forecast/hourly?'
-        f'lat={lat}l&lon={lon}'
-        f'&unit_system={unit_system}'
-        f'&fields={fields}'
-        f'&start_time={start_time}'
-        f'&end_time={end_time}'
-        f'&apikey={self.api_key}'
+            f'{self.base_url}/weather/forecast/hourly?'
+            f'lat={lat}l&lon={lon}'
+            f'&unit_system={unit_system}'
+            f'&fields={fields}'
+            f'&start_time={start_time}'
+            f'&end_time={end_time}'
+            f'&apikey={self.api_key}'
         )
 
         # get response as JSON
@@ -128,8 +132,8 @@ class Weather:
 
         return response
 
-    def get_daily(self, lat, lon, unit_system, fields,
-                    start_time, end_time):
+    def get_daily(self, lat, lon, unit_system, fields, # pylint: disable=R0913
+                  start_time, end_time):
         """
         Daily updates for global forecast up to 15 days.
         ---
@@ -151,19 +155,16 @@ class Weather:
 
         # construct URL
         url = (
-        f'{self.base_url}/weather/forecast/daily?'
-        f'lat={lat}l&lon={lon}'
-        f'&start_time={start_time}'
-        f'&end_time={end_time}'
-        f'&unit_system={unit_system}'
-        f'&fields={fields}'
-        f'&apikey={self.api_key}'
+            f'{self.base_url}/weather/forecast/daily?'
+            f'lat={lat}l&lon={lon}'
+            f'&start_time={start_time}'
+            f'&end_time={end_time}'
+            f'&unit_system={unit_system}'
+            f'&fields={fields}'
+            f'&apikey={self.api_key}'
         )
-
-        print(url)
 
         # get response as JSON
         response = requests.get(url).json()
-        print(response)
 
         return response

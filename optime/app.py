@@ -2,9 +2,9 @@
 Initialize the Application.
 """
 from flask import Flask, request
-from scheduling import schedule
+from scheduling import schedule, window_slider
 import climacell
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 app = Flask(__name__, static_url_path='/static') # pylint: disable=C0103
@@ -47,7 +47,7 @@ def scheduleTime():
     args = request.args
     # lat, lon, start_time, end_time, duration
     start_time = datetime.strptime(args["start"], '%Y-%m-%d').replace(tzinfo=pytz.utc)
-    now = datetime.utcnow().replace(tzinfo=pytz.utc)
+    now = datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(seconds=10)
 
     # If the user specified today as the starting date
     if (start_time.strftime('%x') == now.strftime('%x')):
@@ -63,9 +63,9 @@ def scheduleTime():
         duration *= 86400
     lat = args["lat"]
     long = args["long"]
-
-    return schedule(lat, long, start_time, end_time, duration)
-    #return "cool guy"
+    schedule(lat, long, start_time, end_time, duration)
+    bestStartTime, bestEndTime = window_slider(duration)
+    return "The best time interval to go out is %s to %s" % (bestStartTime.strftime("%c"), bestEndTime.strftime("%c"))
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8000,debug=True)

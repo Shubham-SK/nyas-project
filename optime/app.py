@@ -65,9 +65,9 @@ def scheduleTime():
         duration *= 86400
 
     lat = args['lat']
-    long = args['long']
+    lon = args['lon']
 
-    bestStartTime, bestEndTime = window_slider(lat, long, start_time,
+    bestStartTime, bestEndTime = window_slider(lat, lon, start_time,
                                                end_time, duration)
     bestStartTime = bestStartTime.strftime('%c')
     bestEndTime = bestEndTime.strftime('%c')

@@ -11,3 +11,5 @@ dist/
 build/
 *.egg-info/
 optime/instance/
+
+.mypy_cache

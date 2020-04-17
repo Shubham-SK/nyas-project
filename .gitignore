@@ -11,3 +11,6 @@ dist/
 build/
 *.egg-info/
 optime/instance/
+
+localhost-key.pem
+localhost.pem

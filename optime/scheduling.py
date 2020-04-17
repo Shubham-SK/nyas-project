@@ -79,7 +79,7 @@ def schedule(lat, lon, start_time, end_time, duration):
     # array for fields
     fields = ['temp', 'humidity', 'humidity:%']
 
-    print(f'total time delta: {total_time_delta} secs')
+    # print(f'total time delta: {total_time_delta} secs')
 
     # setting relatives to prevent conflict
     relative_start_time = start_time
@@ -101,7 +101,7 @@ def schedule(lat, lon, start_time, end_time, duration):
         )
         relative_start_time = relative_end_time
 
-    print(f'after nowcast: {total_time_delta} secs')
+    # print(f'after nowcast: {total_time_delta} secs')
 
     # populate weather_data array with hourly
     if total_time_delta > 0 and relative_start_time < hourly_end:
@@ -120,7 +120,7 @@ def schedule(lat, lon, start_time, end_time, duration):
         )
         relative_start_time = relative_end_time
 
-    print(f'after hourly: {total_time_delta} secs')
+    # print(f'after hourly: {total_time_delta} secs')
 
     # populate weather_data array with daily
     if total_time_delta > 0 and relative_start_time < daily_end:
@@ -138,7 +138,7 @@ def schedule(lat, lon, start_time, end_time, duration):
             (relative_end_time-relative_start_time).total_seconds()
         )
 
-    print(f'after daily: {total_time_delta} secs')
+    # print(f'after daily: {total_time_delta} secs')
 
     # make sure data has been logged for the entire time frame
     try:
@@ -147,7 +147,8 @@ def schedule(lat, lon, start_time, end_time, duration):
         print("error in time processing.")
 
 
-def window_slider(duration, alpha=-1, beta=1, theta=1.01):
+def window_slider(lat, lon, start_time, end_time, duration,
+                  alpha=-1, beta=1, theta=1.01):
     """
     Iterates through dictionary keys, finds a duration and calculates
     a weighted quantity to determine safest time to go out.
@@ -157,42 +158,45 @@ def window_slider(duration, alpha=-1, beta=1, theta=1.01):
     beta: (num) humidity weight
     theta: (num) duration weight *** NEED TO PREDETERMINE FOR SPECIFIC RANGES
     """
+    # call schedule
+    schedule(lat, lon, start_time, end_time, duration)
+
+    # loop variables
     best_start_time = dt.utcnow().replace(tzinfo=pytz.utc)
     best_end_time = dt.utcnow().replace(tzinfo=pytz.utc)
     avg_index = 10**1000
+    temp_avg_index = 0
     ctr = 0
 
+    # TODO: Try Memoization to Improve Runtime
+    # OPTIMIZE LOW
+    # loop through finding durations and keeping running average
     for start_time in WEATHER_VALS:
         for end_time in WEATHER_VALS:
+            if start_time == end_time:
+                continue
             # compute average
             ctr += 1
-            temp_avg_index = (alpha*WEATHER_VALS[end_time][0]+
-                              beta*WEATHER_VALS[end_time][1])/ctr
+            temp_avg_index = (((ctr-1)/ctr)*temp_avg_index+
+                              (1/ctr)*(alpha*WEATHER_VALS[end_time][0]+
+                               beta*WEATHER_VALS[end_time][1]))
+            # if duration is in range
             if duration*theta >= (end_time-start_time).total_seconds() >= duration:
                 ctr = 0
+                temp_avg_index = 0
+                # update if better than last
                 if temp_avg_index < avg_index:
                     avg_index = temp_avg_index
                     best_start_time = start_time
                     best_end_time = end_time
+                break
 
     return (best_start_time, best_end_time)
 
 # Testing
-# start_time = dt.strptime("2020-04-16", '%Y-%m-%d').replace(tzinfo=pytz.utc) +
-#timedelta(seconds=10)
-# now = dt.utcnow().replace(tzinfo=pytz.utc) + timedelta(seconds=10)
-#
-# # If the user specified today as the starting date
-# if (start_time.strftime('%x') == now.strftime('%x')):
-#     start_time = now
-# end_time = dt.strptime("2020-04-18", '%Y-%m-%d').replace(tzinfo=pytz.utc)
-# end_time = datetime.strptime("2020-04-18", '%Y-%m-%d').replace(
-# tzinfo=pytz.utc)
 # now_time = dt.utcnow().replace(tzinfo=pytz.utc)
 # start_time = now_time + timedelta(hours=1)
 # end_time = now_time + timedelta(days=2)
 # print(f'start: {start_time}')
 # print(f'end: {end_time}')
-# schedule(10, 10, start_time, end_time, 7200)
-# # print(WEATHER_VALS)
-# print(f'ya so like: {window_slider(86400)}')
+# print(window_slider(10, 10, start_time, end_time, 7200))

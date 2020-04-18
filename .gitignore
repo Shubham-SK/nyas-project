@@ -11,7 +11,10 @@ dist/
 build/
 *.egg-info/
 optime/instance/
+<<<<<<< HEAD
 
 .mypy_cache
 localhost-key.pem
 localhost.pem
+=======
+>>>>>>> parent of 1806e74... Added .mypy_cache to gitignore

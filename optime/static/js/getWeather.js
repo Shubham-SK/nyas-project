@@ -6,7 +6,7 @@ if (navigator.geolocation) {
   x.innerHTML = "Geolocation is not supported by this browser.";
 }
 
-function getLocation(position) {
+function showPosition(position) {
   document.getElementById("lat").value = position.coords.latitude;
   document.getElementById("lon").value = position.coords.longitude;
   x.innerHTML = "latitude: "+position.coords.latitude+"longitude: "+position.coords.longitude;

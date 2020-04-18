@@ -191,6 +191,7 @@ def window_slider(lat, lon, start_time, end_time, duration,
                     best_end_time = end_time
                 break
 
+    # print(WEATHER_VALS)
     return (best_start_time, best_end_time)
 
 # Testing

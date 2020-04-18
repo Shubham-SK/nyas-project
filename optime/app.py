@@ -134,7 +134,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    '''
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -153,7 +153,6 @@ def login():
             return redirect(url_for('index'))
 
         flash(error)
-    '''
     return app.send_static_file('login.html')
     #return render_template('rendertest.html')
 

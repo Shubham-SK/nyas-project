@@ -154,7 +154,8 @@ def login():
 
         flash(error)
     '''
-    return render_template('rendertest.html')
+    return app.send_static_file('login.html')
+    #return render_template('rendertest.html')
 
 
 @app.before_request

@@ -24,8 +24,8 @@
       <div class="card-body">
         <h2 class="card-title">Scheduler</h2>
         <form id="form_id" action="http://localhost:8000/schedule" method="GET" name="myform">
-          <input type="text" id="lat" name="lat" value="">
-          <input type="text" id="lon" name="lon" value="">
+          <input type="hidden" id="lat" name="lat" value="">
+          <input type="hidden" id="lon" name="lon" value="">
           <p class="card-text">How long do you want to go out for?</p>
           <div class="slidecontainer">
             <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration">

@@ -9,5 +9,5 @@ if (navigator.geolocation) {
 function showPosition(position) {
   document.getElementById("lat").value = position.coords.latitude;
   document.getElementById("lon").value = position.coords.longitude;
-  x.innerHTML = "latitude: "+position.coords.latitude+"longitude: "+position.coords.longitude;
+  // x.innerHTML = "latitude: "+position.coords.latitude+"longitude: "+position.coords.longitude;
 }

@@ -138,7 +138,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = get_db()
+        db = get_db()w
         error = None
         user = db.find_one({"username": username})
 
@@ -153,7 +153,7 @@ def login():
             return redirect(url_for('index'))
 
         flash(error)
-    return app.send_static_file('login.html')
+    return app.send_static_file('loginnew.html')
     #return render_template('rendertest.html')
 
 

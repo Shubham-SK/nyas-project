@@ -153,7 +153,7 @@ def login():
             return redirect(url_for('index'))
 
         flash(error)
-    return app.send_static_file('login.html')
+    return app.send_static_file('loginnew.html')
     #return render_template('rendertest.html')
 
 

@@ -12,6 +12,7 @@ flask-login = "*"
 requests = "*"
 json = "*"
 urllib = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.7"

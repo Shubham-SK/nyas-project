@@ -2,14 +2,14 @@
 Initialize the Application.
 """
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 import climacell
 from flask import (
     Flask, request, url_for, g, redirect, render_template, flash, session,
 )
 import functools
 from werkzeug.security import check_password_hash, generate_password_hash
-from scheduling import schedule
+from scheduling import schedule, window_slider
 from pymongo import MongoClient
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
@@ -45,12 +45,15 @@ def index():
 
 @app.route('/realtime')
 def forecast():
-    "Get real time updates"
+    'Get real time updates'
     return str(weather.get_realtime(10, 10, 'si', ['temp', 'temp:F']))
 
 
 @app.route('/nowcast')
 def nowcast():
+
+
+<< << << < HEAD
     "Get updates for a 6 hour range"
     return str(weather.get_nowcast(10, 10, 5, 'si', ['temp', 'temp:F'], "now",
                                    "2020-04-13T21:30:50Z"))
@@ -70,31 +73,70 @@ def daily():
                                  "2020-04-14T21:30:50Z"))
 
 
+== == == =
+    'Get updates for a 6 hour range'
+    return str(weather.get_nowcast(10, 10, 5, 'si', ['temp', 'temp:F'], 'now',
+               '2020-04-13T21:30:50Z'))
+
+
+@app.route('/hourly')
+def hourly():
+    'Get hourly updates'
+    return str(weather.get_hourly(10, 10, 'si', ['temp', 'temp:F'], 'now',
+               '2020-04-14T21:30:50Z'))
+
+
+@app.route('/daily')
+def daily():
+    'Get daily updates'
+    return str(weather.get_daily(10, 10, 'si', ['temp', 'temp:F'], 'now',
+               '2020-04-14T21:30:50Z'))
+
+
+>>>>>> > 8329cc13b73ba47f218f548ff3f3243b9ad9ec34
+
+
 @app.route('/schedule')
 def scheduleTime():
-    "Give the best time to go out"
+    'Give the best time to go out'
     args = request.args
+
     # lat, lon, start_time, end_time, duration
+<< << << < HEAD
     start_time = datetime.strptime(
         args["start"], '%Y-%m-%d').replace(tzinfo=pytz.utc)
     now = datetime.utcnow().replace(tzinfo=pytz.utc)
+== == == =
+    start_time = datetime.strptime(
+        args['start'], '%Y-%m-%d').replace(tzinfo=pytz.utc)
+    now = datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(seconds=10)
+>>>>>> > 8329cc13b73ba47f218f548ff3f3243b9ad9ec34
 
     # If the user specified today as the starting date
-    if (start_time.strftime('%x') == now.strftime('%x')):
+    if start_time.strftime('%x') == now.strftime('%x'):
         start_time = now
+<< << << < HEAD
     end_time = datetime.strptime(
         args["end"], '%Y-%m-%d').replace(tzinfo=pytz.utc)
     count = args["count"]
     duration = int(args["duration"])
     if (count == "Minutes"):
-        duration *= 60
-    elif (count == "Hours"):
-        duration *= 3600
-    elif (count == "Days"):
-        duration *= 86400
-    lat = args["lat"]
-    long = args["long"]
+== == == =
 
+    end_time = datetime.strptime(
+        args['end'], '%Y-%m-%d').replace(tzinfo=pytz.utc)
+    count = args['count']
+    duration = int(args['duration'])
+
+    if count == 'Minutes':
+>>>>>> > 8329cc13b73ba47f218f548ff3f3243b9ad9ec34
+        duration *= 60
+    elif count == 'Hours':
+        duration *= 3600
+    elif count == 'Days':
+        duration *= 86400
+
+<<<<<<< HEAD
     return schedule(lat, long, start_time, end_time, duration)
     # return "cool guy"
 
@@ -166,3 +208,17 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8000, debug=True)
+=======
+    lat = args['lat']
+    lon = args['lon']
+
+    bestStartTime, bestEndTime = window_slider(lat, lon, start_time,
+                                               end_time, duration)
+    bestStartTime = bestStartTime.strftime('%c')
+    bestEndTime = bestEndTime.strftime('%c')
+
+    return f'{bestStartTime} to {bestEndTime}'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=8000,debug=True)
+>>>>>>> 8329cc13b73ba47f218f548ff3f3243b9ad9ec34

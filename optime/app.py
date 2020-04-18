@@ -134,6 +134,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    '''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -152,8 +153,8 @@ def login():
             return redirect(url_for('index'))
 
         flash(error)
-
-    return render_template('login.html')
+    '''
+    return render_template('rendertest.html')
 
 
 @app.before_request
@@ -173,4 +174,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='localhost', port=8000, debug=True)

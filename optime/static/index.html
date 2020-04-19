@@ -28,10 +28,10 @@
           <input type="hidden" id="lon" name="lon" value="">
           <p class="card-text">How long do you want to go out for?</p>
           <div class="slidecontainer">
-            <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration">
+            <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
             <br>
             <p id="val" style="display:inline-block;margin-right:10px;"></p>
-            <select class="selectpicker" data-width="fit" id="form_action" name="count">
+            <select class="selectpicker" data-width="fit" id="form_action" name="count" required>
               <option value="">Units</option>
               <option>Minutes</option>
               <option>Hours</option>
@@ -50,10 +50,10 @@
           <br>
           <p>Time Window</p>
           <label for="start"> Start: </label>
-          <input type="date" id="start" name="start">
+          <input type="date" id="start" name="start" required>
           <br>
           <label for="end"> End: </label>
-          <input type="date" id="end" name="end">
+          <input type="date" id="end" name="end" required>
           <br>
           <br>
           <button class="btn btn-primary">Submit</button>

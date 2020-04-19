@@ -19,6 +19,7 @@ def clean_data(dictionary):
     key: (datetime object)
     value: (arr<float>) [temperature (deg F), humidity (%)]
     """
+    print(dictionary)
     for item in dictionary:
         items = []
         temp = float(item['temp']['value'])
@@ -191,13 +192,12 @@ def window_slider(lat, lon, start_time, end_time, duration,
                     best_end_time = end_time
                 break
 
-    # print(WEATHER_VALS)
     return (best_start_time, best_end_time)
 
 # Testing
 # now_time = dt.utcnow().replace(tzinfo=pytz.utc)
-# start_time = now_time + timedelta(hours=1)
+# start_time = now_time + timedelta(seconds=100)
 # end_time = now_time + timedelta(days=2)
 # print(f'start: {start_time}')
 # print(f'end: {end_time}')
-# print(window_slider(10, 10, start_time, end_time, 7200))
+# print(window_slider(10, 10, start_time, end_time, 1800))

@@ -14,7 +14,7 @@
       <img src="/docs/4.4/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
       OPTIME.
     </a>
-    <button class="btn btn-primary my-2 my-sm-0" type="submit">Log Out</button>
+    <button class="btn btn-primary my-2 my-sm-0" type="submit" href="http://localhost:5000/login?">Log Out</button>
   </nav>
   <div class="container col-5" style="padding-top: 5%">
     <div class="card text-center text-dark bg-white mb-5">
@@ -47,7 +47,7 @@
             output.innerHTML = this.value;
           }
           </script>
-
+          <br>
           <p>Time Window</p>
           <label for="start"> Start: </label>
           <input type="date" id="start" name="start">
@@ -55,9 +55,10 @@
           <label for="end"> End: </label>
           <input type="date" id="end" name="end">
           <br>
+          <br>
+          <button class="btn btn-primary">Submit</button>
         </div>
         <div class="card-footer bg-primary text-white">
-          <button class="btn btn-light">Submit</button>
         </div>
       </div>
     </div>

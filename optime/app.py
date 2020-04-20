@@ -129,11 +129,13 @@ def index():
 
 
 @app.route('/tasks')
+@login_required
 def tasks():
     return render_template('tasks.html')
 
 
 @app.route('/shopping')
+@login_required
 def shopping():
     return render_template('shopping.html'), 200
 

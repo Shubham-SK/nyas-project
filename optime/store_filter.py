@@ -13,7 +13,10 @@ def clean_store_data(raw_json):
 def clean_case_data(raw_json):
     pass
 
+
 def get_case_data(county):
     pass
 
-def get_store_data()
+
+def get_store_data(place_id):
+    pass

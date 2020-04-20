@@ -128,13 +128,13 @@ def tasks():
 
 @app.route('/shopping')
 def shopping():
-    return app.send_static_file('shopping.html'), 200
+    return render_template('shopping.html'), 200
 
 
 @app.route('/scheduling')
 def scheduling():
-    return app.send_static_file('scheduling.html'), 200
-    
+    return render_template('scheduling.html'), 200
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

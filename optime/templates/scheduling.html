@@ -32,52 +32,57 @@
       <button class="btn btn-secondary my-2 my-sm-0" type="submit" href="http://localhost:5000/login?">Log Out</button>
     </div>
   </nav>
-  <div class="container col-5" style="padding-top: 5%">
-    <div class="card text-center text-dark bg-white mb-5">
-      <div class="card-header text-white bg-primary">
-        Let's schedule your tasks.
-      </div>
-      <div class="card-body">
-        <h2 class="card-title">Scheduler</h2>
-        <form id="form_id" action="http://localhost:5000/schedule" method="GET" name="myform">
-          <input type="hidden" id="lat" name="lat" value="">
-          <input type="hidden" id="lon" name="lon" value="">
-          <p class="card-text">How long do you want to go out for?</p>
-          <div class="slidecontainer">
-            <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
-            <br>
-            <p id="val" style="display:inline-block;margin-right:10px;"></p>
-            <select class="selectpicker" data-width="fit" id="form_action" name="count" required>
-              <option value="">Units</option>
-              <option>Minutes</option>
-              <option>Hours</option>
-              <option>Days</option>
-            </select>
-          </div>
-          <script>
-          var slider = document.getElementById("myRange");
-          var output = document.getElementById("val");
-          output.innerHTML = slider.value;
-
-          slider.oninput = function() {
-            output.innerHTML = this.value;
-          }
-          </script>
-          <br>
-          <p>Time Window</p>
-          <label for="start"> Start: </label>
-          <input type="date" id="start" name="start" required>
-          <br>
-          <label for="end"> End: </label>
-          <input type="date" id="end" name="end" required>
-          <br>
-          <br>
-          <button class="btn btn-primary">Submit</button>
-        </div>
-        <div class="card-footer bg-primary text-white">
-        </div>
-      </div>
+  <div class="row py-md-5">
+    <div class="container col-md px-md-5">
+      <h1>Welcome {username},</h1>
+      <h6>Schedule your personal tasks here. <br> They should appear below.</h6>
     </div>
+    <div class="container col-md px-md-5">
+      <div class="card text-center text-dark bg-white mb-5">
+        <div class="card-header text-white bg-primary">
+          Let's schedule your tasks.
+        </div>
+        <div class="card-body">
+          <h2 class="card-title">Scheduler</h2>
+          <form id="form_id" action="http://localhost:5000/schedule" method="GET" name="myform">
+            <input type="hidden" id="lat" name="lat" value="">
+            <input type="hidden" id="lon" name="lon" value="">
+            <p class="card-text">How long do you want to go out for?</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
+              <br>
+              <p id="val" style="display:inline-block;margin-right:10px;"></p>
+              <select class="selectpicker" data-width="fit" id="form_action" name="count" required>
+                <option value="">Units</option>
+                <option>Minutes</option>
+                <option>Hours</option>
+                <option>Days</option>
+              </select>
+            </div>
+            <script>
+            var slider = document.getElementById("myRange");
+            var output = document.getElementById("val");
+            output.innerHTML = slider.value;
+
+            slider.oninput = function() {
+              output.innerHTML = this.value;
+            }
+            </script>
+            <br>
+            <p>Time Window</p>
+            <label for="start"> Start: </label>
+            <input type="date" id="start" name="start" required>
+            <br>
+            <label for="end"> End: </label>
+            <input type="date" id="end" name="end" required>
+            <br>
+            <br>
+            <button class="btn btn-primary">Submit</button>
+          </div>
+          <div class="card-footer bg-primary text-white">
+          </div>
+        </div>
+      </div>
   </form>
   <!-- <button onclick="getLocation()">Get Location</button> -->
   <p id="demo"></p>

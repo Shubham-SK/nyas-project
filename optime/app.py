@@ -11,11 +11,13 @@ import functools
 from werkzeug.security import check_password_hash, generate_password_hash
 from scheduling import schedule, window_slider
 from pymongo import MongoClient
+from instance.config import SECRET_KEY
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
 # app.config.from_object('config')
 app.config.from_pyfile('instance/config.py')
+app.secret_key = SECRET_KEY
 
 weather = climacell.Weather()
 
@@ -110,6 +112,7 @@ def scheduleTime():
 @app.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
+        print("Getting post request for register")
         username = request.form['username']
         password = request.form['password']
         db = get_db()
@@ -119,42 +122,42 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-        elif db.find_one({"username": username}):
+        elif db.users.find_one({"username": username}):
             error = 'User {} is already registered.'.format(username)
 
         if error is None:
             password_hash = generate_password_hash(password)
-            db.insert_one({"username": username, "password": password_hash})
+            db.users.insert_one(
+                {"username": username, "password": password_hash})
             return redirect(url_for('login'))
+        else:
+            print(error)
 
         flash(error)
 
     return render_template('register.html')
 
 
-@app.route('/login', methods=('GET', 'POST'))
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-
+    print("Getting request for login")
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.find_one({"username": username})
-
+        user = db.users.find_one({"username": username})
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-
         if error is None:
             session.clear()
             session['user_id'] = user['id']
             return redirect(url_for('index'))
-
         flash(error)
-    return app.send_static_file('login.html'),200
-    #return render_template('rendertest.html')
+    return render_template('login.html'), 200
+    # return render_template('rendertest.html')
 
 
 @app.before_request
@@ -164,7 +167,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().find_one({"username": user_id})
+        g.user = get_db().users.find_one({"username": user_id})
 
 
 @app.route("/logout")

@@ -118,6 +118,10 @@ def schedule_time():
     return f'{bestStartTime} to {bestEndTime}'
 
 
+@app.route('/')
+def landing():
+    return app.send_static_file('landing.html')
+
 @app.route('/tasks')
 def tasks():
     return render_template('tasks.html')
@@ -178,7 +182,7 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
-            return redirect(url_for('index'))
+            return redirect(url_for('scheduling'))
         flash(error)
     return render_template('login.html'), 200
     # return render_template('rendertest.html')
@@ -198,7 +202,7 @@ def load_logged_in_user():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('landing'))
 
 
 if __name__ == '__main__':

@@ -19,23 +19,19 @@
      <div class="collapse navbar-collapse" id="navbarSupportedContent">
          <ul class="navbar-nav mr-auto">
            <li class="nav-item">
-              <a class="nav-link" href="http://127.0.0.1:5000/scheduling">Scheduling</a>
+              <a class="nav-link" href="/scheduling">Scheduling</a>
            </li>
             <li class="nav-item">
-               <a class="nav-link" href="http://127.0.0.1:5000/shopping">Shopping</a>
+               <a class="nav-link" href="/shopping">Shopping</a>
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="http://127.0.0.1:5000/tasks">Tasks</a>
+               <a class="nav-link" href="/tasks">Tasks</a>
             </li>
          </ul>
         {% if g.user is none %}
-        <form action="{{ url_for('login') }}">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log In</button>
-        </form>
+        <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
         {% else %}
-        <form action="{{ url_for('logout') }}">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log Out</button>
-        </form>
+        <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
         {% endif %}
      </div>
   </nav>

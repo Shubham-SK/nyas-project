@@ -19,7 +19,15 @@
      <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
         </ul>
-        <button class="btn btn-secondary my-2 my-sm-0" type="link" href="http://localhost:5000/login?">Log In</button>
+        {% if g.user is none %}
+        <form action="{{ url_for('login') }}">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log In</button>
+        </form>
+        {% else %}
+        <form action="{{ url_for('logout') }}">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log Out</button>
+        </form>
+        {% endif %}
      </div>
   </nav>
 </body>

@@ -76,7 +76,7 @@ def schedule_time():
     # lat, lon, start_time, end_time, duration
     lat = args['lat']
     lon = args['lon']
-
+    
     # finding timezone
     tz = tzwhere.tzwhere(forceTZ=True)
     local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
@@ -85,8 +85,6 @@ def schedule_time():
     start_time_local = datetime.strptime(args['start'],
                        '%Y-%m-%d').astimezone(pytz.timezone(local))
     now_time_local = datetime.now(pytz.timezone(local))
-
-    print(now_time_local)
 
     # if the user specified today as the starting date
     if start_time_local.strftime('%x') == now_time_local.strftime('%x'):

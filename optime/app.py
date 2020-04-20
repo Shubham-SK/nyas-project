@@ -12,6 +12,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from tzwhere import tzwhere
 from scheduling import schedule, window_slider
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from instance.config import SECRET_KEY
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
@@ -70,6 +71,7 @@ def daily():
 
 
 @app.route('/schedule')
+@login_required
 def schedule_time():
     'Give the best time to go out'
     args = request.args
@@ -119,23 +121,27 @@ def schedule_time():
     return f'{bestStartTime} to {bestEndTime}'
 
 
-@app.route('/')
 @app.route('/index')
+@app.route('/')
 def index():
+    print(g.user)
     return render_template('index.html')
 
 
 @app.route('/tasks')
+@login_required
 def tasks():
     return render_template('tasks.html')
 
 
 @app.route('/shopping')
+@login_required
 def shopping():
     return render_template('shopping.html'), 200
 
 
 @app.route('/scheduling')
+@login_required
 def scheduling():
     return render_template('scheduling.html'), 200
 
@@ -198,7 +204,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().users.find_one({"username": user_id})
+        g.user = get_db().users.find_one({"_id": ObjectId(user_id)})
         print("Logged in user")
 
 

@@ -29,17 +29,20 @@
                   <a class="nav-link" href="http://127.0.0.1:5000/tasks">Tasks</a>
                </li>
             </ul>
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit" href="http://localhost:5000/login?">Log Out</button>
+            <form action="{{ url_for('logout') }}">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log Out</button>
+            </form>
          </div>
       </nav>
       <div class="container">
         <div class="row py-md-5">
         <div class="container col-md px-md-5">
           <div class="row pb-md-4">
-            <h1>Welcome {username},</h1>
-            <h6>Schedule your personal tasks here. <br> They should appear below.</h6>
+            <h2>Welcome {{ g.user['username'] }},</h2>
+            <p class="lead">Schedule your personal tasks here.</p>
           </div>
           <div class="row">
+            <h6> Watch them appear below.</h6>
             <table class="table table-dark text-center">
               <thead>
                 <tr>

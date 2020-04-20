@@ -17,11 +17,37 @@
      <span class="navbar-toggler-icon"></span>
      </button>
      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-        </ul>
-        <button class="btn btn-secondary my-2 my-sm-0" type="link" href="http://localhost:5000/login?">Log In</button>
+         <ul class="navbar-nav mr-auto">
+           <li class="nav-item">
+              <a class="nav-link" href="http://127.0.0.1:5000/scheduling">Scheduling</a>
+           </li>
+            <li class="nav-item">
+               <a class="nav-link" href="http://127.0.0.1:5000/shopping">Shopping</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="http://127.0.0.1:5000/tasks">Tasks</a>
+            </li>
+         </ul>
+        {% if g.user is none %}
+        <form action="{{ url_for('login') }}">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log In</button>
+        </form>
+        {% else %}
+        <form action="{{ url_for('logout') }}">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Log Out</button>
+        </form>
+        {% endif %}
      </div>
   </nav>
+  <div class="jumbotron bg-gradient-light">
+    <div class="container">
+      <h1 class="display-4">Run your errands safely.</h1>
+      <p class="lead">Schedule your tasks and shopping sessions using our intelligent engine.</p>
+      <hr class="my-4">
+      <p>We analyze environmental conditions and COVID-19 case data to ensure you can get stuff done without worry.</p>
+      <a class="btn btn-primary btn-lg" href="/register" role="button">Sign Up</a>
+    </div>
+  </div>
 </body>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>

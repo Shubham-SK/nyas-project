@@ -1,3 +1,6 @@
+"""
+Retrieves Case Data form NY Times.
+"""
 from places import Stores
 #from uszipcode import SearchEngine
 import csv
@@ -6,21 +9,42 @@ import codecs
 from datetime import datetime, timedelta
 from pytz import timezone
 
-DATE = 0
-COUNTY = 1
-STATE = 2
-FIPS = 3
-CASES = 4
-DEATHS = 5
+class Cases:
+    DATE = 0
+    COUNTY = 1
+    STATE = 2
+    FIPS = 3
+    CASES = 4
+    DEATHS = 5
 
-url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
-ftpstream = urllib.request.urlopen(url)
-csvfile = csv.reader(codecs.iterdecode(ftpstream, 'utf-8'))
+    def __init__(self):
+        pass
 
-now = datetime.now().replace(tzinfo=timezone('US/Eastern')) - timedelta(days=1)
-yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
+    def get_cases(self, county, state):
+        """
+        county: (string) county name
+        ---
+        return:
+        """
+        # get retrieve CSV data
+        url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
+        ftpstream = urllib.request.urlopen(url)
+        csvfile = csv.reader(codecs.iterdecode(ftpstream, 'utf-8'))
 
-cases = []
-for line in csvfile:
-    if (line[DATE] == yesterday):
-        cases.append(line)
+        now = datetime.now().replace(tzinfo=timezone('US/Eastern')) - timedelta(days=1)
+        #yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
+
+        cases = []
+
+        for line in csvfile:
+            print(line)
+            if (#line[self.DATE] == yesterday and
+                line[self.COUNTY] == county and
+                line[self.STATE] == state):
+                cases.append(line)
+
+        return cases
+
+# Testing
+# case = Cases()
+# print(case.get_cases("Contra Costa", "California"))

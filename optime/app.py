@@ -14,6 +14,7 @@ from scheduling import schedule, window_slider
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from instance.config import SECRET_KEY
+import urllib.parse
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
@@ -30,7 +31,16 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('login'))
+            # parsed_url = urllib.parse.urlparse(url_for("login"))
+            # query = urllib.parse.parse_qs(parsed_url.query)
+            # query["next"] = request.url
+            # query_string = urllib.parse.urlencode(query)
+            # new_url = urllib.parse.urlunparse(
+            #     (parsed_url.scheme, parsed_url.netloc, parsed_url.path,
+            #      parsed_url.params, query_string, parsed_url.fragment)
+            # )
+
+            return redirect(url_for("login", next=request.url))
         return view(**kwargs)
 
     return wrapped_view
@@ -191,7 +201,10 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
-            return redirect(url_for('scheduling'))
+            if "next" in request.args:
+                return redirect(request.args["next"])
+            else:
+                return redirect(url_for('scheduling'))
         flash(error)
     return render_template('login.html'), 200
     # return render_template('rendertest.html')

@@ -20,6 +20,7 @@ app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 app.config.from_pyfile('instance/config.py')
 app.secret_key = SECRET_KEY
 
+
 weather = climacell.Weather()
 
 
@@ -119,8 +120,10 @@ def schedule_time():
 
 
 @app.route('/')
-def landing():
-    return app.send_static_file('landing.html')
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
 
 @app.route('/tasks')
 def tasks():
@@ -202,7 +205,7 @@ def load_logged_in_user():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('landing'))
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

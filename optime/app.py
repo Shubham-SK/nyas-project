@@ -37,7 +37,7 @@ def login_required(view):
 def get_db():
     if 'db' not in g:
         client = MongoClient('mongodb://localhost:27017')
-        g.db = client.users
+        g.db = client.optime
     return g.db
 
 
@@ -88,23 +88,23 @@ def scheduleTime():
 
     # local start time
     start_time_local = datetime.strptime(args['start'],
-                       '%Y-%m-%d').astimezone(pytz.timezone(local))
+                                         '%Y-%m-%d').astimezone(pytz.timezone(local))
     now_time_local = datetime.now(pytz.timezone(local))
 
     print(now_time_local)
 
     # if the user specified today as the starting date
     if start_time_local.strftime('%x') == now_time_local.strftime('%x'):
-        start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc)+
+        start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
                           timedelta(seconds=10))
     else:
         start_time_utc = start_time_local.astimezone(pytz.utc)
 
     # local end time
     end_time_local = datetime.strptime(args['end'],
-                     '%Y-%m-%d').astimezone(pytz.timezone(local))
+                                       '%Y-%m-%d').astimezone(pytz.timezone(local))
     end_time_utc = end_time_local.astimezone(pytz.utc)
-    # 
+    #
     # print(f'utc times: {start_time_utc} {end_time_utc}')
     # print(f'local times: {start_time_local} {end_time_local}')
 
@@ -157,7 +157,6 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print("Getting request for login")
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -170,7 +169,7 @@ def login():
             error = 'Incorrect password.'
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['user_id'] = str(user['_id'])
             return redirect(url_for('index'))
         flash(error)
     return render_template('login.html'), 200
@@ -185,6 +184,7 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().users.find_one({"username": user_id})
+        print("Logged in user")
 
 
 @app.route("/logout")

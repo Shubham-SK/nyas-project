@@ -9,6 +9,7 @@ from flask import (
 )
 import functools
 from werkzeug.security import check_password_hash, generate_password_hash
+from tzwhere import tzwhere
 from scheduling import schedule, window_slider
 from pymongo import MongoClient
 from instance.config import SECRET_KEY
@@ -78,16 +79,35 @@ def scheduleTime():
     args = request.args
 
     # lat, lon, start_time, end_time, duration
-    start_time = datetime.strptime(
-        args['start'], '%Y-%m-%d').replace(tzinfo=pytz.utc)
-    now = datetime.utcnow().replace(tzinfo=pytz.utc) + timedelta(seconds=10)
+    lat = args['lat']
+    lon = args['lon']
 
-    # If the user specified today as the starting date
-    if start_time.strftime('%x') == now.strftime('%x'):
-        start_time = now
+    # finding timezone
+    tz = tzwhere.tzwhere(forceTZ=True)
+    local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
 
-    end_time = datetime.strptime(
-        args['end'], '%Y-%m-%d').replace(tzinfo=pytz.utc)
+    # local start time
+    start_time_local = datetime.strptime(args['start'],
+                       '%Y-%m-%d').astimezone(pytz.timezone(local))
+    now_time_local = datetime.now(pytz.timezone(local))
+
+    print(now_time_local)
+
+    # if the user specified today as the starting date
+    if start_time_local.strftime('%x') == now_time_local.strftime('%x'):
+        start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc)+
+                          timedelta(seconds=10))
+    else:
+        start_time_utc = start_time_local.astimezone(pytz.utc)
+
+    # local end time
+    end_time_local = datetime.strptime(args['end'],
+                     '%Y-%m-%d').astimezone(pytz.timezone(local))
+    end_time_utc = end_time_local.astimezone(pytz.utc)
+    # 
+    # print(f'utc times: {start_time_utc} {end_time_utc}')
+    # print(f'local times: {start_time_local} {end_time_local}')
+
     count = args['count']
     duration = int(args['duration'])
 
@@ -98,11 +118,8 @@ def scheduleTime():
     elif count == 'Days':
         duration *= 86400
 
-    lat = args['lat']
-    lon = args['lon']
-
-    bestStartTime, bestEndTime = window_slider(lat, lon, start_time,
-                                               end_time, duration)
+    bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
+                                               end_time_utc, duration)
     bestStartTime = bestStartTime.strftime('%c')
     bestEndTime = bestEndTime.strftime('%c')
 

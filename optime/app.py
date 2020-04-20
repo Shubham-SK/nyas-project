@@ -1,6 +1,6 @@
-"""
+'''
 Initialize the Application.
-"""
+'''
 import pytz
 from datetime import datetime, timedelta
 import climacell
@@ -24,11 +24,11 @@ weather = climacell.Weather()
 
 
 def login_required(view):
-    "Use as a decorator with pages where login is required"
+    'Use as a decorator with pages where login is required'
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for("login"))
+            return redirect(url_for('login'))
         return view(**kwargs)
 
     return wrapped_view
@@ -104,7 +104,7 @@ def scheduleTime():
     end_time_local = datetime.strptime(args['end'],
                      '%Y-%m-%d').astimezone(pytz.timezone(local))
     end_time_utc = end_time_local.astimezone(pytz.utc)
-    # 
+
     # print(f'utc times: {start_time_utc} {end_time_utc}')
     # print(f'local times: {start_time_local} {end_time_local}')
 
@@ -129,7 +129,7 @@ def scheduleTime():
 @app.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
-        print("Getting post request for register")
+        print('Getting post request for register')
         username = request.form['username']
         password = request.form['password']
         db = get_db()
@@ -139,13 +139,13 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-        elif db.users.find_one({"username": username}):
+        elif db.users.find_one({'username': username}):
             error = 'User {} is already registered.'.format(username)
 
         if error is None:
             password_hash = generate_password_hash(password)
             db.users.insert_one(
-                {"username": username, "password": password_hash})
+                {'username': username, 'password': password_hash})
             return redirect(url_for('login'))
         else:
             print(error)
@@ -157,13 +157,13 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print("Getting request for login")
+    print('Getting request for login')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.users.find_one({"username": username})
+        user = db.users.find_one({'username': username})
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
@@ -179,18 +179,18 @@ def login():
 
 @app.before_request
 def load_logged_in_user():
-    user_id = session.get("user_id")
+    user_id = session.get('user_id')
 
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().users.find_one({"username": user_id})
+        g.user = get_db().users.find_one({'username': user_id})
 
 
-@app.route("/logout")
+@app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for("index"))
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

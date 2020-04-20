@@ -41,11 +41,6 @@ def get_db():
     return g.db
 
 
-@app.route('/')
-def index():
-    return app.send_static_file('index.html'), 200
-
-
 @app.route('/realtime')
 def forecast():
     'Get real time updates'
@@ -74,7 +69,7 @@ def daily():
 
 
 @app.route('/schedule')
-def scheduleTime():
+def schedule_time():
     'Give the best time to go out'
     args = request.args
 
@@ -126,7 +121,22 @@ def scheduleTime():
     return f'{bestStartTime} to {bestEndTime}'
 
 
-@app.route('/register', methods=('GET', 'POST'))
+@app.route('/tasks')
+def tasks():
+    return render_template('tasks.html')
+
+
+@app.route('/shopping')
+def shopping():
+    return app.send_static_file('shopping.html'), 200
+
+
+@app.route('/scheduling')
+def scheduling():
+    return app.send_static_file('scheduling.html'), 200
+    
+
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         print('Getting post request for register')

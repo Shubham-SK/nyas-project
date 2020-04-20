@@ -29,9 +29,9 @@ def parse_receipt(image_file_path):
     for text in texts[1:]:
         receipt_contents.append(f'{text.description}')
 
-    print(receipt_string)
     address = pyap.parse(receipt_string, country='US')
-    print(receipt_contents)
-    print(address)
+    # print(receipt_string)
+    # print(receipt_contents)
+    # print(address)
 
 parse_receipt('/Users/shubhamkumar/Desktop/sample-receipt.jpg')

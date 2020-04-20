@@ -19,7 +19,6 @@ def clean_data(dictionary):
     key: (datetime object)
     value: (arr<float>) [temperature (deg F), humidity (%)]
     """
-    print(dictionary)
     for item in dictionary:
         items = []
         temp = float(item['temp']['value'])

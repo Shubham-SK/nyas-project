@@ -32,13 +32,10 @@ class Stores:
             f'&key={self.api_key}'
         )
 
-        # print(url)
-
         # record response
-        response = requests.get(url)
-        responseData = json.loads(response.text)
+        response = requests.get(url).json()
 
-        return responseData
+        return response
 
     def get_details(self, place_id):
         """
@@ -54,13 +51,10 @@ class Stores:
             f'&key={self.api_key}'
         )
 
-        # print(url)
-
         # record response
-        response = requests.get(url)
-        responseData = json.loads(response.text)
+        response = requests.get(url).json()
 
-        return responseData
+        return response
 
 # Testing
 # store = Stores()

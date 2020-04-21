@@ -24,7 +24,7 @@ class Cases:
         """
         county: (string) county name
         ---
-        return:
+        return: (arr<date, county, state, cases, deaths>)
         """
         # get retrieve CSV data
         url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
@@ -32,18 +32,24 @@ class Cases:
         csvfile = csv.reader(codecs.iterdecode(ftpstream, 'utf-8'))
 
         now = datetime.now().replace(tzinfo=timezone('US/Eastern')) - timedelta(days=1)
-        #yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
+        # yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
 
         cases = []
 
         for line in csvfile:
-            print(line)
             if (#line[self.DATE] == yesterday and
                 line[self.COUNTY] == county and
                 line[self.STATE] == state):
                 cases.append(line)
 
         return cases
+
+    def SEIR_analysis(self, case_data):
+        """
+        case_data: 
+        ---
+        return: r0
+        """
 
 # Testing
 # case = Cases()

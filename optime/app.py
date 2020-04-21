@@ -110,11 +110,13 @@ def schedule_time():
     end_time_local = datetime.strptime(args['end'],
                                        '%Y-%m-%d').astimezone(pytz.timezone(local))
     end_time_utc = end_time_local.astimezone(pytz.utc)
+
     # print(f'utc times: {start_time_utc} {end_time_utc}')
     # print(f'local times: {start_time_local} {end_time_local}')
 
     count = args['count']
     duration = int(args['duration'])
+    name = args['name']
 
     if count == 'Minutes':
         duration *= 60
@@ -125,11 +127,34 @@ def schedule_time():
 
     bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
                                                end_time_utc, duration)
-    bestStartTime = bestStartTime.strftime('%c')
-    bestEndTime = bestEndTime.strftime('%c')
 
-    return f'{bestStartTime} to {bestEndTime}'
+    # bestStartTime = bestStartTime.strftime('%c')
+    # bestEndTime = bestEndTime.strftime('%c')
 
+    print(bestStartTime, bestEndTime)
+
+    bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
+    bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
+
+    print(bestStartTime, bestEndTime)
+
+    task = {
+        "name": name,
+        "start_time": bestStartTime,
+        "end_time": bestEndTime,
+    }
+
+    db = get_db()
+    db.users.update({"_id": ObjectId(g.user["_id"])}, {"$push": {"items": task}})
+    print("insertion", g.user['items'])
+
+    return redirect(url_for('scheduling'))
+
+@app.route('/deletetask/<int:id>')
+def delete():
+    db = get_db()
+
+    return render_template('index.html')
 
 @app.route('/index')
 @app.route('/')
@@ -153,7 +178,8 @@ def shopping():
 @app.route('/scheduling')
 @login_required
 def scheduling():
-    return render_template('scheduling.html'), 200
+    print('lookup', g.user['items'])
+    return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -180,7 +206,8 @@ def register():
             db.users.insert_one(
                 {'username': username,
                  'email': email,
-                 'password': password_hash})
+                 'password': password_hash,
+                 'items': []})
             return redirect(url_for('login'))
         else:
             print(error)

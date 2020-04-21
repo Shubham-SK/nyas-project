@@ -14,7 +14,6 @@ from scheduling import schedule, window_slider
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from instance.config import SECRET_KEY
-import urllib.parse
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys

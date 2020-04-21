@@ -13,3 +13,4 @@ build/
 optime/instance/
 
 .mypy_cache
+venv/

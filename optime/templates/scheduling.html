@@ -37,97 +37,107 @@
          </div>
       </nav>
       <div class="container">
-        <div class="row py-md-5">
-        <div class="container col-md px-md-5">
-          <div class="row pb-md-4">
-            <h2>Welcome {{ g.user['username'] }},</h2>
-            <p class="lead">Schedule your personal tasks here.</p>
-          </div>
-          <div class="row">
-            <h6> Watch them appear below.</h6>
-            <table class="table table-dark text-center">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Start Time</th>
-                  <th scope="col">End Time</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Saved</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                  <td class="bg-success">Yes</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                  <td class="bg-success">Yes</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                  <td class="bg-danger">No</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="container col-md px-md-5">
-           <div class="card text-center text-dark bg-white mb-5 rounded">
-              <div class="card-header text-white bg-dark">
-                 Let's schedule your tasks.
-              </div>
-              <div class="card-body">
-                 <h2 class="card-title">Scheduler</h2>
-                 <form id="form_id" action="http://localhost:5000/schedule" method="GET" name="myform">
-                    <input type="hidden" id="lat" name="lat" value="">
-                    <input type="hidden" id="lon" name="lon" value="">
-                    <p class="card-text">How long do you want to go out for?</p>
-                    <div class="slidecontainer">
-                       <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
-                       <br>
-                       <p id="val" style="display:inline-block;margin-right:10px;"></p>
-                       <select class="selectpicker" data-width="fit" id="form_action" name="count" required>
-                          <option value="">Units</option>
-                          <option>Minutes</option>
-                          <option>Hours</option>
-                          <option>Days</option>
-                       </select>
-                    </div>
-                    <script>
-                       var slider = document.getElementById("myRange");
-                       var output = document.getElementById("val");
-                       output.innerHTML = slider.value;
+      <div class="row py-md-5">
+         <div class="container col-md px-md-5">
+            <div class="row pb-md-4">
+               <h2>Welcome {{ g.user['username'] }},</h2>
+               <p class="lead">Schedule your personal tasks here.</p>
+            </div>
+            <div class="row">
+               <h6> Watch them appear below.</h6>
+               <table class="table table-dark text-center">
+                  <thead>
+                     <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Saved</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                        <td class="bg-success">Yes</td>
+                     </tr>
+                     <tr>
+                        <th scope="row">2</th>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                        <td class="bg-success">Yes</td>
+                     </tr>
+                     <tr>
+                        <th scope="row">3</th>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td class="bg-danger">No</td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+         </div>
+         <div class="container col-md px-md-5">
+            <div class="card text-center text-dark bg-white mb-5 rounded">
+               <div class="card-header text-white bg-dark">
+                  Let's schedule your tasks.
+               </div>
+               <div class="card-body">
+                  <h2 class="card-title">Scheduler</h2>
+                  <form id="form_id" action="/schedule" method="GET" name="myform">
+                     <input type="hidden" id="lat" name="lat" value="">
+                     <input type="hidden" id="lon" name="lon" value="">
+                     <p class="card-text">How long do you want to go out for?</p>
+                     <div class="slidecontainer">
+                        <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
+                        <br>
+                        <p id="val" style="display:inline-block;margin-right:10px;"></p>
+                        <select class="selectpicker" data-width="fit" id="form_action" name="count" required>
+                           <option value="">Units</option>
+                           <option>Minutes</option>
+                           <option>Hours</option>
+                           <option>Days</option>
+                        </select>
+                     </div>
+                     <script>
+                        var slider = document.getElementById("myRange");
+                        var output = document.getElementById("val");
+                        output.innerHTML = slider.value;
 
-                       slider.oninput = function() {
-                         output.innerHTML = this.value;
-                       }
-                    </script>
-                    <br>
-                    <p>Time Window</p>
-                    <label for="start"> Start: </label>
-                    <input type="date" id="start" name="start" required>
-                    <br>
-                    <label for="end"> End: </label>
-                    <input type="date" id="end" name="end" required>
-                    <br>
-                    <br>
-                    <button class="btn btn-primary">Submit</button>
-              </div>
-              <div class="card-footer bg-dark text-white">
-              </div>
-           </div>
-        </div>
-        </form>
+                        slider.oninput = function() {
+                          output.innerHTML = this.value;
+                        }
+                     </script>
+                     <br>
+                     <p>Time Window</p>
+                     <div class="d-flex justify-content-center">
+                       <div class="form group">
+                          <div class="form group row py-md-2">
+                             <label for="start">Start</label>
+                             <input class="form-control" type="date" id="start" name="start" required>
+                          </div>
+                          <div class="form group row py-md-2">
+                             <label for="end">End</label>
+                             <input class="form-control" type="date" id="end" name="end" required>
+                          </div>
+                          <div class="form group row py-md-2">
+                             <label for="name">Name</label>
+                             <input class="form-control" type="text" id="name" name="name" required>
+                          </div>
+                          <br>
+                       </div>
+                   </div>
+                     <button class="btn btn-primary">Submit</button>
+               </div>
+               </form>
+               <div class="card-footer bg-dark text-white">
+               </div>
+            </div>
+         </div>
       </div>
       <!-- <button onclick="getLocation()">Get Location</button> -->
       <p id="demo"></p>

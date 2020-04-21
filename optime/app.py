@@ -194,11 +194,11 @@ def register():
 def login():
     print('Getting request for login')
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         db = get_db()
         error = None
-        user = db.users.find_one({'username': username})
+        user = db.users.find_one({'email': email})
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):

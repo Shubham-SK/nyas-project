@@ -34,4 +34,5 @@ def parse_receipt(image_file_path):
     # print(receipt_contents)
     # print(address)
 
-parse_receipt('/Users/shubhamkumar/Desktop/sample-receipt.jpg')
+# Testing
+# parse_receipt('/Users/shubhamkumar/Desktop/sample-receipt.jpg')

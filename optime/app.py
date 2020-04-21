@@ -1,19 +1,20 @@
 '''
 Initialize the Application.
 '''
-import pytz
-from datetime import datetime, timedelta
-import climacell
-from flask import (
-    Flask, request, url_for, g, redirect, render_template, flash, session,
-)
 import functools
-from werkzeug.security import check_password_hash, generate_password_hash
-from tzwhere import tzwhere
-from scheduling import schedule, window_slider
-from pymongo import MongoClient
+from datetime import datetime, timedelta
+
+import pytz
 from bson.objectid import ObjectId
+from flask import (Flask, flash, g, redirect, render_template, request,
+                   session, url_for)
+from pymongo import MongoClient
+from tzwhere import tzwhere
+from werkzeug.security import check_password_hash, generate_password_hash
+
+import climacell
 from instance.config import SECRET_KEY
+from scheduling import schedule, window_slider
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
@@ -161,6 +162,7 @@ def register():
         print('Getting post request for register')
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
         db = get_db()
         error = None
 
@@ -168,13 +170,17 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
+        elif not email:
+            error = 'Email is required.'
         elif db.users.find_one({'username': username}):
             error = 'User {} is already registered.'.format(username)
 
         if error is None:
             password_hash = generate_password_hash(password)
             db.users.insert_one(
-                {'username': username, 'password': password_hash})
+                {'username': username,
+                 'email': email,
+                 'password': password_hash})
             return redirect(url_for('login'))
         else:
             print(error)
@@ -205,7 +211,12 @@ def login():
             else:
                 return redirect(url_for('scheduling'))
         flash(error)
-    return render_template('login.html'), 200
+    next_url = request.args.get('next')
+    if next_url is not None:
+        form_action = url_for('login', next=next_url)
+    else:
+        form_action = url_for('login')
+    return render_template('login.html', form_action=form_action), 200
     # return render_template('rendertest.html')
 
 

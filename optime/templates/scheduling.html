@@ -38,7 +38,7 @@
       </nav>
       <div class="container">
       <div class="row py-md-5">
-         <div class="container col-md px-md-5">
+         <div class="container col-md pr-md-5">
             <div class="row pb-md-4">
                <h2>Welcome {{ g.user['username'] }},</h2>
                <p class="lead">Schedule your personal tasks here.</p>
@@ -52,7 +52,7 @@
                         <th scope="col">Name</th>
                         <th scope="col">Start Time</th>
                         <th scope="col">End Time</th>
-                        <th scope="col">Delete</th>
+                        <th scope="col">Actions</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -69,14 +69,14 @@
                </table>
             </div>
          </div>
-         <div class="container col-md px-md-5">
+         <div class="container col-md pl-md-3">
             <div class="card text-center text-dark bg-white mb-5 rounded">
                <div class="card-header text-white bg-dark">
                   Let's schedule your tasks.
                </div>
                <div class="card-body">
                   <h2 class="card-title">Scheduler</h2>
-                  <form id="form_id" action="/schedule" method="GET" name="myform">
+                  <form id="form_id" action="/scheduling/schedule" method="GET" name="myform">
                      <input type="hidden" id="lat" name="lat" value="">
                      <input type="hidden" id="lon" name="lon" value="">
                      <p class="card-text">How long do you want to go out for?</p>
@@ -129,6 +129,7 @@
             </div>
          </div>
       </div>
+    </div>
       <!-- <button onclick="getLocation()">Get Location</button> -->
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>

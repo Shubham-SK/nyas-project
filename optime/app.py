@@ -80,9 +80,9 @@ def daily():
                                  '2020-04-14T21:30:50Z'))
 
 
-@app.route('/schedule')
+@app.route('/scheduling/schedule')
 @login_required
-def schedule_time():
+def schedule_create():
     'Give the best time to go out'
     args = request.args
 
@@ -131,12 +131,8 @@ def schedule_time():
     # bestStartTime = bestStartTime.strftime('%c')
     # bestEndTime = bestEndTime.strftime('%c')
 
-    print(bestStartTime, bestEndTime)
-
     bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
     bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
-
-    print(bestStartTime, bestEndTime)
 
     task = {
         "name": name,
@@ -146,15 +142,15 @@ def schedule_time():
 
     db = get_db()
     db.users.update({"_id": ObjectId(g.user["_id"])}, {"$push": {"items": task}})
-    print("insertion", g.user['items'])
 
     return redirect(url_for('scheduling'))
 
-@app.route('/deletetask/<int:id>')
-def delete():
-    db = get_db()
 
-    return render_template('index.html')
+@app.route('/scheduling/delete')
+@login_required
+def schedule_delete():
+    return redirect(url_for('scheduling'))
+
 
 @app.route('/index')
 @app.route('/')
@@ -178,11 +174,10 @@ def shopping():
 @app.route('/scheduling')
 @login_required
 def scheduling():
-    print('lookup', g.user['items'])
     return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/auth/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         print('Getting post request for register')
@@ -217,7 +212,7 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     print('Getting request for login')
     if request.method == 'POST':
@@ -258,7 +253,7 @@ def load_logged_in_user():
         print("Logged in user")
 
 
-@app.route('/logout')
+@app.route('/auth/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))

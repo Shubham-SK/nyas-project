@@ -82,7 +82,7 @@ class Weather:
         url = (
             f'{self.base_url}/weather/nowcast?'
             f'lat={lat}l&lon={lon}'
-            f'timestep={timestep}'
+            f'&timestep={timestep}'
             f'&unit_system={unit_system}'
             f'&fields={fields}'
             f'&start_time={start_time}'

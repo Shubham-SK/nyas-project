@@ -6,7 +6,6 @@ from instance import config
 import urllib
 
 class Arcgis():
-
     base_url = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?'
     api_key = config.ARCGIS_REST_API_KEY
 
@@ -17,26 +16,24 @@ class Arcgis():
         """
         """
         # parse categories
-        categories = " ".join(map(urllib.parse.quote, categories))
+        categories = ",".join(map(urllib.parse.quote, categories))
 
         # construct URL
         url = (
             f'{self.base_url}'
             f'f=json'
             f'&category={categories}'
-            f'&location={lat},{lon}'
+            f'&location={lon},{lat}'
             f'&outFields=Place_addr,PlaceName'
             f'&maxLocations={max_locations}'
         )
-        print(url)
+
         # get response as JSON
         response = requests.get(url).json()
 
         return response
 
 # Testing
-# https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates/f=json&category=Coffee%20Shop&location=-118.58864,34.06145&outFields=Place_addr,PlaceName&maxLocations=4
-# https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates/f=json&category=Coffee Shop&location=-118.58864,34.06145&outFields=Place_addr,PlaceName&maxLocations=4
 # https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?f=json&category=Coffee Shop&location=-118.58864,34.06145&outFields=Place_addr, PlaceName&maxLocations=5
 # arcgis = Arcgis()
-# print(arcgis.find_places(-118.58864, 34.06145, 4, ['Coffee Shop']))
+# print(arcgis.find_places(37.777081, -121.967522, 10, ['Grocery', 'Pharmacy']))

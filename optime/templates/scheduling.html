@@ -59,6 +59,14 @@
                         <th scope="col">Actions</th>
                      </tr>
                   </thead>
+                  <style>
+                    .font-icon-white{
+                      color: #ffffff;
+                    }
+                    .font-icon-white:hover{
+                      color: #cccccc;
+                    }
+                  </style>
                   <tbody>
                     {% for item in tasks %}
                     <tr>
@@ -66,7 +74,7 @@
                       <td>{{item.name}}</td>
                       <td>{{item.start_time.strftime('%x %-I:%M %p')}}</td>
                       <td>{{item.end_time.strftime('%x %-I:%M %p')}}</td>
-                      <td class="bg-primary"><a href="/scheduling/delete_task/{{ loop.index - 1 }}"><i class="fas fa-trash"></i></a></td>
+                      <td class="bg-primary"><a href="/scheduling/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                     </tr>
                     {% endfor %}
                   </tbody>

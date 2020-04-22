@@ -142,8 +142,8 @@ def schedule_create():
     }
 
     db = get_db()
-    db.users.update({"_id": ObjectId(g.user["_id"])}, {
-                    "$push": {"items": task}})
+    db.users.update_one({"_id": ObjectId(g.user["_id"])}, {
+        "$push": {"items": task}})
     print("insertion", g.user['items'])
 
     return redirect(url_for('scheduling'))

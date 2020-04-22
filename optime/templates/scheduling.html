@@ -10,7 +10,7 @@
    <body>
       <!-- Image and text -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
-         <a class="navbar-brand">
+         <a class="navbar-brand" href="/">
          <img src="/docs/4.4/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
          OPTIME.
          </a>
@@ -30,65 +30,59 @@
                </li>
             </ul>
             {% if g.user is none %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
             {% else %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
             {% endif %}
          </div>
       </nav>
-      <div class="container">
-      <div class="row py-md-5">
-         <div class="container col-md px-md-5">
+      <div class="container-fluid px-5">
+        <div class="row py-5">
+         <div class="container px-md-5 col-md">
             <div class="row pb-md-4">
+              <div class="col">
                <h2>Welcome {{ g.user['username'] }},</h2>
                <p class="lead">Schedule your personal tasks here.</p>
+             </div>
             </div>
             <div class="row">
+              <div class="col">
                <h6> Watch them appear below.</h6>
-               <table class="table table-dark text-center">
+               <div class="rounded shadow" style="width:100%; display:block; height:80%; overflow-y:scroll; overflow-x:hidden;">
+               <table class="table table-dark table-striped table-hover table text-center" style="">
                   <thead>
                      <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Name</th>
                         <th scope="col">Start Time</th>
                         <th scope="col">End Time</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Saved</th>
+                        <th scope="col">Actions</th>
                      </tr>
                   </thead>
                   <tbody>
-                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td class="bg-success">Yes</td>
-                     </tr>
-                     <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td class="bg-success">Yes</td>
-                     </tr>
-                     <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td class="bg-danger">No</td>
-                     </tr>
+                    {% for item in tasks %}
+                    <tr>
+                      <th scope="row">{{loop.index}}</th>
+                      <td>{{item.name}}</td>
+                      <td>{{item.start_time.strftime('%x %-I:%M %p')}}</td>
+                      <td>{{item.end_time.strftime('%x %-I:%M %p')}}</td>
+                      <td class="bg-primary"><i class="fas fa-trash"></i></td>
+                    </tr>
+                    {% endfor %}
                   </tbody>
                </table>
+             </div>
+             </div>
             </div>
          </div>
-         <div class="container col-md px-md-5">
-            <div class="card text-center text-dark bg-white mb-5 rounded">
+         <div class="container px-md-5 col-md">
+            <div class="card text-center text-dark bg-white mb-5 rounded shadow">
                <div class="card-header text-white bg-dark">
                   Let's schedule your tasks.
                </div>
                <div class="card-body">
                   <h2 class="card-title">Scheduler</h2>
-                  <form id="form_id" action="/schedule" method="GET" name="myform">
+                  <form id="form_id" action="/scheduling/schedule" method="GET" name="myform">
                      <input type="hidden" id="lat" name="lat" value="">
                      <input type="hidden" id="lon" name="lon" value="">
                      <p class="card-text">How long do you want to go out for?</p>
@@ -131,8 +125,9 @@
                           <br>
                        </div>
                    </div>
-                     <button class="btn btn-primary">Submit</button>
+                     <button class="btn btn-primary shadow">Submit</button>
                </div>
+                <p id="demo"></p>
                </form>
                <div class="card-footer bg-dark text-white">
                  ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
@@ -140,10 +135,11 @@
             </div>
          </div>
       </div>
+    </div>
       <!-- <button onclick="getLocation()">Get Location</button> -->
-      <p id="demo"></p>
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
+   <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>

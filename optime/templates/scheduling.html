@@ -62,7 +62,7 @@
                       <td>{{item.name}}</td>
                       <td>{{item.start_time.strftime('%x %-I:%M %p')}}</td>
                       <td>{{item.end_time.strftime('%x %-I:%M %p')}}</td>
-                      <td class="bg-primary"><i class="fas fa-trash"></i></td>
+                      <td class="bg-primary"><a href="/delete_task/{{ loop.index - 1 }}"><i class="fas fa-trash"></i></a></td>
                     </tr>
                     {% endfor %}
                   </tbody>

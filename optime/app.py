@@ -139,22 +139,28 @@ def schedule_time():
     print(bestStartTime, bestEndTime)
 
     task = {
+        "_id": ObjectId(),
         "name": name,
         "start_time": bestStartTime,
         "end_time": bestEndTime,
     }
 
     db = get_db()
-    db.users.update({"_id": ObjectId(g.user["_id"])}, {"$push": {"items": task}})
+    db.users.update({"_id": ObjectId(g.user["_id"])}, {
+                    "$push": {"items": task}})
     print("insertion", g.user['items'])
 
     return redirect(url_for('scheduling'))
 
-@app.route('/deletetask/<int:id>')
-def delete():
-    db = get_db()
 
-    return render_template('index.html')
+@app.route('/delete_task/<int:task_index>')
+def delete_task(task_index):
+    db = get_db()
+    task_id = g.user["items"][task_index]["_id"]
+    db.users.update_one({"_id": g.user["_id"]},
+                        {"$pull": {"items": {"_id": task_id}}})
+    return redirect(url_for('scheduling'))
+
 
 @app.route('/index')
 @app.route('/')

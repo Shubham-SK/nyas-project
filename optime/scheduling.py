@@ -181,14 +181,14 @@ def window_slider(lat, lon, start_time, end_time, duration,
                               (1/ctr)*(alpha*WEATHER_VALS[end_time][0]+
                                beta*WEATHER_VALS[end_time][1]))
             # if duration is in range
-            if duration*theta >= (end_time-start_time).total_seconds() >= duration:
+            if (end_time-start_time).total_seconds() >= duration:
                 ctr = 0
                 temp_avg_index = 0
                 # update if better than last
                 if temp_avg_index < avg_index:
                     avg_index = temp_avg_index
                     best_start_time = start_time
-                    best_end_time = end_time
+                    best_end_time = start_time + timedelta(seconds=duration)
                 break
 
     return (best_start_time, best_end_time)

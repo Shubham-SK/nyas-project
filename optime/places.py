@@ -6,14 +6,14 @@ import requests, json
 
 
 class Stores:
-    api_key = config.GOOGLE_API_KEY
-    base_url = 'https://maps.googleapis.com/maps/api/place'
+    api_key = config.TOMTOM_API_KEY
+    base_url = 'https://api.tomtom.com/search/2'
     stores = ["Safeway", "Walmart", "Sprouts", "Trader Joes"]
 
     def __init__(self):
         pass
 
-    def find_place(self, input, lat, lon, radius, inputtype="textquery"):
+    def find_place(self, lat, lon, radius):
         """
         input: (string) store name
         lat: (num)
@@ -24,12 +24,12 @@ class Stores:
         """
         # construct URL
         url = (
-            f'{self.base_url}/findplacefromtext/json?'
-            f'input={input}'
-            f'&inputtype={inputtype}'
-            f'&fields=place_id,formatted_address'
-            f'&locationbias=circle:{radius}@{lat},{lon}'
-            f'&key={self.api_key}'
+            f'{self.base_url}/nearbySearch/.JSON?'
+            f'key={self.api_key}'
+            f'&lat={lat}'
+            f'&lon={lon}'
+            f'&radius={radius}'
+            f'&openingHours=nextSevenDays'
         )
 
         # record response
@@ -58,5 +58,5 @@ class Stores:
 
 # Testing
 # store = Stores()
-# print(store.find_place("Trader Joes", 37.710079, -121.927002, 10000000))
+# print(store.find_place(37.710079, -121.927002, 30))
 #print(store.get_details('ChIJQwOmU2zsj4ARL1OEw9L_v4Y'))

@@ -80,9 +80,9 @@ def daily():
                                  '2020-04-14T21:30:50Z'))
 
 
-@app.route('/schedule')
+@app.route('/scheduling/schedule')
 @login_required
-def schedule_time():
+def schedule_create():
     'Give the best time to go out'
     args = request.args
 
@@ -131,12 +131,8 @@ def schedule_time():
     # bestStartTime = bestStartTime.strftime('%c')
     # bestEndTime = bestEndTime.strftime('%c')
 
-    print(bestStartTime, bestEndTime)
-
     bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
     bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
-
-    print(bestStartTime, bestEndTime)
 
     task = {
         "_id": ObjectId(),
@@ -153,7 +149,7 @@ def schedule_time():
     return redirect(url_for('scheduling'))
 
 
-@app.route('/delete_task/<int:task_index>')
+@app.route('/scheduling/delete_task/<int:task_index>')
 def delete_task(task_index):
     db = get_db()
     task_id = g.user["items"][task_index]["_id"]
@@ -184,11 +180,10 @@ def shopping():
 @app.route('/scheduling')
 @login_required
 def scheduling():
-    print('lookup', g.user['items'])
     return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/auth/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         print('Getting post request for register')
@@ -223,7 +218,7 @@ def register():
     return render_template('register.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     print('Getting request for login')
     if request.method == 'POST':
@@ -264,7 +259,7 @@ def load_logged_in_user():
         print("Logged in user")
 
 
-@app.route('/logout')
+@app.route('/auth/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))

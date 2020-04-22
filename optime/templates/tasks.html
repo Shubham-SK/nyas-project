@@ -30,9 +30,9 @@
                </li>
             </ul>
             {% if g.user is none %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
             {% else %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
             {% endif %}
          </div>
       </nav>

@@ -8,7 +8,7 @@
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
    </head>
    <body>
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
          <a class="navbar-brand" href="/">
          <img src="/docs/4.4/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
          OPTIME.
@@ -29,9 +29,9 @@
                </li>
             </ul>
             {% if g.user is none %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
             {% else %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
             {% endif %}
          </div>
       </nav>
@@ -41,7 +41,7 @@
             <p class="lead">Schedule your tasks and shopping sessions using our intelligent engine.</p>
             <hr class="my-4">
             <p>We analyze environmental conditions and COVID-19 case data to ensure you can get stuff done without worry.</p>
-            <a class="btn btn-primary btn-lg" href="/register" role="button">Sign Up</a>
+            <a class="btn btn-primary btn-lg" href="/auth/register" role="button">Sign Up</a>
          </div>
       </div>
    </body>

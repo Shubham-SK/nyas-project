@@ -10,7 +10,7 @@
    <body>
       <!-- Image and text -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
-         <a class="navbar-brand">
+         <a class="navbar-brand" href="/">
          <img src="/docs/4.4/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
          OPTIME.
          </a>
@@ -30,9 +30,9 @@
                </li>
             </ul>
             {% if g.user is none %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
             {% else %}
-            <a class="btn btn-secondary my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
+            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
             {% endif %}
          </div>
       </nav>

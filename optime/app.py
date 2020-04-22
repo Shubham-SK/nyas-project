@@ -161,14 +161,10 @@ def delete_task(task_index):
 @app.route('/index')
 @app.route('/')
 def index():
-    print(g.user)
-    return render_template('index.html')
-
-
-@app.route('/tasks')
-@login_required
-def tasks():
-    return render_template('tasks.html')
+    if g.user is None:
+        return render_template('index.html')
+    else:
+        return render_template('tasks.html')
 
 
 @app.route('/shopping')

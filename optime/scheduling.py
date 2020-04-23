@@ -184,10 +184,10 @@ def window_slider(lat, lon, start_time, end_time, duration,
     # loop through finding durations and keeping running average
     for start in WEATHER_VALS:
         for end in WEATHER_VALS:
-            if start_time == end_time:
-                continue
             start_time = start[0]
             end_time = end[0]
+            if start_time == end_time:
+                continue
             # compute average
             ctr += 1
             temp_avg_index = (((ctr-1)/ctr)*temp_avg_index+
@@ -202,7 +202,6 @@ def window_slider(lat, lon, start_time, end_time, duration,
                     avg_index = temp_avg_index
                     best_start_time = start_time
                     best_end_time = start_time + timedelta(seconds=duration)
-                break
 
     return best_start_time, best_end_time
 

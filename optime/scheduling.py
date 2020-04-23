@@ -182,19 +182,24 @@ def window_slider(lat, lon, start_time, end_time, duration,
     # TODO: Try Memoization to Improve Runtime
     # OPTIMIZE LOW
     # loop through finding durations and keeping running average
+
     for start in WEATHER_VALS:
         for end in WEATHER_VALS:
+            # assign start and end times
             start_time = start[0]
             end_time = end[0]
-            if start_time == end_time:
-                continue
+
             # compute average
             ctr += 1
+
+            # print(start_time, temp_avg_index)
             temp_avg_index = (((ctr-1)/ctr)*temp_avg_index+
-                              (1/ctr)*(start[1]+
+                              (1/ctr)*(alpha*end[1]+
                                beta*end[2]))
+                               
             # if duration is in range
             if (end_time-start_time).total_seconds() >= duration:
+                # reset counter and running average
                 ctr = 0
                 temp_avg_index = 0
                 # update if better than last
@@ -202,6 +207,8 @@ def window_slider(lat, lon, start_time, end_time, duration,
                     avg_index = temp_avg_index
                     best_start_time = start_time
                     best_end_time = start_time + timedelta(seconds=duration)
+                # choose new start time once duration has been verified
+                break
 
     return best_start_time, best_end_time
 

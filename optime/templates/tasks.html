@@ -33,6 +33,24 @@
             {% endif %}
          </div>
       </nav>
+      <div class="container-fluid px-5 py-5">
+        <div class="row">
+          <div class="col">
+            <h2>Welcome {{ g.user['username'] }},</h2>
+            <p class="lead">All your errands. In one place.</p>
+          </div>
+        </div>
+        <div class="row bg-light rounded py-5 y-5">
+          <div class="col">
+            <h4>Shopping</h4>
+          </div>
+        </div>
+        <div class="row bg-light rounded py-5 my-5">
+          <div class="col">
+            <h4>Personal</h4>
+          </div>
+        </div>
+      </div>
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

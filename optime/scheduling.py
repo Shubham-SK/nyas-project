@@ -15,9 +15,10 @@ def clean_data(WEATHER_VALS, dictionary):
     """
     Creates a dictionary - for get_nowcast and get_hourly API response
     ---
-    dictionary: WEATHER_VALS
-    key: (datetime object)
-    value: (arr<float>) [temperature (deg F), humidity (%)]
+    array: WEATHER_VALS
+    dictionary: (json) response
+    ---
+    return: (arr<dt, float>) [time, temperature (deg F), humidity (%)]
     """
 
     # iterate through dict
@@ -33,9 +34,10 @@ def clean_daily(WEATHER_VALS, dictionary):
     """
     Creates a dictionary - for slightly different get_daily API response
     ---
-    dictionary: WEATHER_VALS
-    key: (datetime object)
-    value: (arr<float>) [temperature (deg F), humidity (%)]
+    array: WEATHER_VALS
+    dictionary: (json) response
+    ---
+    return: (arr<dt, float>) [time, temperature (deg F), humidity (%)]
     """
     for item in dictionary:
         temp = float(item['temp'][1]['max']['value'])
@@ -54,6 +56,8 @@ def schedule(lat, lon, start_time, end_time, duration):
     start_time: (datetime object)
     end_time: (datetime object)
     duration: (num) seconds
+    ---
+    return: WEATHER_VALS
     """
     # store all data here
     WEATHER_VALS = []
@@ -158,6 +162,8 @@ def window_slider(lat, lon, start_time, end_time, duration,
     alpha: (num) weather weight
     beta: (num) humidity weight
     theta: (num) duration weight *** NEED TO PREDETERMINE FOR SPECIFIC RANGES
+    ---
+    return: (dt) best start, best end
     """
     # call schedule
     WEATHER_VALS = schedule(lat, lon, start_time, end_time, duration)

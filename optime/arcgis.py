@@ -12,7 +12,6 @@ class Arcgis():
     find_places
     """
     base_url = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?'
-    api_key = config.ARCGIS_REST_API_KEY
 
     def __init__(self):
         pass

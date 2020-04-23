@@ -15,6 +15,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import climacell
 from instance.config import SECRET_KEY
 from scheduling import schedule, window_slider
+from store_filter import get_safest_stores
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
@@ -145,12 +146,30 @@ def index():
 def shopping():
     return render_template('shopping.html'), 200
 
+@app.route('/shopping/shop')
+def shop():
+    args = request.args
+
+    # lat, lon, max_locations, k, categories, product
+    lat = args['lat']
+    lon = args['lon']
+    max_locations = 20
+    k = 5
+    categories = []
+    if ('grocery' in args):
+        categories.append('Grocery')
+    if ('pharm' in args):
+        categories.append('Pharmacy')
+
+    stores = get_safest_stores(lat, lon, max_locations, k, categories)
+
+    return str(stores)
+    # return render_template('scheduling.html', tasks=g.user['items']), 200
 
 @app.route('/scheduling')
 @login_required
 def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
-
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():

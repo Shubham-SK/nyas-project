@@ -53,33 +53,6 @@ def get_db():
     return g.db
 
 
-@app.route('/realtime')
-def forecast():
-    'Get real time updates'
-    return str(weather.get_realtime(10, 10, 'si', ['temp', 'temp:F']))
-
-
-@app.route('/nowcast')
-def nowcast():
-    'Get updates for a 6 hour range'
-    return str(weather.get_nowcast(10, 10, 5, 'si', ['temp', 'temp:F'], 'now',
-                                   '2020-04-13T21:30:50Z'))
-
-
-@app.route('/hourly')
-def hourly():
-    'Get hourly updates'
-    return str(weather.get_hourly(10, 10, 'si', ['temp', 'temp:F'], 'now',
-                                  '2020-04-14T21:30:50Z'))
-
-
-@app.route('/daily')
-def daily():
-    'Get daily updates'
-    return str(weather.get_daily(10, 10, 'si', ['temp', 'temp:F'], 'now',
-                                 '2020-04-14T21:30:50Z'))
-
-
 @app.route('/scheduling/schedule')
 @login_required
 def schedule_create():

@@ -1,7 +1,7 @@
 """
 Retrieves Case Data form NY Times.
 """
-from places import Stores
+# from Arcgis import Arcgis
 #from uszipcode import SearchEngine
 import csv
 import urllib.request
@@ -22,9 +22,11 @@ class Cases:
 
     def get_cases(self, county, state):
         """
+        Read CSV from NYtimes and lookup certain conty
+        ---
         county: (string) county name
         ---
-        return: (arr<date, county, state, cases, deaths>)
+        return: (arr<date, county, state, fips, cases, deaths>)
         """
         # get retrieve CSV data
         url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv"
@@ -46,7 +48,7 @@ class Cases:
 
     def SEIR_analysis(self, case_data):
         """
-        case_data: 
+        case_data:
         ---
         return: r0
         """

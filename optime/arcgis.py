@@ -6,6 +6,11 @@ from instance import config
 import urllib
 
 class Arcgis():
+    """
+    Functions for various API calls
+    ---
+    find_places
+    """
     base_url = 'https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?'
     api_key = config.ARCGIS_REST_API_KEY
 
@@ -14,10 +19,14 @@ class Arcgis():
 
     def find_places(self, lat, lon, max_locations, categories):
         """
+        Find nearby places that fit specified categories.
+        ---
         lat: (num) -59.9, 59.9
         lon: (num) -180, 180
         max_locations: (num) number of suggested stores
         categories: (arr<str>) lookup fields
+        ---
+        return: (dict) json
         """
         # parse categories
         categories = ",".join(map(urllib.parse.quote, categories))

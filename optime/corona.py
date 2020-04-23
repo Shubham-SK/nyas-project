@@ -34,12 +34,12 @@ class Cases:
         csvfile = csv.reader(codecs.iterdecode(ftpstream, 'utf-8'))
 
         now = datetime.now().replace(tzinfo=timezone('US/Eastern')) - timedelta(days=1)
-        # yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
+        yesterday = "%s-%s-%s" % (now.strftime("%Y"), now.strftime("%m"), now.strftime("%d"))
 
         cases = []
 
         for line in csvfile:
-            if (#line[self.DATE] == yesterday and
+            if (line[self.DATE] == yesterday and
                 line[self.COUNTY] == county and
                 line[self.STATE] == state):
                 cases.append(line)
@@ -54,5 +54,5 @@ class Cases:
         """
 
 # Testing
-# case = Cases()
-# print(case.get_cases("Contra Costa", "California"))
+case = Cases()
+print(case.get_cases("New York",  "New York"))

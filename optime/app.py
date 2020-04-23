@@ -57,7 +57,7 @@ def swap(item, item1):
     return (item1, item)
 
 @app.route('/scheduling/schedule')
-# @login_required
+@login_required
 def schedule_create():
     'Give the best time to go out'
     args = request.args
@@ -148,7 +148,7 @@ def index():
 
 
 @app.route('/shopping')
-# @login_required
+@login_required
 def shopping():
     return render_template('shopping.html'), 200
 
@@ -173,7 +173,7 @@ def shop():
     # return render_template('scheduling.html', tasks=g.user['items']), 200
 
 @app.route('/scheduling')
-# @login_required
+@login_required
 def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
 

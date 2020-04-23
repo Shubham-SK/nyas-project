@@ -7,11 +7,11 @@ from datetime import datetime as dt
 import pytz
 import dateutil.parser as parser
 from climacell import Weather
+import numpy as np
 
 WEATHER = Weather()
-WEATHER_VALS = {}
 
-def clean_data(dictionary):
+def clean_data(WEATHER_VALS, dictionary):
     """
     Creates a dictionary - for get_nowcast and get_hourly API response
     ---
@@ -19,18 +19,17 @@ def clean_data(dictionary):
     key: (datetime object)
     value: (arr<float>) [temperature (deg F), humidity (%)]
     """
+
+    # iterate through dict
     for item in dictionary:
-        items = []
         temp = float(item['temp']['value'])
         humid = float(item['humidity']['value'])
-        items.append(temp)
-        items.append(humid)
         observation_time = parser.parse(item['observation_time']['value'])
         observation_time = observation_time.replace(tzinfo=pytz.utc)
-        WEATHER_VALS[observation_time] = items
+        WEATHER_VALS.append(np.array([observation_time, temp, humid]))
 
 
-def clean_daily(dictionary):
+def clean_daily(WEATHER_VALS, dictionary):
     """
     Creates a dictionary - for slightly different get_daily API response
     ---
@@ -39,14 +38,11 @@ def clean_daily(dictionary):
     value: (arr<float>) [temperature (deg F), humidity (%)]
     """
     for item in dictionary:
-        items = []
         temp = float(item['temp'][1]['max']['value'])
         humid = float(item['humidity'][0]['min']['value'])
-        items.append(temp)
-        items.append(humid)
         observation_time = dt.strptime(item['observation_time']['value'], "%Y-%m-%d")
         observation_time = observation_time.replace(tzinfo=pytz.utc)
-        WEATHER_VALS[observation_time] = items
+        WEATHER_VALS.append(np.array([observation_time, temp, humid]))
 
 
 def schedule(lat, lon, start_time, end_time, duration):
@@ -59,6 +55,9 @@ def schedule(lat, lon, start_time, end_time, duration):
     end_time: (datetime object)
     duration: (num) seconds
     """
+    # store all data here
+    WEATHER_VALS = []
+
     # calculate time difference to make correct API call
     now_time = dt.utcnow().replace(tzinfo=pytz.utc)
     total_time_delta = (end_time-start_time).total_seconds()
@@ -94,7 +93,7 @@ def schedule(lat, lon, start_time, end_time, duration):
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
         # append data
-        clean_data(data)
+        clean_data(WEATHER_VALS, data)
         # update variables for next timestep
         total_time_delta -= round(
             (relative_end_time-start_time).total_seconds()
@@ -113,7 +112,7 @@ def schedule(lat, lon, start_time, end_time, duration):
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
         # append data
-        clean_data(data)
+        clean_data(WEATHER_VALS, data)
         # update variables for next timestep
         total_time_delta -= round(
             (relative_end_time-relative_start_time).total_seconds()
@@ -132,7 +131,7 @@ def schedule(lat, lon, start_time, end_time, duration):
             relative_start_time.isoformat(), relative_end_time.isoformat()
         )
         # append data
-        clean_daily(data)
+        clean_daily(WEATHER_VALS, data)
         # update variables for next timestep
         total_time_delta -= round(
             (relative_end_time-relative_start_time).total_seconds()
@@ -145,6 +144,8 @@ def schedule(lat, lon, start_time, end_time, duration):
         assert total_time_delta <= 0
     except AssertionError:
         print("error in time processing.")
+
+    return WEATHER_VALS
 
 
 def window_slider(lat, lon, start_time, end_time, duration,
@@ -159,7 +160,11 @@ def window_slider(lat, lon, start_time, end_time, duration,
     theta: (num) duration weight *** NEED TO PREDETERMINE FOR SPECIFIC RANGES
     """
     # call schedule
-    schedule(lat, lon, start_time, end_time, duration)
+    WEATHER_VALS = schedule(lat, lon, start_time, end_time, duration)
+
+    # record data and sort it
+    WEATHER_VALS = np.array(WEATHER_VALS)
+    WEATHER_VALS = np.sort(WEATHER_VALS, axis=0)
 
     # loop variables
     best_start_time = dt.utcnow().replace(tzinfo=pytz.utc)
@@ -171,15 +176,17 @@ def window_slider(lat, lon, start_time, end_time, duration,
     # TODO: Try Memoization to Improve Runtime
     # OPTIMIZE LOW
     # loop through finding durations and keeping running average
-    for start_time in WEATHER_VALS:
-        for end_time in WEATHER_VALS:
+    for start in WEATHER_VALS:
+        for end in WEATHER_VALS:
             if start_time == end_time:
                 continue
+            start_time = start[0]
+            end_time = end[0]
             # compute average
             ctr += 1
             temp_avg_index = (((ctr-1)/ctr)*temp_avg_index+
-                              (1/ctr)*(alpha*WEATHER_VALS[end_time][0]+
-                               beta*WEATHER_VALS[end_time][1]))
+                              (1/ctr)*(start[1]+
+                               beta*end[2]))
             # if duration is in range
             if (end_time-start_time).total_seconds() >= duration:
                 ctr = 0
@@ -191,12 +198,12 @@ def window_slider(lat, lon, start_time, end_time, duration,
                     best_end_time = start_time + timedelta(seconds=duration)
                 break
 
-    return (best_start_time, best_end_time)
+    return best_start_time, best_end_time
 
 # Testing
 # now_time = dt.utcnow().replace(tzinfo=pytz.utc)
 # start_time = now_time + timedelta(seconds=100)
-# end_time = now_time + timedelta(days=2)
+# end_time = now_time + timedelta(days=5)
 # print(f'start: {start_time}')
 # print(f'end: {end_time}')
 # print(window_slider(10, 10, start_time, end_time, 1800))

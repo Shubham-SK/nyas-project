@@ -14,6 +14,10 @@ class Arcgis():
 
     def find_places(self, lat, lon, max_locations, categories):
         """
+        lat: (num) -59.9, 59.9
+        lon: (num) -180, 180
+        max_locations: (num) number of suggested stores
+        categories: (arr<str>) lookup fields
         """
         # parse categories
         categories = ",".join(map(urllib.parse.quote, categories))

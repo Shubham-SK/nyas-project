@@ -175,7 +175,7 @@ def shop():
 @app.route('/scheduling')
 # @login_required
 def scheduling():
-    return render_template('scheduling.html') #, tasks=g.user['items']), 200
+    return render_template('scheduling.html', tasks=g.user['items']), 200
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():

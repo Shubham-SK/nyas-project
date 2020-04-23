@@ -53,9 +53,11 @@ def get_db():
         g.db = client.optime
     return g.db
 
+def swap(item, item1):
+    return (item1, item)
 
 @app.route('/scheduling/schedule')
-@login_required
+# @login_required
 def schedule_create():
     'Give the best time to go out'
     args = request.args
@@ -84,6 +86,10 @@ def schedule_create():
     end_time_local = datetime.strptime(args['end'],
                                        '%Y-%m-%d').astimezone(pytz.timezone(local))
     end_time_utc = end_time_local.astimezone(pytz.utc)
+
+    if (end_time_utc < start_time_utc):
+        (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
+        (start_time_local, end_time_local) = swap(start_time_local, end_time_local)
 
     # print(f'utc times: {start_time_utc} {end_time_utc}')
     # print(f'local times: {start_time_local} {end_time_local}')
@@ -142,7 +148,7 @@ def index():
 
 
 @app.route('/shopping')
-@login_required
+# @login_required
 def shopping():
     return render_template('shopping.html'), 200
 
@@ -167,9 +173,9 @@ def shop():
     # return render_template('scheduling.html', tasks=g.user['items']), 200
 
 @app.route('/scheduling')
-@login_required
+# @login_required
 def scheduling():
-    return render_template('scheduling.html', tasks=g.user['items']), 200
+    return render_template('scheduling.html') #, tasks=g.user['items']), 200
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():

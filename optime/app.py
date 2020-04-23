@@ -53,8 +53,10 @@ def get_db():
         g.db = client.optime
     return g.db
 
+
 def swap(item, item1):
     return (item1, item)
+
 
 @app.route('/scheduling/schedule')
 @login_required
@@ -124,7 +126,7 @@ def schedule_create():
     db = get_db()
     db.users.update_one({"_id": ObjectId(g.user["_id"])}, {
         "$push": {"items": task}})
-    print("insertion", g.user['items'])
+    # print("insertion", g.user['items'])
 
     return redirect(url_for('scheduling'))
 
@@ -152,6 +154,7 @@ def index():
 def shopping():
     return render_template('shopping.html'), 200
 
+
 @app.route('/shopping/shop')
 def shop():
     args = request.args
@@ -172,10 +175,12 @@ def shop():
     return str(stores)
     # return render_template('scheduling.html', tasks=g.user['items']), 200
 
+
 @app.route('/scheduling')
 @login_required
 def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
+    
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():

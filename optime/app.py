@@ -180,7 +180,7 @@ def shop():
 @login_required
 def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
-    
+
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
@@ -236,7 +236,7 @@ def login():
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:
-                return redirect(url_for('scheduling'))
+                return redirect(url_for('/'))
         flash(error)
     next_url = request.args.get('next')
     if next_url is not None:

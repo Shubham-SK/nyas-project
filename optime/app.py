@@ -236,7 +236,7 @@ def login():
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:
-                return redirect(url_for('/'))
+                return redirect(url_for('index'))
         flash(error)
     next_url = request.args.get('next')
     if next_url is not None:

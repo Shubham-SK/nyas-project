@@ -33,21 +33,121 @@
             {% endif %}
          </div>
       </nav>
+
       <div class="container-fluid px-5 py-5">
-        <div class="row">
-          <div class="col">
-            <h2>Welcome {{ g.user['username'] }},</h2>
-            <p class="lead">All your errands. In one place.</p>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col rounded shadow bg-primary p-3">
+              <h2>Welcome {{ g.user['username'] }},</h2>
+              <p class="lead">All your scheduled errands. In one place.</p>
+            </div>
+            <div class="col rounded shadow bg-info mx-3 p-3">
+              <h2>Task Data</h2>
+              <div class="row">
+                <div class="col">
+                  <p class="lead">{x} Shopping Trips.</p>
+                </div>
+                <div class="col">
+                  <p class="lead">{x} Personal Tasks.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col rounded shadow bg-success p-3">
+              <h2>Notification Settings</h2>
+              <form>
+                <div class="form-group">
+                  <input type="tel" class="form-control" id="phone" aria-describedby="phone" placeholder="Enter Phone Number">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </form>
+            </div>
           </div>
         </div>
-        <div class="row bg-light rounded py-5 y-5">
-          <div class="col">
-            <h4>Shopping</h4>
+
+        <div class="container-fluid">
+          <div class="row mt-5">
+            <h4>Your Errands</h4>
           </div>
-        </div>
-        <div class="row bg-light rounded py-5 my-5">
-          <div class="col">
-            <h4>Personal</h4>
+          <div class="row bg-light rounded pt-3">
+            <div class="col-3 mb-3">
+              <div class="card">
+                <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Card title</h5>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+              </div>
+            </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 mb-3">
+            <div class="card">
+              <img src="https://i.picsum.photos/id/301/100/50.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>

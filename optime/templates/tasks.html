@@ -56,11 +56,11 @@
             </div>
             <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
               <h2>Notification Settings</h2>
-              <form>
+              <form action="/update_settings" method="POST">
                 <div class="input-group mb-3">
-                  <input type="tel" class="form-control" placeholder="Phone Number" aria-label="Phone Number" required>
+                  <input type="tel" class="form-control" placeholder="Phone Number" name="phone_number" aria-label="Phone Number" required>
                   <div class="input-group-append">
-                    <button class="btn btn-outline-light" type="button">Save</button>
+                    <input type="submit" class="btn btn-outline-light" type="button" value="Save">
                   </div>
                 </div>
               </form>

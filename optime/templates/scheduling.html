@@ -62,10 +62,10 @@
                   <tbody>
                     {% for item in tasks %}
                     <tr>
-                      <th scope="row">{{loop.index}}</th>
-                      <td>{{item.name}}</td>
-                      <td>{{item.start_time.strftime('%x %-I:%M %p')}}</td>
-                      <td>{{item.end_time.strftime('%x %-I:%M %p')}}</td>
+                      <th scope="row">{{ loop.index }}</th>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+                      <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
                       <td class="bg-primary"><a href="/scheduling/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                     </tr>
                     {% endfor %}

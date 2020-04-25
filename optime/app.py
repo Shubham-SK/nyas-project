@@ -184,13 +184,13 @@ def scheduling():
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
+    error = None
     if request.method == 'POST':
         print('Getting post request for register')
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
         db = get_db()
-        error = None
 
         if not username:
             error = 'Username is required.'
@@ -198,8 +198,10 @@ def register():
             error = 'Password is required.'
         elif not email:
             error = 'Email is required.'
+        elif db.users.find_one({'email': email}):
+            error = 'A user with that email is already registered'
         elif db.users.find_one({'username': username}):
-            error = 'User {} is already registered.'.format(username)
+            error = 'A user with username {} is already registered.'.format(username)
 
         if error is None:
             password_hash = generate_password_hash(password)
@@ -214,17 +216,18 @@ def register():
 
         flash(error)
 
-    return render_template('register.html')
+    return render_template('register.html', error=error)
 
 
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     print('Getting request for login')
+    error = None
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
         db = get_db()
-        error = None
+
         user = db.users.find_one({'email': email})
         if user is None:
             error = 'Incorrect username.'
@@ -237,13 +240,15 @@ def login():
                 return redirect(request.args["next"])
             else:
                 return redirect(url_for('index'))
+
         flash(error)
+
     next_url = request.args.get('next')
     if next_url is not None:
         form_action = url_for('login', next=next_url)
     else:
         form_action = url_for('login')
-    return render_template('login.html', form_action=form_action), 200
+    return render_template('login.html', error=error, form_action=form_action), 200
     # return render_template('rendertest.html')
 
 

@@ -11,6 +11,9 @@
    </head>
    <body>
       <div class="container col-md-3 py-md-5">
+        {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
          <div class="card text-center text-dark bg-white mb-5">
             <div class="card-header text-white bg-dark">
                <strong>OPTIME.</strong>

@@ -28,3 +28,6 @@ def add(store, item, count, latitude, longitude, ID = None):
     		"INSERT INTO storedb (store, item, count, latitude, longitude, ID) VALUES (%s, %s, %s, %s, %s, %s)"
  		)
  	mycursor.execute(comm, data)
+def update(store, item, count, latitude, longitude):
+	data = (store, item, count, latitude, longitude)
+	comm = 	

@@ -2,6 +2,7 @@
 Initialize the Application.
 """
 import functools
+import re
 from datetime import datetime, timedelta
 
 import pytz
@@ -91,7 +92,8 @@ def schedule_create():
 
     if (end_time_utc < start_time_utc):
         (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
-        (start_time_local, end_time_local) = swap(start_time_local, end_time_local)
+        (start_time_local, end_time_local) = swap(
+            start_time_local, end_time_local)
 
     # print(f'utc times: {start_time_utc} {end_time_utc}')
     # print(f'local times: {start_time_local} {end_time_local}')
@@ -124,7 +126,7 @@ def schedule_create():
     }
 
     db = get_db()
-    db.users.update_one({"_id": ObjectId(g.user["_id"])}, {
+    db.users.update_one({"_id": g.user["_id"]}, {
         "$push": {"items": task}})
     # print("insertion", g.user['items'])
 
@@ -153,6 +155,26 @@ def index():
 @login_required
 def shopping():
     return render_template('shopping.html'), 200
+
+
+@app.route('/update_settings', methods=("POST",))
+@login_required
+def update_settings():
+    phone_number = request.form.get("phone_number")
+    if phone_number is None:
+        return "No phone number given"
+    else:
+        phone_number = "".join(char for char in phone_number)
+
+        if len(phone_number) != 10 or not phone_number.isdigit():
+            return "phone number is invalid"
+
+        db = get_db()
+        db.users.update_one({"_id": g.user["_id"]}, {
+                            "$set": {"phone_number": phone_number}})
+        print(phone_number)
+
+        return redirect(url_for('index'))
 
 
 @app.route('/shopping/shop')

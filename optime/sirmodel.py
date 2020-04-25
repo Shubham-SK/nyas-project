@@ -75,13 +75,10 @@ def CalcR0(countyname, statename):
 
     def leastSquares(model, xdata, ydata, n):
         #least squares fit type beat.
-        time_total = xdata
 
-        data_record = ydata
+        k = 1.0/sum(ydata)
 
-        k = 1.0/sum(data_record)
-
-        I0 = data_record[0]*k
+        I0 = ydata[0]*k
         S0 = 1 - I0
         R0 = 0 
         N0 = [S0,I0,R0]
@@ -89,8 +86,8 @@ def CalcR0(countyname, statename):
         param_init = [0.75, 0.75]
         param_init.append(k)
 
-        param = minimize(sse(model, N0, time_total, k, data_record, n), param_init, method="nelder-mead").x 
-        Nt = integrate.odeint(model, N0, time_total, args=tuple(param))
+        param = minimize(sse(model, N0, xdata, k, ydata, n), param_init, method="nelder-mead").x 
+        Nt = integrate.odeint(model, N0, xdata, args=tuple(param))
         #print(Nt)
         Nt = np.divide(Nt, k)
 

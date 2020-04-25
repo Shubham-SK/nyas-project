@@ -196,7 +196,7 @@ def window_slider(lat, lon, start_time, end_time, duration,
             temp_avg_index = (((ctr-1)/ctr)*temp_avg_index+
                               (1/ctr)*(alpha*end[1]+
                                beta*end[2]))
-                               
+
             # if duration is in range
             if (end_time-start_time).total_seconds() >= duration:
                 # reset counter and running average

@@ -11,6 +11,9 @@
    </head>
    <body>
       <div class="container col-md-3 py-md-5">
+        {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
          <div class="card text-center text-dark bg-white mb-5">
             <div class="card-header text-white bg-dark">
                <strong>OPTIME.</strong>
@@ -27,17 +30,16 @@
                      <input type="checkbox" value="remember-me"> Remember me
                      </label>
                   </div>
-                  <button class="btn btn-primary" type="submit" href="/">Sign in</button>
+                  <button class="btn btn-primary" type="submit" href="{{ url_for('index') }}">Sign in</button>
                </form>
             </div>
-            <p>Don't have an account? <a href="/auth/register" style="text-decoration: none;">Register</a></p>
+            <p>Don't have an account? <a href="{{ url_for('register') }}" style="text-decoration: none;">Register</a></p>
             <div class="card-footer text-white bg-dark">
             </div>
          </div>
       </div>
    </body>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+   <script src= "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-   <script src = "/signin.css"></script>
 </html>

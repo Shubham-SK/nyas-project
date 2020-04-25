@@ -11,6 +11,9 @@
    </head>
    <body>
       <div class="container col-md-3 py-md-5">
+        {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
          <div class="card text-center text-dark bg-white mb-5">
             <div class="card-header text-white bg-dark">
                <strong>OPTIME.</strong>
@@ -18,7 +21,6 @@
             <div class="card-body">
                <h2 class="card-title">Register</h2>
                <form class="form-register" method="post">
-                  {# <img class="mb-4" src="{{ site.baseurl }}/docs/{{ site.docs_version }}/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> #}
                   <label for="inputEmail" class="sr-only">Email address</label>
                   <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
                   <label for="inputUsername" class="sr-only">Username</label>
@@ -31,10 +33,10 @@
                      <input type="checkbox" value="remember-me"> Remember me
                      </label>
                   </div>
-                  <button class="btn btn-primary" type="submit" href="/register">Register</button>
+                  <button class="btn btn-primary" type="submit" href="{{ url_for('register') }}">Register</button>
                </form>
             </div>
-            <p>Already have an account? <a href="/auth/login" style="text-decoration: none;">Log In</a></p>
+            <p>Already have an account? <a href="{{ url_for('login') }}" style="text-decoration: none;">Log In</a></p>
             <div class="card-footer text-white bg-dark">
             </div>
          </div>
@@ -43,5 +45,4 @@
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-   <script src = "/signin.css"></script>
 </html>

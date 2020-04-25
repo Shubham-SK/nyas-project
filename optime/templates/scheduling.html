@@ -12,7 +12,7 @@
    <body>
       <!-- Image and text -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
-         <a class="navbar-brand" href="/">
+         <a class="navbar-brand" href="{{ url_for('index') }}">
          <img src="static/img/optime.png" height="30" width="30" class="d-inline-block align-top" alt="">
          OPTIME.
          </a>
@@ -25,7 +25,7 @@
                   <a class="nav-link" href="#">Scheduling<span class="sr-only">(current)</span></a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" href="/shopping">Shopping</a>
+                  <a class="nav-link" href="{{ url_for('shopping') }}">Shopping</a>
                </li>
             </ul>
             {% if g.user is none %}
@@ -62,10 +62,10 @@
                   <tbody>
                     {% for item in tasks %}
                     <tr>
-                      <th scope="row">{{loop.index}}</th>
-                      <td>{{item.name}}</td>
-                      <td>{{item.start_time.strftime('%x %-I:%M %p')}}</td>
-                      <td>{{item.end_time.strftime('%x %-I:%M %p')}}</td>
+                      <th scope="row">{{ loop.index }}</th>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+                      <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
                       <td class="bg-primary"><a href="/scheduling/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                     </tr>
                     {% endfor %}

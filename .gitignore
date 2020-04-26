@@ -14,3 +14,4 @@ optime/instance/
 
 .mypy_cache
 venv/
+.tags

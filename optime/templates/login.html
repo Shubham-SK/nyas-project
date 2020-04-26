@@ -21,6 +21,8 @@
             <div class="card-body">
                <h2 class="card-title">Sign In</h2>
                <form class="form-signin" method="post" action="{{ form_action }}">
+                  <input type="hidden" id="lat" name="lat" value="">
+                  <input type="hidden" id="lon" name="lon" value="">
                   <label for="inputEmail" class="sr-only">Email</label>
                   <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email" required autofocus>
                   <label for="inputPassword" class="sr-only">Password</label>
@@ -39,6 +41,7 @@
          </div>
       </div>
    </body>
+   <script type="text/javascript" src="../static/js/getLocation.js"></script>
    <script src= "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
    <script src = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>

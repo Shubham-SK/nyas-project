@@ -83,7 +83,7 @@ def get_safest_stores(lat, lon, max_locations, k, categories):
     # TODO: ADD THE SIR MODEL IN CORONA.PY, FIND POPULATION DATA W FIPS
 
     # sort by cases for each address
-    store_info = sorted(store_info, key=order)
+    # store_info = sorted(store_info, key=order)
 
     return store_info[:k]
 

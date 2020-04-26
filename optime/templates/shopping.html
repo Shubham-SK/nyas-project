@@ -60,15 +60,21 @@
                   </ul>
                   <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-findstores-tab">
+
                       <h4 class="pb-3">Find Stores</h4>
                       <div class="form group">
-                        <select id="category" class="selectpicker pb-3" multiple title="Category">
-                          <option>Pharmacy</option>
-                          <option>Grocery Store</option>
-                        </select>
-                        <form class="form-inline justify-content-center mb-3">
-                          <input class="form-control mr-sm-2" type="search" placeholder="Search For Products" aria-label="Search">
+
+                        <form action="/shopping" method="post">
+                          <input type="hidden" id="lat" name="lat" value="">
+                          <input type="hidden" id="lon" name="lon" value="">
+                          <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
+                            <option>Pharmacy</option>
+                            <option>Grocery Store</option>
+                          </select>
+                          <div class="form-inline justify-content-center mb-3">
+                          <input class="form-control mr-sm-2" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
                           <button class="btn btn-sm btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                          </div>
                         </form>
                       </div>
                     </div>
@@ -87,8 +93,7 @@
                        <tr>
                           <th scope="col">#</th>
                           <th scope="col">Name</th>
-                          <th scope="col">Start Time</th>
-                          <th scope="col">End Time</th>
+                          <th scope="col">Store Name</th>
                           <th scope="col">Actions</th>
                        </tr>
                     </thead>
@@ -118,44 +123,32 @@
         </div>
 
         <div class="container-fluid">
-          <div class="row mt">
+          <div class="row">
             <div class="col">
               <h3>Stores Near You</h3>
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
+            {% for item in storeLocs %}
             <div class="col-md mb-3">
-              <div class="card">
-                <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
+              <div class="card border-white shadow" style="height:100%">
+                <div class="card-header bg-white text-center">
+                  <strong>{{ item.name }}</strong>
+                </div>
+                <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
                 <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-secondary">Go somewhere</a>
+                  <p class="card-text text-center">{{ item.storeAddress }}</p>
+                </div>
+                <div class="card-footer bg-white text-center">
+                  <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
                 </div>
               </div>
             </div>
-          <div class="col-md mb-3">
-            <div class="card">
-              <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-secondary">Go somewhere</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-md mb-3">
-            <div class="card">
-              <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-secondary">Go somewhere</a>
-              </div>
-            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
+
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
    <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>

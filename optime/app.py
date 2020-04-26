@@ -58,78 +58,81 @@ def swap(item, item1):
     return (item1, item)
 
 
-@app.route('/scheduling/schedule')
+@app.route('/scheduling', methods=['GET', 'POST'])
 @login_required
-def schedule_create():
+def scheduling():
     'Give the best time to go out'
-    args = request.args
+    if request.method == 'POST':
+        args = request.form
 
-    # lat, lon, start_time, end_time, duration
-    lat = args['lat']
-    lon = args['lon']
+        # lat, lon, start_time, end_time, duration
+        lat = args['lat']
+        lon = args['lon']
 
-    # finding timezone
-    tz = tzwhere.tzwhere(forceTZ=True)
-    local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
+        # finding timezone
+        tz = tzwhere.tzwhere(forceTZ=True)
+        local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
 
-    # local start time
-    start_time_local = datetime.strptime(args['start'],
-                                         '%Y-%m-%d').astimezone(pytz.timezone(local))
-    now_time_local = datetime.now(pytz.timezone(local))
+        # local start time
+        start_time_local = datetime.strptime(args['start'],
+                                             '%Y-%m-%d').astimezone(pytz.timezone(local))
+        now_time_local = datetime.now(pytz.timezone(local))
 
-    # if the user specified today as the starting date
-    if start_time_local.strftime('%x') == now_time_local.strftime('%x'):
-        start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
-                          timedelta(seconds=10))
-    else:
-        start_time_utc = start_time_local.astimezone(pytz.utc)
+        # if the user specified today as the starting date
+        if start_time_local.strftime('%x') == now_time_local.strftime('%x'):
+            start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
+                              timedelta(seconds=10))
+        else:
+            start_time_utc = start_time_local.astimezone(pytz.utc)
 
-    # local end time
-    end_time_local = datetime.strptime(args['end'],
-                                       '%Y-%m-%d').astimezone(pytz.timezone(local))
-    end_time_utc = end_time_local.astimezone(pytz.utc)
+        # local end time
+        end_time_local = datetime.strptime(args['end'],
+                                           '%Y-%m-%d').astimezone(pytz.timezone(local))
+        end_time_utc = end_time_local.astimezone(pytz.utc)
 
-    if (end_time_utc < start_time_utc):
-        (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
-        (start_time_local, end_time_local) = swap(
-            start_time_local, end_time_local)
+        if (end_time_utc < start_time_utc):
+            (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
+            (start_time_local, end_time_local) = swap(
+                start_time_local, end_time_local)
 
-    # print(f'utc times: {start_time_utc} {end_time_utc}')
-    # print(f'local times: {start_time_local} {end_time_local}')
+        # print(f'utc times: {start_time_utc} {end_time_utc}')
+        # print(f'local times: {start_time_local} {end_time_local}')
 
-    count = args['count']
-    duration = int(args['duration'])
-    name = args['name']
+        count = args['count']
+        duration = int(args['duration'])
+        name = args['name']
 
-    if count == 'Minutes':
-        duration *= 60
-    elif count == 'Hours':
-        duration *= 3600
-    elif count == 'Days':
-        duration *= 86400
+        if count == 'Minutes':
+            duration *= 60
+        elif count == 'Hours':
+            duration *= 3600
+        elif count == 'Days':
+            duration *= 86400
 
-    bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
-                                               end_time_utc, duration)
+        bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
+                                                   end_time_utc, duration)
 
-    # bestStartTime = bestStartTime.strftime('%c')
-    # bestEndTime = bestEndTime.strftime('%c')
+        # bestStartTime = bestStartTime.strftime('%c')
+        # bestEndTime = bestEndTime.strftime('%c')
 
-    bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
-    bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
+        bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
+        bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
 
-    task = {
-        "_id": ObjectId(),
-        "name": name,
-        "start_time": bestStartTime,
-        "end_time": bestEndTime,
-    }
+        task = {
+            "_id": ObjectId(),
+            "name": name,
+            "start_time": bestStartTime,
+            "end_time": bestEndTime,
+        }
 
-    db = get_db()
-    db.users.update_one({"_id": g.user["_id"]}, {
-        "$push": {"items": task}})
-    # print("insertion", g.user['items'])
+        db = get_db()
+        db.users.update_one({"_id": g.user["_id"]}, {
+            "$push": {"items": task}})
 
-    return redirect(url_for('scheduling'))
+        return redirect(url_for('scheduling'))
+        # print("insertion", g.user['items'])
+
+    return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
 @app.route('/scheduling/delete_task/<int:task_index>')
@@ -138,6 +141,7 @@ def delete_task(task_index):
     task_id = g.user["items"][task_index]["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"items": {"_id": task_id}}})
+    print("DATABASE: ", g.user)
     return redirect(url_for('scheduling'))
 
 
@@ -147,13 +151,47 @@ def index():
     if g.user is None:
         return render_template('index.html')
     else:
-        return render_template('tasks.html')
+        return render_template('tasks.html', tasks=g.user['items'],
+                               number=g.user['phone_number'],
+                               lentasks=len(g.user['items']),
+                               lenshoppingtasks=len(g.user['items']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
 
 
-@app.route('/shopping')
+@app.route('/shopping', methods=['GET', 'POST'])
 @login_required
 def shopping():
-    return render_template('shopping.html'), 200
+    print('Getting request for stores')
+    # lat, lon, max_locations, k, categories, product
+    lat = g.user['lat']
+    lon = g.user['lon']
+    max_locations = 20
+    k = 3
+    categories = ['Grocery']
+    if request.method == 'POST':
+        args = request.form
+        categories = args.getlist('category')
+        print(args)
+        for i in range(len(categories)):
+            if (categories[i] == "Grocery Store"):
+                categories[i] = "Grocery"
+    # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
+    storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
+
+    allStores = []
+
+    for store in storesArr:
+        storeDict = {}
+        storeDict['name'] = store[0]
+        storeDict['storeLat'] = str(store[1][0])
+        storeDict['storeLon'] = str(store[1][1])
+        storeDict['storeAddress'] = store[2]
+        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (
+            lat, lon, storeDict['storeLat'], storeDict['storeLon'])
+        storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (
+            lat, lon, storeDict['storeLat'], storeDict['storeLon'])
+
+        allStores.append(storeDict)
+    return render_template('shopping.html', userLat=lat, userLon=lon, storeLocs=allStores), 200
 
 
 @app.route('/update_settings', methods=("POST",))
@@ -171,36 +209,7 @@ def update_settings():
         db = get_db()
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
-        print(phone_number)
-
         return redirect(url_for('index'))
-
-
-@app.route('/shopping/shop')
-def shop():
-    args = request.args
-
-    # lat, lon, max_locations, k, categories, product
-    lat = args['lat']
-    lon = args['lon']
-    max_locations = 20
-    k = 5
-    categories = []
-    if ('grocery' in args):
-        categories.append('Grocery')
-    if ('pharm' in args):
-        categories.append('Pharmacy')
-
-    stores = get_safest_stores(lat, lon, max_locations, k, categories)
-
-    return str(stores)
-    # return render_template('scheduling.html', tasks=g.user['items']), 200
-
-
-@app.route('/scheduling')
-@login_required
-def scheduling():
-    return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
 @app.route('/auth/register', methods=['GET', 'POST'])
@@ -211,6 +220,9 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        lat = request.form['lat']
+        lon = request.form['lon']
+
         db = get_db()
 
         if not username:
@@ -230,8 +242,11 @@ def register():
             db.users.insert_one(
                 {'username': username,
                  'email': email,
+                 'lat': lat,
+                 'lon': lon,
                  'password': password_hash,
-                 'items': []})
+                 'items': [],
+                 'phone_number': ''})
             return redirect(url_for('login'))
         else:
             print(error)
@@ -249,6 +264,7 @@ def login():
         lat = request.form.get('lat')
         lon = request.form.get('lon')
         db = get_db()
+        print(db)
 
         user = db.users.find_one({'email': email})
         if user is None:
@@ -261,6 +277,14 @@ def login():
             session.clear()
             session['user_id'] = str(user['_id'])
             session['location'] = (lat, lon)
+            newLat = {"$set": {"lat": lat}}
+            newLon = {"$set": {"lon": lon}}
+            # print("NEW LAT:", newLat)
+            # print("NEW LON:", newLon)
+            db.users.update_one({'email': email}, newLat)
+            db.users.update_one({'email': email}, newLon)
+
+            # print(db.users)
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:

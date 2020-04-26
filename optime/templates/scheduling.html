@@ -53,7 +53,7 @@
                </div>
                <div class="card-body">
                   <h2 class="card-title">Scheduler</h2>
-                  <form id="form_id" action="/scheduling/schedule" method="GET" name="myform">
+                  <form id="form_id" action="/scheduling" method="post" name="myform">
                      <input type="hidden" id="lat" name="lat" value="">
                      <input type="hidden" id="lon" name="lon" value="">
                      <p class="card-text">How long do you want to go out for?</p>
@@ -143,6 +143,9 @@
       <!-- <button onclick="getLocation()">Get Location</button> -->
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
+   <script>
+     setDates();
+   </script>
    <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

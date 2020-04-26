@@ -24,7 +24,6 @@ app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 app.config.from_pyfile('instance/config.py')
 app.secret_key = SECRET_KEY
 
-
 weather = climacell.Weather()
 
 
@@ -223,7 +222,8 @@ def register():
         elif db.users.find_one({'email': email}):
             error = 'A user with that email is already registered'
         elif db.users.find_one({'username': username}):
-            error = 'A user with username {} is already registered.'.format(username)
+            error = 'A user with username {} is already registered.'.format(
+                username)
 
         if error is None:
             password_hash = generate_password_hash(password)
@@ -236,8 +236,6 @@ def register():
         else:
             print(error)
 
-        flash(error)
-
     return render_template('register.html', error=error)
 
 
@@ -246,8 +244,10 @@ def login():
     print('Getting request for login')
     error = None
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
+        lat = request.form.get('lat')
+        lon = request.form.get('lon')
         db = get_db()
 
         user = db.users.find_one({'email': email})
@@ -255,9 +255,12 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
+        elif lat is None or lon is None:
+            error = 'No location provided'
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
+            session['location'] = (lat, lon)
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:
@@ -270,8 +273,9 @@ def login():
         form_action = url_for('login', next=next_url)
     else:
         form_action = url_for('login')
-    return render_template('login.html', error=error, form_action=form_action), 200
-    # return render_template('rendertest.html')
+    return (render_template('login.html', error=error,
+                            form_action=form_action),
+            200)
 
 
 @app.before_request

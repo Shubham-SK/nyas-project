@@ -158,15 +158,16 @@ def shopping():
     if request.method == 'POST':
         print('Getting post request for register')
         args = request.form
-
+        print(args)
         # lat, lon, max_locations, k, categories, product
-        lat = args['lat']
-        lon = args['lon']
+        lat = g.user['lat']
+        lon = g.user['lon']
         max_locations = 20
         k = 5
         categories = args.getlist('category')
-        if ("Grocery Store" in categories):
-            categories[1] = "Grocery"
+        for i in range(len(categories)):
+            if (categories[i] == "Grocery Store"):
+                categories[i] = "Grocery"
 
         stores = get_safest_stores(lat, lon, max_locations, k, categories)
         # print(stores)
@@ -207,6 +208,9 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+        lat = request.form['lat']
+        lon = request.form['lon']
+
         db = get_db()
 
         if not username:
@@ -225,6 +229,8 @@ def register():
             db.users.insert_one(
                 {'username': username,
                  'email': email,
+                 'lat': lat,
+                 'lon': lon,
                  'password': password_hash,
                  'items': [],
                  'phone_number': ''})
@@ -244,7 +250,10 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        lat = g.user['lat']
+        lon = g.user['lon']
         db = get_db()
+        print(db)
 
         user = db.users.find_one({'email': email})
         if user is None:
@@ -254,6 +263,13 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
+            newLat = { "$set": { "lat": lat } }
+            newLon =  { "$set": { "lon": lon } }
+            # print("NEW LAT:", newLat)
+            # print("NEW LON:", newLon)
+            db.users.update_one({'email': email}, newLat)
+            db.users.update_one({'email': email}, newLon)
+            # print(db.users)
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:
@@ -267,7 +283,6 @@ def login():
     else:
         form_action = url_for('login')
     return render_template('login.html', error=error, form_action=form_action), 200
-    # return render_template('rendertest.html')
 
 
 @app.before_request

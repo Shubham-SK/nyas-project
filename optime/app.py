@@ -185,19 +185,10 @@ def shopping():
         storeDict['storeLat'] = str(store[1][0])
         storeDict['storeLon'] = str(store[1][1])
         storeDict['storeAddress'] = store[2]
-        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&path=color:0x0000ff|weight:5|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
+        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
         storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
 
         allStores.append(storeDict)
-    #     print(storeDict)
-    #     print(allStores)
-    #     print()
-    #     print()
-    #
-    # print()
-    # print()
-    # print()
-    # print()
     return render_template('shopping.html', userLat=lat, userLon=lon, storeLocs=allStores), 200
 
 @app.route('/update_settings', methods=("POST",))
@@ -215,8 +206,6 @@ def update_settings():
         db = get_db()
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
-        # print(phone_number)
-
         return redirect(url_for('index'))
 
 @app.route('/auth/register', methods=['GET', 'POST'])

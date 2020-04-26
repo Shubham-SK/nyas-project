@@ -60,15 +60,21 @@
                   </ul>
                   <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-findstores-tab">
+
                       <h4 class="pb-3">Find Stores</h4>
                       <div class="form group">
-                        <select id="category" class="selectpicker pb-3" multiple title="Category">
-                          <option>Pharmacy</option>
-                          <option>Grocery Store</option>
-                        </select>
-                        <form class="form-inline justify-content-center mb-3">
-                          <input class="form-control mr-sm-2" type="search" placeholder="Search For Products" aria-label="Search">
+
+                        <form action="/shopping" method="post">
+                          <input type="hidden" id="lat" name="lat" value="">
+                          <input type="hidden" id="lon" name="lon" value="">
+                          <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
+                            <option>Pharmacy</option>
+                            <option>Grocery Store</option>
+                          </select>
+                          <div class="form-inline justify-content-center mb-3">
+                          <input class="form-control mr-sm-2" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
                           <button class="btn btn-sm btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                          </div>
                         </form>
                       </div>
                     </div>
@@ -87,8 +93,7 @@
                        <tr>
                           <th scope="col">#</th>
                           <th scope="col">Name</th>
-                          <th scope="col">Start Time</th>
-                          <th scope="col">End Time</th>
+                          <th scope="col">Store Name</th>
                           <th scope="col">Actions</th>
                        </tr>
                     </thead>

@@ -148,12 +148,29 @@ def index():
     if g.user is None:
         return render_template('index.html')
     else:
-        return render_template('tasks.html')
+        return render_template('tasks.html', tasks=g.user['items']) #, userLat=g.user["lat"], userLon=g.user["lon"])
 
 
-@app.route('/shopping')
+@app.route('/shopping', methods=['GET', 'POST'])
 @login_required
 def shopping():
+    if request.method == 'POST':
+        print('Getting post request for register')
+        args = request.form
+
+        # lat, lon, max_locations, k, categories, product
+        lat = args['lat']
+        lon = args['lon']
+        max_locations = 20
+        k = 5
+        categories = args.getlist('category')
+        if ("Grocery Store" in categories):
+            categories[1] = "Grocery"
+
+        stores = get_safest_stores(lat, lon, max_locations, k, categories)
+        print(stores)
+        print(g.user)
+
     return render_template('shopping.html'), 200
 
 
@@ -176,33 +193,10 @@ def update_settings():
 
         return redirect(url_for('index'))
 
-
-@app.route('/shopping/shop')
-def shop():
-    args = request.args
-
-    # lat, lon, max_locations, k, categories, product
-    lat = args['lat']
-    lon = args['lon']
-    max_locations = 20
-    k = 5
-    categories = []
-    if ('grocery' in args):
-        categories.append('Grocery')
-    if ('pharm' in args):
-        categories.append('Pharmacy')
-
-    stores = get_safest_stores(lat, lon, max_locations, k, categories)
-
-    return str(stores)
-    # return render_template('scheduling.html', tasks=g.user['items']), 200
-
-
 @app.route('/scheduling')
 @login_required
 def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
-
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
@@ -289,7 +283,6 @@ def load_logged_in_user():
 def logout():
     session.clear()
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)

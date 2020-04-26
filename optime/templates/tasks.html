@@ -83,12 +83,10 @@
           <div class="row bg-light rounded pt-3">
             {% for item in tasks %}
             <div class="col-md-3 mb-3">
-              <div class="card" style="height:100%">
-                <div class="card-header bg-dark text-center text-white">
-                  <strong>{{ item.name }}</strong>
-                </div>
+              <div class="card text-center" style="height:100%">
                 <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
                 <div class="card-body">
+                  <h5 class="card-title">{{ item.name }}</h5>
                   <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
                 </div>
                 <div class="card-footer bg-dark text-center text-white">

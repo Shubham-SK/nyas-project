@@ -24,7 +24,6 @@ app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 app.config.from_pyfile('instance/config.py')
 app.secret_key = SECRET_KEY
 
-
 weather = climacell.Weather()
 
 
@@ -165,9 +164,9 @@ def index():
         return render_template('index.html')
     else:
         return render_template('tasks.html', tasks=g.user['items'],
-                                number=g.user['phone_number'],
-                                lentasks=len(g.user['items']),
-                                lenshoppingtasks=len(g.user['items'])) #, userLat=g.user["lat"], userLon=g.user["lon"])
+                               number=g.user['phone_number'],
+                               lentasks=len(g.user['items']),
+                               lenshoppingtasks=len(g.user['items']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
 
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
@@ -227,6 +226,7 @@ def delete_shoppingTask(task_index):
     print("\n\n")
     return redirect(url_for('shopping'))
 
+
 @app.route('/update_settings', methods=("POST",))
 @login_required
 def update_settings():
@@ -243,6 +243,7 @@ def update_settings():
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
         return redirect(url_for('index'))
+
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
@@ -266,7 +267,8 @@ def register():
         elif db.users.find_one({'email': email}):
             error = 'A user with that email is already registered'
         elif db.users.find_one({'username': username}):
-            error = 'A user with username {} is already registered.'.format(username)
+            error = 'A user with username {} is already registered.'.format(
+                username)
 
         if error is None:
             password_hash = generate_password_hash(password)
@@ -283,8 +285,6 @@ def register():
         else:
             print(error)
 
-        flash(error)
-
     return render_template('register.html', error=error)
 
 
@@ -293,10 +293,10 @@ def login():
     print('Getting request for login')
     error = None
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        lat = request.form['lat']
-        lon = request.form['lon']
+        email = request.form.get('email')
+        password = request.form.get('password')
+        lat = request.form.get('lat')
+        lon = request.form.get('lon')
         db = get_db()
         print(db)
 
@@ -305,15 +305,19 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
+        elif lat is "" or lon is "":
+            error = 'No location provided'
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
-            newLat = { "$set": { "lat": lat } }
-            newLon =  { "$set": { "lon": lon } }
+            session['location'] = (lat, lon)
+            newLat = {"$set": {"lat": lat}}
+            newLon = {"$set": {"lon": lon}}
             # print("NEW LAT:", newLat)
             # print("NEW LON:", newLon)
             db.users.update_one({'email': email}, newLat)
             db.users.update_one({'email': email}, newLon)
+
             # print(db.users)
             if "next" in request.args:
                 return redirect(request.args["next"])
@@ -327,7 +331,9 @@ def login():
         form_action = url_for('login', next=next_url)
     else:
         form_action = url_for('login')
-    return render_template('login.html', error=error, form_action=form_action), 200
+    return (render_template('login.html', error=error,
+                            form_action=form_action),
+            200)
 
 
 @app.before_request
@@ -346,5 +352,6 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

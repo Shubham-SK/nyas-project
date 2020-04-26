@@ -271,7 +271,7 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-        elif lat is None or lon is None:
+        elif lat is "" or lon is "":
             error = 'No location provided'
         if error is None:
             session.clear()
@@ -320,4 +320,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

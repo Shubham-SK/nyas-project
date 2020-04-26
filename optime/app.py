@@ -128,6 +128,7 @@ def scheduling():
         db = get_db()
         db.users.update_one({"_id": g.user["_id"]}, {
             "$push": {"items": task}})
+
         return redirect(url_for('scheduling'))
         # print("insertion", g.user['items'])
 
@@ -140,6 +141,7 @@ def delete_task(task_index):
     task_id = g.user["items"][task_index]["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"items": {"_id": task_id}}})
+    print("DATABASE: ", g.user)
     return redirect(url_for('scheduling'))
 
 
@@ -183,7 +185,7 @@ def shopping():
         storeDict['storeLat'] = str(store[1][0])
         storeDict['storeLon'] = str(store[1][1])
         storeDict['storeAddress'] = store[2]
-        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=295x197&path=color:0x0000ff|weight:5|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
+        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&path=color:0x0000ff|weight:5|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
         storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
 
         allStores.append(storeDict)

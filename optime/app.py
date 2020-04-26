@@ -185,15 +185,15 @@ def shopping():
         storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
 
         allStores.append(storeDict)
-        print(storeDict)
-        print(allStores)
-        print()
-        print()
-
-    print()
-    print()
-    print()
-    print()
+    #     print(storeDict)
+    #     print(allStores)
+    #     print()
+    #     print()
+    #
+    # print()
+    # print()
+    # print()
+    # print()
     return render_template('shopping.html', userLat=lat, userLon=lon, storeLocs=allStores), 200
 
 @app.route('/update_settings', methods=("POST",))

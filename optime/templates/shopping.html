@@ -123,27 +123,32 @@
         </div>
 
         <div class="container-fluid">
-          <div class="row mt">
+          <div class="row">
             <div class="col">
               <h3>Stores Near You</h3>
             </div>
           </div>
-          {% for item in storeLocs %}
-          <div class="col-md-3 mb-3">
-            <div class="card">
-              <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
-              <div class="card-body">
-                <h5 class="card-title">{{ item.name }}</h5>
-                <ul class="list-group list-group-flush">
-                  <li class="list-group-item">{{ item.storeAddress }}</li>
-                </ul>
-                <a href="{{ item.storeGoogleMap }}" class="btn btn-primary" target="_blank">Go to the store</a>
+          <div class="row bg-light rounded pt-3">
+            {% for item in storeLocs %}
+            <div class="col-md mb-3">
+              <div class="card" style="height:100%">
+                <div class="card-header bg-white text-center">
+                  <strong>{{ item.name }}</strong>
+                </div>
+                <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <p class="card-text">{{ item.storeAddress }}</p>
+                </div>
+                <div class="card-footer bg-white text-center">
+                  <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+                </div>
               </div>
             </div>
+            {% endfor %}
           </div>
-          {% endfor %}
         </div>
       </div>
+
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
    <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>

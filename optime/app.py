@@ -61,7 +61,7 @@ def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product
     storeDict = {}
     storeDict['_id'] = id
     storeDict['name'] = name
-    storeDict['product'] = product
+    storeDict['product'] = [{"productName" : product}]
     storeDict['storeLat'] = storeLat
     storeDict['storeLon'] = storeLon
     storeDict['storeAddress'] = storeAddress
@@ -164,9 +164,10 @@ def index():
         return render_template('index.html')
     else:
         return render_template('tasks.html', tasks=g.user['items'],
+                               shoppingTasks=g.user['shoppingTasks'],
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
-                               lenshoppingtasks=len(g.user['items']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
+                               lenshoppingtasks=len(g.user['shoppingTasks']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
 
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
@@ -205,14 +206,41 @@ def selectStore():
         params.append(request.args[i])
         print(request.args[i])
     print("\n\nstore request received. ID=%s\n\n" % (params))
+    addresses = [list(task.values())[5] for task in g.user['shoppingTasks']]
     lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
-
+    store = constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)
+    newProduct = store.pop("product")[0]
+    print("\n\n")
+    print(store)
+    print(newProduct)
+    print("\n\n")
 
     db = get_db()
-    db.users.update_one({"_id": g.user["_id"]}, {
-        "$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
+    print("\n\n")
+    print(g.user)
+    print("\n\n")
+    # db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
+    #     "$push" : { "shoppingTasks.$.product" : newProduct },
+    #     "$setOnInsert" : { "shoppingTasks" : store }
+    #     }, upsert=True)
+    db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
+        "$push" : { "shoppingTasks.$.product" : newProduct }}, upsert=True )
+    db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
+        "$set" : { "shoppingTasks" : store }}, upsert=True )
+
+    # if (storeAddress in addresses):
+    #     print("\n\nADDRESS MATCH\n\n")
+    #     db = get_db()
+    #     db.users.shoppingTasks.update_one({"storeAddress":storeAddress}, {
+    #         "$push": {"product": product}})
+    # else:
+    #     print("\n\nNO ADDRESS MATCH\n\n")
+    #     db = get_db()
+    #     db.users.update_one({"_id": g.user["_id"]}, {
+    #         "$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
     print("\n\nSHOPPING TASK ADDED\n\n")
     print(g.user)
+    print("\n\n")
 
     return redirect(url_for('shopping'))
 

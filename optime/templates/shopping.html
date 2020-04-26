@@ -113,7 +113,7 @@
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ item.name }}</td>
                         <td>{{ splitAddr[0] }}</td>
-                        <td>{{ item.product }}</td>
+                        <td>{{ item.product|join(', ') }}</td>
                         <td class="bg-primary"><a href="/shopping/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                       </tr>
                       {% endfor %}

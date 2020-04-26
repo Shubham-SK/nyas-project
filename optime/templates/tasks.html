@@ -77,7 +77,7 @@
         <div class="container-fluid">
           <div class="row mt-5">
             <div class="col">
-              <h3>Your Errands</h3>
+              <h3>Your Personal Tasks</h3>
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
@@ -97,6 +97,32 @@
             {% endfor %}
         </div>
       </div>
+
+      <div class="container-fluid">
+        <div class="row mt-5">
+          <div class="col">
+            <h3>Your Shopping Tasks</h3>
+          </div>
+        </div>
+        <div class="row bg-light rounded pt-3">
+          {% for item in shoppingTasks %}
+          <div class="col-md-3 mb-3">
+            <div class="card border-white shadow" style="height:100%">
+              <div class="card-header bg-white text-center">
+                <strong>{{ item.name }}</strong>
+              </div>
+              <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <p class="card-text text-center">{{ item.storeAddress }}</p>
+              </div>
+              <div class="card-footer bg-white text-center">
+                <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+      </div>
+    </div>
    </body>
    <script type="text/javascript" src="static/js/getLocation.js"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

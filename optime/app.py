@@ -150,7 +150,9 @@ def index():
         return render_template('index.html')
     else:
         return render_template('tasks.html', tasks=g.user['items'],
-                                number=g.user['phone_number'], lentasks=8, lenshoppingtasks=5) #, userLat=g.user["lat"], userLon=g.user["lon"])
+                                number=g.user['phone_number'],
+                                lentasks=len(g.user['items']),
+                                lenshoppingtasks=len(g.user['items'])) #, userLat=g.user["lat"], userLon=g.user["lon"])
 
 
 @app.route('/shopping', methods=['GET', 'POST'])

@@ -92,8 +92,9 @@
                     <thead>
                        <tr>
                           <th scope="col">#</th>
-                          <th scope="col">Name</th>
                           <th scope="col">Store Name</th>
+                          <th scope="col">Address</th>
+                          <th scope="col">Product</th>
                           <th scope="col">Actions</th>
                        </tr>
                     </thead>
@@ -106,13 +107,14 @@
                       }
                     </style>
                     <tbody>
-                      {% for item in tasks %}
+                      {% for item in shoppingTasks %}
+                      {% set splitAddr = item.storeAddress.split(',') %}
                       <tr>
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
-                        <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-                        <td class="bg-primary"><a href="/scheduling/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+                        <td>{{ splitAddr[0] }}</td>
+                        <td>{{ item.product }}</td>
+                        <td class="bg-primary"><a href="/shopping/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                       </tr>
                       {% endfor %}
                     </tbody>
@@ -141,6 +143,9 @@
                 </div>
                 <div class="card-footer bg-white text-center">
                   <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+                  {% if req == "POST" %}
+                  <a href="{{ item.selectURL }}" class="btn btn-sm btn-primary"> Add to tasks </a>
+                  {% endif %}
                 </div>
               </div>
             </div>

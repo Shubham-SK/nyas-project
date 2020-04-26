@@ -58,6 +58,20 @@ def get_db():
 def swap(item, item1):
     return (item1, item)
 
+def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
+    storeDict = {}
+    storeDict['_id'] = id
+    storeDict['name'] = name
+    storeDict['product'] = product
+    storeDict['storeLat'] = storeLat
+    storeDict['storeLon'] = storeLon
+    storeDict['storeAddress'] = storeAddress
+    storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeLat, storeLon)
+    storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeLat, storeLon)
+    storeDict['selectURL'] = "/selectStore?lat=%s&lon=%s&id=%s&name=%s&storeLat=%s&storeLon=%s&storeAddress=%s&product=%s" % (lat, lon, id, name, storeLat, storeLon, storeAddress, product)
+
+    return storeDict
+
 @app.route('/scheduling', methods=['GET', 'POST'])
 @login_required
 def scheduling():
@@ -144,7 +158,6 @@ def delete_task(task_index):
     print("DATABASE: ", g.user)
     return redirect(url_for('scheduling'))
 
-
 @app.route('/index')
 @app.route('/')
 def index():
@@ -156,7 +169,6 @@ def index():
                                 lentasks=len(g.user['items']),
                                 lenshoppingtasks=len(g.user['items'])) #, userLat=g.user["lat"], userLon=g.user["lon"])
 
-
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
 def shopping():
@@ -167,29 +179,53 @@ def shopping():
     max_locations = 20
     k = 3
     categories = ['Grocery']
+    product = "Water"
+    allStores = []
     if request.method == 'POST':
         args = request.form
         categories = args.getlist('category')
+        product = args['product']
         print(args)
         for i in range(len(categories)):
             if (categories[i] == "Grocery Store"):
                 categories[i] = "Grocery"
+
     # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
 
-    allStores = []
-
     for store in storesArr:
-        storeDict = {}
-        storeDict['name'] = store[0]
-        storeDict['storeLat'] = str(store[1][0])
-        storeDict['storeLon'] = str(store[1][1])
-        storeDict['storeAddress'] = store[2]
-        storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
-        storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeDict['storeLat'], storeDict['storeLon'])
+        allStores.append(constructStore(lat, lon, ObjectId(), store[0], str(store[1][0]), str(store[1][1]), store[2], product))
+    if request.method == 'POST':
+        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], storeLocs=allStores, req='POST'), 200
+    return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], storeLocs=allStores, req='GET'), 200
 
-        allStores.append(storeDict)
-    return render_template('shopping.html', userLat=lat, userLon=lon, storeLocs=allStores), 200
+@app.route('/selectStore')
+def selectStore():
+    params = []
+    for i in request.args:
+        params.append(request.args[i])
+        print(request.args[i])
+    print("\n\nstore request received. ID=%s\n\n" % (params))
+    lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
+
+
+    db = get_db()
+    db.users.update_one({"_id": g.user["_id"]}, {
+        "$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
+    print("\n\nSHOPPING TASK ADDED\n\n")
+    print(g.user)
+
+    return redirect(url_for('shopping'))
+
+@app.route('/shopping/delete_task/<int:task_index>')
+def delete_shoppingTask(task_index):
+    db = get_db()
+    task_id = g.user["shoppingTasks"][task_index]["_id"]
+    db.users.update_one({"_id": g.user["_id"]},
+                        {"$pull": {"shoppingTasks": {"_id": task_id}}})
+    print("\n\nDATABASE: ", g.user)
+    print("\n\n")
+    return redirect(url_for('shopping'))
 
 @app.route('/update_settings', methods=("POST",))
 @login_required
@@ -241,6 +277,7 @@ def register():
                  'lon': lon,
                  'password': password_hash,
                  'items': [],
+                 'shoppingTasks': [],
                  'phone_number': ''})
             return redirect(url_for('login'))
         else:

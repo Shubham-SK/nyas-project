@@ -131,15 +131,15 @@
           <div class="row bg-light rounded pt-3">
             {% for item in storeLocs %}
             <div class="col-md mb-3">
-              <div class="card" style="height:100%">
-                <div class="card-header bg-dark text-white text-center">
+              <div class="card border-white" style="height:100%">
+                <div class="card-header bg-white text-center">
                   <strong>{{ item.name }}</strong>
                 </div>
                 <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
                 <div class="card-body">
                   <p class="card-text text-center">{{ item.storeAddress }}</p>
                 </div>
-                <div class="card-footer bg-dark text-center">
+                <div class="card-footer bg-white text-center">
                   <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
                 </div>
               </div>

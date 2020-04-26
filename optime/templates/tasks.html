@@ -58,7 +58,11 @@
               <h2>Notification Settings</h2>
               <form action="/update_settings" method="POST">
                 <div class="input-group mb-3">
-                  <input type="tel" class="form-control" placeholder="Phone Number" name="phone_number" aria-label="Phone Number" required>
+                  {% if number %}
+                    <input type="tel" id="phone_number" class="form-control" placeholder={{number}} name="phone_number" aria-label="Phone Number" pattern="^\d{10}$" required>
+                    {% else %}
+                    <input type="tel" id="phone_number" class="form-control" placeholder="Phone Number" name="phone_number" aria-label="Phone Number" pattern="^\d{10}$" required>
+                  {% endif %}
                   <div class="input-group-append">
                     <input type="submit" class="btn btn-outline-light" type="button" value="Save">
                   </div>

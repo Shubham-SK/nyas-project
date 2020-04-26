@@ -148,7 +148,8 @@ def index():
     if g.user is None:
         return render_template('index.html')
     else:
-        return render_template('tasks.html', tasks=g.user['items']) #, userLat=g.user["lat"], userLon=g.user["lon"])
+        return render_template('tasks.html', tasks=g.user['items'],
+                                number=g.user['phone_number']) #, userLat=g.user["lat"], userLon=g.user["lon"])
 
 
 @app.route('/shopping', methods=['GET', 'POST'])
@@ -168,8 +169,8 @@ def shopping():
             categories[1] = "Grocery"
 
         stores = get_safest_stores(lat, lon, max_locations, k, categories)
-        print(stores)
-        print(g.user)
+        # print(stores)
+        # print(g.user)
 
     return render_template('shopping.html'), 200
 
@@ -189,7 +190,7 @@ def update_settings():
         db = get_db()
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
-        print(phone_number)
+        # print(phone_number)
 
         return redirect(url_for('index'))
 
@@ -225,7 +226,8 @@ def register():
                 {'username': username,
                  'email': email,
                  'password': password_hash,
-                 'items': []})
+                 'items': [],
+                 'phone_number': ''})
             return redirect(url_for('login'))
         else:
             print(error)

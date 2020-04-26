@@ -128,37 +128,20 @@
               <h3>Stores Near You</h3>
             </div>
           </div>
-          <div class="row bg-light rounded pt-3">
-            <div class="col-md mb-3">
-              <div class="card">
-                <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">Card title</h5>
-                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  <a href="#" class="btn btn-secondary">Go somewhere</a>
-                </div>
-              </div>
-            </div>
-          <div class="col-md mb-3">
+          {% for item in storeLocs %}
+          <div class="col-md-3 mb-3">
             <div class="card">
-              <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
+              <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
               <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-secondary">Go somewhere</a>
+                <h5 class="card-title">{{ item.name }}</h5>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">{{ item.storeAddress }}</li>
+                </ul>
+                <a href="{{ item.storeGoogleMap }}" class="btn btn-primary" target="_blank">Go to the store</a>
               </div>
             </div>
           </div>
-          <div class="col-md mb-3">
-            <div class="card">
-              <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
-              <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-secondary">Go somewhere</a>
-              </div>
-            </div>
-          </div>
+          {% endfor %}
         </div>
       </div>
    </body>

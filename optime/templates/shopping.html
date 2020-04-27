@@ -60,9 +60,8 @@
                   </ul>
                   <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-findstores-tab">
-
-                      <h4 class="pb-3">Find Stores</h4>
-                      <div class="form group">
+                        <h4 class="pb-3">Find Stores</h4>
+                        <div class="form group">
 
                         <form action="/shopping" method="post">
                           <input type="hidden" id="lat" name="lat" value="">
@@ -87,7 +86,7 @@
             </div>
 
             <div class="col-md mb-5">
-              <div class="rounded shadow" style="width:100%; display:block; height:100%; overflow-y:scroll; overflow-x:scroll;">
+              <div class="rounded shadow" style="width:100%; display:block; height:260px; overflow-y:scroll; overflow-x:scroll;">
                  <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
                     <thead>
                        <tr>
@@ -127,10 +126,16 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col">
-              <h3>Stores Near You</h3>
+              {% if product %}
+                <h3>Query for results for "{{ product }}"</h3>
+                {% else %}
+                <h3>Stores Near You</h3>
+                <p class="lead">Make a query to find stores with your desired product</p>
+              {% endif %}
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
+            {% if storeLocs %}
             {% for item in storeLocs %}
             <div class="col-md mb-3">
               <div class="card border-white shadow" style="height:100%">
@@ -143,13 +148,22 @@
                 </div>
                 <div class="card-footer bg-white text-center">
                   <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
-                  {% if req == "POST" %}
                   <a href="{{ item.selectURL }}" class="btn btn-sm btn-primary"> Add to tasks </a>
-                  {% endif %}
                 </div>
               </div>
             </div>
             {% endfor %}
+            {% else %}
+            <div class="col-md-3 mb-3">
+              <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
+                <div class="card-body">
+                  <h5 class="card-title">No query found.</h5>
+                  <p class="card-text text-center">The safest stores will magically appear here!</p>
+                  <a href="{{ url_for('shopping') }}" class="btn btn-sm btn-light">Make a Query</a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>

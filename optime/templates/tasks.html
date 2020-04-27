@@ -48,11 +48,11 @@
               <div class="row">
                 <div class="col">
                   <h4>{{ lentasks }}</h4>
-                  <p class="lead">Shopping Trips</p>
+                  <p class="lead">Personal Tasks</p>
                 </div>
                 <div class="col">
                   <h4>{{ lenshoppingtasks }}</h4>
-                  <p class="lead">Personal Tasks</p>
+                  <p class="lead">Shopping Trips</p>
                 </div>
               </div>
             </div>
@@ -81,30 +81,43 @@
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
-            {% for item in tasks %}
-            <div class="col-md-3 mb-3">
-              <div class="card text-center border-white shadow" style="height:100%">
-                <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                  <h5 class="card-title">{{ item.name }}</h5>
-                  <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
-                </div>
-                <div class="card-footer bg-white text-center text-white">
-                  <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-primary">Mark as Complete</a>
+            {% if tasks %}
+              {% for item in tasks %}
+              <div class="col-md-3 mb-3">
+                <div class="card text-center border-white shadow" style="height:100%">
+                  <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
+                  </div>
+                  <div class="card-footer bg-white text-center text-white">
+                    <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-primary">Mark as Complete</a>
+                  </div>
                 </div>
               </div>
-            </div>
-            {% endfor %}
+              {% endfor %}
+              {% else %}
+              <div class="col-md-3 mb-3">
+                <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
+                  <div class="card-body">
+                    <h5 class="card-title">No Tasks</h5>
+                    <p class="card-text text-center">Looks like you don't have any personal tasks yet.</p>
+                    <a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-light">Make a Personal Task</a>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
         </div>
       </div>
 
       <div class="container-fluid">
         <div class="row mt-5">
           <div class="col">
-            <h3>Your Shopping Tasks</h3>
+            <h3>Your Shopping Trips</h3>
           </div>
         </div>
         <div class="row bg-light rounded pt-3">
+          {% if shoppingTasks %}
           {% for item in shoppingTasks %}
           <div class="col-md-3 mb-3">
             <div class="card border-white shadow" style="height:100%">
@@ -117,10 +130,22 @@
               </div>
               <div class="card-footer bg-white text-center">
                 <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+                <a href="/shopping/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-secondary" target="_blank"><i class="fas fa-location-arrow"></i> Mark as complete</a>
               </div>
             </div>
           </div>
           {% endfor %}
+          {% else %}
+          <div class="col-md-3 mb-3">
+            <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
+              <div class="card-body">
+                <h5 class="card-title">No Trips</h5>
+                <p class="card-text text-center">Looks like you don't have any shopping trips yet.</p>
+                <a href="{{ url_for('shopping') }}" class="btn btn-sm btn-light">Add a Shopping Trip</a>
+              </div>
+            </div>
+          </div>
+        {% endif %}
       </div>
     </div>
    </body>

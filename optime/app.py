@@ -53,14 +53,17 @@ def get_db():
         g.db = client.optime
     return g.db
 
+
 def get_stores_db():
     if 'db' not in g:
         client = MongoClient('mongodb://localhost:27017')
         g.db = client.optime.allStores
     return g.db
 
+
 def swap(item, item1):
     return (item1, item)
+
 
 def registerStore(id):
     db = get_stores_db()
@@ -68,6 +71,7 @@ def registerStore(id):
         {'_id': id,
          'stock': [],
          'hours': []})
+
 
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
     storeDict = {}
@@ -82,6 +86,7 @@ def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product
     storeDict['selectURL'] = "/selectStore?lat=%s&lon=%s&id=%s&name=%s&storeLat=%s&storeLon=%s&storeAddress=%s&product=%s" % (lat, lon, id, name, storeLat, storeLon, storeAddress, product)
 
     return storeDict
+
 
 @app.route('/scheduling', methods=['GET', 'POST'])
 @login_required
@@ -169,6 +174,7 @@ def delete_task(task_index):
     print("DATABASE: ", g.user)
     return redirect(url_for('scheduling'))
 
+
 @app.route('/index')
 @app.route('/')
 def index():
@@ -180,6 +186,7 @@ def index():
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
                                lenshoppingtasks=len(g.user['shoppingTasks']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
+
 
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
@@ -214,8 +221,9 @@ def shopping():
                 products.append(value)
         allProducts.append(products)
     if request.method == 'POST':
-        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, req='POST'), 200
+        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, product=product, req='POST'), 200
     return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, req='GET'), 200
+
 
 @app.route('/selectStore')
 def selectStore():
@@ -273,6 +281,7 @@ def selectStore():
     print("\n\n")
 
     return redirect(url_for('shopping'))
+
 
 @app.route('/shopping/delete_task/<int:task_index>')
 def delete_shoppingTask(task_index):
@@ -365,14 +374,14 @@ def login():
             error = 'Incorrect password.'
         elif lat is "" or lon is "":
             error = 'No location provided'
+            # print("NEW LAT:", lat)
+            # print("NEW LON:", lon)
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
             session['location'] = (lat, lon)
             newLat = {"$set": {"lat": lat}}
             newLon = {"$set": {"lon": lon}}
-            # print("NEW LAT:", newLat)
-            # print("NEW LON:", newLon)
             db.users.update_one({'email': email}, newLat)
             db.users.update_one({'email': email}, newLon)
 

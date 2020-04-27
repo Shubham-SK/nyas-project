@@ -120,15 +120,13 @@
           {% if shoppingTasks %}
           {% for item in shoppingTasks %}
           <div class="col-md-3 mb-3">
-            <div class="card border-white shadow" style="height:100%">
-              <div class="card-header bg-white text-center">
-                <strong>{{ item.name }}</strong>
-              </div>
+            <div class="card border-white bg-white shadow text-center" style="height:100%">
               <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
               <div class="card-body">
-                <p class="card-text text-center">{{ item.storeAddress }}</p>
+                <h5 class="card-title">{{ item.name }}</h5>
+                <p class="card-text">{{ item.storeAddress }}</p>
               </div>
-              <div class="card-footer bg-white text-center">
+              <div class="card-footer border-white bg-white">
                 <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
                 <a href="/shopping/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-secondary" target="_blank"><i class="fas fa-location-arrow"></i> Mark as complete</a>
               </div>

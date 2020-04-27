@@ -127,16 +127,15 @@
           <div class="row">
             <div class="col">
               {% if product %}
-                <h3>Query for results for "{{ product }}"</h3>
-                <p class="lead">Choose from the stores below</p>
+                <h3>Search for results for "{{ product }}"</h3>
+                <p class="lead">Choose from the stores below.</p>
                 {% else %}
                 <h3>Stores Near You</h3>
-                <p class="lead">Make a query to find stores with your desired product</p>
+                <p class="lead">Make a search above to find stores with your desired product.</p>
               {% endif %}
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
-            {% if storeLocs %}
             {% for item in storeLocs %}
             <div class="col-md mb-3">
               <div class="card border-white shadow" style="height:100%">
@@ -154,17 +153,6 @@
               </div>
             </div>
             {% endfor %}
-            {% else %}
-            <div class="col-md-3 mb-3">
-              <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
-                <div class="card-body">
-                  <h5 class="card-title">No query found.</h5>
-                  <p class="card-text text-center">The safest stores will magically appear here!</p>
-                  <a href="{{ url_for('shopping') }}" class="btn btn-sm btn-light">Make a Query</a>
-                </div>
-              </div>
-            </div>
-            {% endif %}
           </div>
         </div>
       </div>

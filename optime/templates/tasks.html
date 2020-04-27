@@ -90,7 +90,7 @@
                   <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
                 </div>
                 <div class="card-footer bg-white text-center text-white">
-                  <a href="#" class="btn btn-sm btn-primary">Mark as Complete</a>
+                  <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-primary">Mark as Complete</a>
                 </div>
               </div>
             </div>

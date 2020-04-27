@@ -53,9 +53,21 @@ def get_db():
         g.db = client.optime
     return g.db
 
+def get_stores_db():
+    if 'db' not in g:
+        client = MongoClient('mongodb://localhost:27017')
+        g.db = client.optime.allStores
+    return g.db
 
 def swap(item, item1):
     return (item1, item)
+
+def registerStore(id):
+    db = get_stores_db()
+    db.stores.insert_one(
+        {'_id': id,
+         'stock': [],
+         'hours': []})
 
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
     storeDict = {}
@@ -66,7 +78,7 @@ def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product
     storeDict['storeLon'] = storeLon
     storeDict['storeAddress'] = storeAddress
     storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeLat, storeLon)
-    storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s,%s'/" % (lat, lon, storeLat, storeLon)
+    storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s'/" % (lat, lon, storeAddress)
     storeDict['selectURL'] = "/selectStore?lat=%s&lon=%s&id=%s&name=%s&storeLat=%s&storeLon=%s&storeAddress=%s&product=%s" % (lat, lon, id, name, storeLat, storeLon, storeAddress, product)
 
     return storeDict
@@ -192,12 +204,18 @@ def shopping():
 
     # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
-
     for store in storesArr:
         allStores.append(constructStore(lat, lon, ObjectId(), store[0], str(store[1][0]), str(store[1][1]), store[2], product))
+    allProducts = []
+    for task in g.user['shoppingTasks']:
+        products = []
+        for prodDict in task['product']:
+            for key, value in prodDict.items():
+                products.append(value)
+        allProducts.append(products)
     if request.method == 'POST':
-        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], storeLocs=allStores, req='POST'), 200
-    return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], storeLocs=allStores, req='GET'), 200
+        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, req='POST'), 200
+    return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, req='GET'), 200
 
 @app.route('/selectStore')
 def selectStore():
@@ -210,10 +228,10 @@ def selectStore():
     lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
     store = constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)
     newProduct = store.pop("product")[0]
-    print("\n\n")
-    print(store)
-    print(newProduct)
-    print("\n\n")
+    # print("\n\n")
+    # print(store)
+    # print(newProduct)
+    # print("\n\n")
 
     db = get_db()
     print("\n\n")
@@ -223,10 +241,22 @@ def selectStore():
     #     "$push" : { "shoppingTasks.$.product" : newProduct },
     #     "$setOnInsert" : { "shoppingTasks" : store }
     #     }, upsert=True)
-    db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
-        "$push" : { "shoppingTasks.$.product" : newProduct }}, upsert=True )
-    db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
-        "$set" : { "shoppingTasks" : store }}, upsert=True )
+            # db.users.update_one(
+            #     {"_id": g.user["_id"]},
+            #     {"$push" : { "shoppingTasks.$[elem]" : constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product) }},
+            #     upsert=True,
+            #     array_filters=[ {"elem.storeAddress" : storeAddress} ]
+            # )
+    if (storeAddress not in addresses):
+        db.users.update_one({"_id": g.user["_id"]},
+        {"$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
+    else:
+        db.users.update_one(
+            {"_id": g.user["_id"]},
+            {"$addToSet" : { "shoppingTasks.$[elem].product" : newProduct }},
+            upsert=True,
+            array_filters=[ {"elem.storeAddress" : storeAddress}]
+        )
 
     # if (storeAddress in addresses):
     #     print("\n\nADDRESS MATCH\n\n")

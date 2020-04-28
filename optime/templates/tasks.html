@@ -96,7 +96,7 @@
                     <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
                   </div>
                   <div class="card-footer bg-white text-center border-white text-white">
-                    <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-secondary">Mark as Complete</a>
+                    <a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary">Mark as Complete</a>
                   </div>
                 </div>
               </div>
@@ -130,10 +130,11 @@
               <div class="card-body">
                 <h5 class="card-title">{{ item.name }}</h5>
                 <p class="card-text">{{ item.storeAddress }}</p>
+                <p class="card-text">{{ allProducts[loop.index0]|join(', ') }}</p>
               </div>
               <div class="card-footer border-white bg-white">
                 <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
-                <a href="/shopping/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-secondary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Mark as complete</a>
+                <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a>
               </div>
             </div>
           </div>

@@ -84,7 +84,7 @@
                       </div>
                     </div>
                     <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-updatestock-tab">
-                      <h4 class="pb-3">Update stock for {{ storename }}</h4>
+                      <h4 class="pb-3" id="demotext">Update stock for {{ storename }}</h4>
                       <p class="text-muted">Please update the stocks of the products that <br> you remember to the best of your ability.</p>
                       <form action="/shopping" method="post">
                         <input type="hidden" id="lat" name="lat" value="">
@@ -93,10 +93,11 @@
                           <div class="form group" style="width:50%">
                             <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
                             <div class="form group row py-md-2 justify-content-center">
-                              <select id="category" class="selectpicker pb-3" name="category" title="Your stores" required>
-                                <option>{Store Name}</option>
-                                <option>{Store Name}</option>
-                                <option>{Store Name}</option>
+                              <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
+                                <!-- first option should be the one they are redirected here for -->
+                                <option value="Safeway" data-subtext="Address">Safeway</option>
+                                <option value="Sprouts" data-subtext="Address">Sprouts</option>
+                                <option value="CVS" data-subtext="Address">CVS</option>
                               </select>
                               <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
                                 <option data-subtext="{Product Name}">1-10</option>
@@ -114,6 +115,13 @@
                 </div>
               </div>
             </div>
+
+            <script>
+            function changeStoreName() {
+              var selected = document.getElementById("storename").value;
+              document.getElementById("demotext").innerHTML = "Update stock for " + selected;
+            }
+            </script>
 
             <div class="col-md mb-5">
               <div class="rounded shadow" style="width:100%; display:block; height:400px; overflow-y:scroll; overflow-x:scroll;">

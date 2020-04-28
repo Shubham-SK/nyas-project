@@ -65,21 +65,32 @@ def swap(item, item1):
     return (item1, item)
 
 
-def registerStore(id):
+def registerStore(id, lat, lon):
+    print("\n\nINSERTING STORE\n\n")
     db = get_stores_db()
     db.stores.insert_one(
         {'_id': id,
+         'location': [{'lat' : lat}, {'lon' : lon}],
          'stock': [],
          'hours': []})
+    print("\n\nINSERTING STORE\n%s\n\n" % (db.stores.find_one({"_id": id})))
 
+def getAllProducts():
+    allProducts = []
+    for task in g.user['shoppingTasks']:
+        products = []
+        for prodDict in task['product']:
+            for key, value in prodDict.items():
+                products.append(value)
+        allProducts.append(products)
+    return allProducts
 
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
     storeDict = {}
     storeDict['_id'] = id
     storeDict['name'] = name
     storeDict['product'] = [{"productName" : product}]
-    storeDict['storeLat'] = storeLat
-    storeDict['storeLon'] = storeLon
+    storeDict['location'] = [storeLat, storeLon]
     storeDict['storeAddress'] = storeAddress
     storeDict['storeStaticMap'] = "https://maps.googleapis.com/maps/api/staticmap?size=411x275&style=invert_lightness:true&style=feature:road.highway|color:0x808080&path=color:0x1770fb|weight:6|%s,%s|%s,%s&key=AIzaSyC4Kc0Oam47F3Fuznw0nqUWyckCptf_fog" % (lat, lon, storeLat, storeLon)
     storeDict['storeGoogleMap'] = "https://www.google.com/maps/dir/'%s,%s'/'%s'/" % (lat, lon, storeAddress)
@@ -165,13 +176,16 @@ def scheduling():
     return render_template('scheduling.html', tasks=g.user['items']), 200
 
 
-@app.route('/scheduling/delete_task/<int:task_index>')
-def delete_task(task_index):
+@app.route('/scheduling/delete_task')
+def delete_task():
+    args = request.args
+    task_index = int(args['task_index'])
     db = get_db()
     task_id = g.user["items"][task_index]["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"items": {"_id": task_id}}})
-    print("DATABASE: ", g.user)
+    if ('tasks' in args):
+        return redirect("/#personal-tasks")
     return redirect(url_for('scheduling'))
 
 
@@ -185,12 +199,13 @@ def index():
                                shoppingTasks=g.user['shoppingTasks'],
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
+                               allProducts=getAllProducts(),
                                lenshoppingtasks=len(g.user['shoppingTasks']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
 
 
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
-def shopping():
+def shopping(storename=None):
     print('Getting request for stores')
     # lat, lon, max_locations, k, categories, product
     lat = g.user['lat']
@@ -200,6 +215,7 @@ def shopping():
     categories = ['Grocery']
     product = "Water"
     allStores = []
+
     if request.method == 'POST':
         args = request.form
         categories = args.getlist('category')
@@ -208,21 +224,22 @@ def shopping():
         for i in range(len(categories)):
             if (categories[i] == "Grocery Store"):
                 categories[i] = "Grocery"
+    elif 'storename' in request.args:
+        storename = request.args['storename']
 
     # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
+    db = get_stores_db()
     for store in storesArr:
-        allStores.append(constructStore(lat, lon, ObjectId(), store[0], str(store[1][0]), str(store[1][1]), store[2], product))
-    allProducts = []
-    for task in g.user['shoppingTasks']:
-        products = []
-        for prodDict in task['product']:
-            for key, value in prodDict.items():
-                products.append(value)
-        allProducts.append(products)
-    if request.method == 'POST':
-        return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, product=product, req='POST'), 200
-    return render_template('shopping.html', userLat=lat, userLon=lon, shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts, storeLocs=allStores, req='GET'), 200
+        storeLat = str(store[1][0])
+        storeLon = str(store[1][1])
+        allStores.append(constructStore(lat, lon, ObjectId(), store[0], storeLat, storeLon, store[2], product))
+
+    allProducts = getAllProducts()
+    # print("\n\nALLPRODUCTS\n%s\n\n"%(allProducts))
+    return render_template('shopping.html', userLat=lat, userLon=lon,
+    shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
+    storeLocs=allStores, storename=storename, req=request.method), 200
 
 
 @app.route('/selectStore')
@@ -230,67 +247,52 @@ def selectStore():
     params = []
     for i in request.args:
         params.append(request.args[i])
-        print(request.args[i])
-    print("\n\nstore request received. ID=%s\n\n" % (params))
-    addresses = [list(task.values())[5] for task in g.user['shoppingTasks']]
+        # print(request.args[i])
+    # print("\n\nstore request received. ID=%s\n\n" % (params))
+    allLocs = [list(task.values())[3] for task in g.user['shoppingTasks']]
+    # print("\n\nstore request received. IDs=%s\n\n" % (allLocs))
     lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
     store = constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)
     newProduct = store.pop("product")[0]
-    # print("\n\n")
-    # print(store)
-    # print(newProduct)
-    # print("\n\n")
 
     db = get_db()
-    print("\n\n")
-    print(g.user)
-    print("\n\n")
-    # db.users.update( {"_id": g.user["_id"], "shoppingTasks.storeAddress" : storeAddress}, {
-    #     "$push" : { "shoppingTasks.$.product" : newProduct },
-    #     "$setOnInsert" : { "shoppingTasks" : store }
-    #     }, upsert=True)
-            # db.users.update_one(
-            #     {"_id": g.user["_id"]},
-            #     {"$push" : { "shoppingTasks.$[elem]" : constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product) }},
-            #     upsert=True,
-            #     array_filters=[ {"elem.storeAddress" : storeAddress} ]
-            # )
-    if (storeAddress not in addresses):
+
+    # print("\n\nnewProduct\n%s" % (newProduct))
+    # print(store)
+    # print("\n\n")
+    if ([storeLat, storeLon] not in allLocs):
+        # print("\n\nNEW STORE\n\n")
+        # print(g.user)
+        # print("\n\n")
         db.users.update_one({"_id": g.user["_id"]},
         {"$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
     else:
+        # print("UPDATING PRODUCTS")
         db.users.update_one(
             {"_id": g.user["_id"]},
             {"$addToSet" : { "shoppingTasks.$[elem].product" : newProduct }},
             upsert=True,
-            array_filters=[ {"elem.storeAddress" : storeAddress}]
+            array_filters=[ {"elem.location" : [storeLat,storeLon]}]
         )
-
-    # if (storeAddress in addresses):
-    #     print("\n\nADDRESS MATCH\n\n")
-    #     db = get_db()
-    #     db.users.shoppingTasks.update_one({"storeAddress":storeAddress}, {
-    #         "$push": {"product": product}})
-    # else:
-    #     print("\n\nNO ADDRESS MATCH\n\n")
-    #     db = get_db()
-    #     db.users.update_one({"_id": g.user["_id"]}, {
-    #         "$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
-    print("\n\nSHOPPING TASK ADDED\n\n")
-    print(g.user)
-    print("\n\n")
+    # print("\n\nSHOPPING TASK ADDED\n\n")
+    # print(g.user)
+    # print("\n\n\n\n\n\n\n\n\n\n\n\n")
 
     return redirect(url_for('shopping'))
 
 
-@app.route('/shopping/delete_task/<int:task_index>')
-def delete_shoppingTask(task_index):
+@app.route('/shopping/delete_task')
+def delete_shoppingTask():
+    args = request.args
+    task_index = int(args['task_index'])
     db = get_db()
-    task_id = g.user["shoppingTasks"][task_index]["_id"]
+    task = g.user["shoppingTasks"][task_index]
+    task_id = task["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
-    print("\n\nDATABASE: ", g.user)
-    print("\n\n")
+    if ('tasks' in args):
+        print("\n\nTask:%s\n\n"%(task['name']))
+        return redirect(url_for('.shopping',storename=task['name']))
     return redirect(url_for('shopping'))
 
 

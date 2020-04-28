@@ -48,38 +48,67 @@
         <div class="container-fluid mt-5">
           <div class="row">
             <div class="col-md mb-5">
-              <div class="card text-center">
+              <div class="card border-white text-center">
                 <div class="card-body border-white rounded shadow">
                   <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item">
-                      <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Find Stores</a>
+                      <a class="nav-link active" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">Find Stores</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Update Stock</a>
+                      <a class="nav-link" id="pills-update-tab" data-toggle="pill" href="#pills-update" role="tab" aria-controls="pills-update" aria-selected="false">Update Stock</a>
                     </li>
                   </ul>
-                  <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-findstores-tab">
-
-                      <h4 class="pb-3">Find Stores</h4>
-                      <div class="form group">
-
+                  <div class="tab-content" id="shopping-form">
+                    <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-findstores-tab">
+                        <h4 class="pb-3">Find Stores</h4>
+                        <p class="text-muted">Search for a product and select from <br> the options below to add to your tasks.</p>
+                        <div class="form group">
                         <form action="/shopping" method="post">
                           <input type="hidden" id="lat" name="lat" value="">
                           <input type="hidden" id="lon" name="lon" value="">
-                          <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
-                            <option>Pharmacy</option>
-                            <option>Grocery Store</option>
-                          </select>
-                          <div class="form-inline justify-content-center mb-3">
-                          <input class="form-control mr-sm-2" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
-                          <button class="btn btn-sm btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                          <div class="d-flex justify-content-center">
+                            <div class="form-group" style="width:50%">
+                              <div class="form group row py-md-2 justify-content-center">
+                                <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
+                                  <option data-content="<span class='badge badge-info'>Pharmacy</span>">Pharmacy</option>
+                                  <option data-content="<span class='badge badge-primary'>Grocery Store</span>">Grocery Store</option>
+                                </select>
+                              </div>
+                              <div class="form group row py-md-2">
+                                <input class="form-control mr-sm-2 text-center mb-3" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
+                              </div>
+                            <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Search</button>
                           </div>
+                        </div>
                         </form>
                       </div>
                     </div>
-                    <div class="tab-pane fade text-white" id="pills-profile" role="tabpanel" aria-labelledby="pills-updatestock-tab">
-                      Update Stock
+                    <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-updatestock-tab">
+                      <h4 class="pb-3">Update Stock for {storename}</h4>
+                      <p class="text-muted">Please update the stocks of the products that <br> you remember to the best of your ability.</p>
+                      <form action="/shopping" method="post">
+                        <input type="hidden" id="lat" name="lat" value="">
+                        <input type="hidden" id="lon" name="lon" value="">
+                        <div class="d-flex justify-content-center">
+                          <div class="form group" style="width:50%">
+                            <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
+                            <div class="form group row py-md-2 justify-content-center">
+                              <select id="category" class="selectpicker pb-3" name="category" title="{Store Name Options}" required>
+                                <option>{Store Name}</option>
+                                <option>{Store Name}</option>
+                                <option>{Store Name}</option>
+                              </select>
+                              <select id="stock" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
+                                <option>1-10</option>
+                                <option>10-25</option>
+                                <option>25-40</option>
+                                <option>40+</option>
+                              </select>
+                            </div>
+                             <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Update</button>
+                          </div>
+                        </div>
+                      </form>
                     </div>
                   </div>
                 </div>
@@ -87,7 +116,7 @@
             </div>
 
             <div class="col-md mb-5">
-              <div class="rounded shadow" style="width:100%; display:block; height:100%; overflow-y:scroll; overflow-x:scroll;">
+              <div class="rounded shadow" style="width:100%; display:block; height:400px; overflow-y:scroll; overflow-x:scroll;">
                  <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
                     <thead>
                        <tr>
@@ -113,7 +142,7 @@
                         <th scope="row">{{ loop.index }}</th>
                         <td>{{ item.name }}</td>
                         <td>{{ splitAddr[0] }}</td>
-                        <td>{{ item.product }}</td>
+                        <td>{{ allProducts[loop.index0]|join(', ') }}</td>
                         <td class="bg-primary"><a href="/shopping/delete_task/{{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
                       </tr>
                       {% endfor %}
@@ -127,23 +156,27 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col">
-              <h3>Stores Near You</h3>
+              {% if product %}
+                <h3>Recommended stores for "{{ product }}"</h3>
+                <p class="lead">Choose from the stores below.</p>
+                {% else %}
+                <h3>Stores Near You</h3>
+                <p class="lead">Make a search above to find stores with your desired product.</p>
+              {% endif %}
             </div>
           </div>
           <div class="row bg-light rounded pt-3">
             {% for item in storeLocs %}
             <div class="col-md mb-3">
-              <div class="card border-white shadow" style="height:100%">
-                <div class="card-header bg-white text-center">
-                  <strong>{{ item.name }}</strong>
-                </div>
+              <div class="card border-white shadow text-center" style="height:100%">
                 <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
                 <div class="card-body">
-                  <p class="card-text text-center">{{ item.storeAddress }}</p>
+                  <h5>{{ item.name }}</h5>
+                  <p class="card-text">{{ item.storeAddress }}</p>
                 </div>
-                <div class="card-footer bg-white text-center">
-                  <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
-                  {% if req == "POST" %}
+                <div class="card-footer border-white bg-white">
+                  <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+                  {% if req == 'POST' %}
                   <a href="{{ item.selectURL }}" class="btn btn-sm btn-primary"> Add to tasks </a>
                   {% endif %}
                 </div>

@@ -41,7 +41,7 @@
           <div class="row">
             <div class="col-md rounded shadow bg-dark p-5 m-2 text-white">
               <h2>Welcome {{ g.user['username'] }},</h2>
-              <p class="lead">All your scheduled errands. In one place.</p>
+              <p class="lead">All your scheduled errands. All in one place.</p>
               <div class="btn-group" role="group" aria-label="Basic example">
                 <a href="#personal-tasks"><input class="btn btn-outline-light mr-2" type="button" value="Personal Tasks"></a>
                 <a href="#shopping-trips"><input class="btn btn-outline-light" type="button" value="Shopping Trips"></a>
@@ -62,6 +62,7 @@
             </div>
             <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
               <h2>Notification Settings</h2>
+              <p class="lead">We'll message you when tasks should be complete.</p>
               <form action="/update_settings" method="POST">
                 <div class="input-group mb-3">
                   {% if number %}

@@ -14,7 +14,7 @@ function setDates() {
 
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(showPosition);
-  // alert("Location data received.");
+  alert("Location data recorded.");
 } else {
   alert("Geolocation is not supported by this browser.");
 }

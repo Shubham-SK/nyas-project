@@ -352,6 +352,7 @@ def login():
         lon = request.form.get('lon')
         db = get_db()
         print(db)
+        print(f"lat lon {lat} {lon}")
 
         user = db.users.find_one({'email': email})
         if user is None:

@@ -41,7 +41,7 @@
           <div class="row">
             <div class="col-md rounded shadow bg-dark p-5 m-2 text-white">
               <h2>Welcome {{ g.user['username'] }},</h2>
-              <p class="lead">All your scheduled errands. In one place.</p>
+              <p class="lead">All your scheduled errands. All in one place.</p>
               <div class="btn-group" role="group" aria-label="Basic example">
                 <a href="#personal-tasks"><input class="btn btn-outline-light mr-2" type="button" value="Personal Tasks"></a>
                 <a href="#shopping-trips"><input class="btn btn-outline-light" type="button" value="Shopping Trips"></a>
@@ -62,6 +62,7 @@
             </div>
             <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
               <h2>Notification Settings</h2>
+              <p class="lead">We'll message you when tasks should be complete.</p>
               <form action="/update_settings" method="POST">
                 <div class="input-group mb-3">
                   {% if number %}
@@ -95,7 +96,7 @@
                     <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
                   </div>
                   <div class="card-footer bg-white text-center border-white text-white">
-                    <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-primary">Mark as Complete</a>
+                    <a href="/scheduling/delete_task/{{ loop.index - 1 }}" class="btn btn-sm btn-secondary">Mark as Complete</a>
                   </div>
                 </div>
               </div>
@@ -106,7 +107,7 @@
                   <div class="card-body">
                     <h5 class="card-title">No Tasks</h5>
                     <p class="card-text text-center">Looks like you don't have any personal tasks yet.</p>
-                    <a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-light">Make a Personal Task</a>
+                    <a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-outline-light">Make a Personal Task</a>
                   </div>
                 </div>
               </div>
@@ -143,7 +144,7 @@
               <div class="card-body">
                 <h5 class="card-title">No Trips</h5>
                 <p class="card-text text-center">Looks like you don't have any shopping trips yet.</p>
-                <a href="{{ url_for('shopping') }}" class="btn btn-sm btn-light">Add a Shopping Trip</a>
+                <a href="{{ url_for('shopping') }}" class="btn btn-sm btn-outline-light">Add a Shopping Trip</a>
               </div>
             </div>
           </div>

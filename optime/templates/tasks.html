@@ -90,7 +90,7 @@
               {% for item in tasks %}
               <div class="col-md-3 mb-3">
                 <div class="card text-center border-white shadow" style="height:100%">
-                  <img src="https://i.picsum.photos/id/1033/2048/1365.jpg" class="card-img-top" alt="...">
+                  <img src="/static/img/gradient.png" class="card-img-top" alt="...">
                   <div class="card-body">
                     <h5 class="card-title">{{ item.name }}</h5>
                     <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
@@ -115,7 +115,7 @@
         </div>
       </div>
 
-      <div class="container-fluid" id="shopping-trips" >
+      <div class="container-fluid" id="shopping-trips">
         <div class="row mt-5">
           <div class="col">
             <h3>Your Shopping Trips</h3>

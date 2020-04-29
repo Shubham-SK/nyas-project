@@ -26,6 +26,15 @@ app.secret_key = SECRET_KEY
 
 weather = climacell.Weather()
 
+productStorage = {
+    "1-10" : 10,
+    "10-25" : 25,
+    "25-40" : 40,
+    "40+" : 50,
+    10 : "1-10",
+    25 : "10-25",
+    40 : "25-40",
+    50 : "40+"}
 
 def login_required(view):
     'Use as a decorator with pages where login is required'
@@ -65,13 +74,13 @@ def swap(item, item1):
     return (item1, item)
 
 
-def registerStore(id, lat, lon):
-    print("\n\nINSERTING STORE\n\n")
+def registerStore(id, lat, lon, product):
+    # Product storage: 1-10 = 10, 10-25 = 25, 25-40 = 40, 40+ = 50
     db = get_stores_db()
     db.stores.insert_one(
         {'_id': id,
          'location': [{'lat' : lat}, {'lon' : lon}],
-         'stock': [],
+         'stock': [{'name': product, 'stock': 0, 'stockStr': "0"}],
          'hours': []})
     print("\n\nINSERTING STORE\n%s\n\n" % (db.stores.find_one({"_id": id})))
 
@@ -107,8 +116,8 @@ def scheduling():
         args = request.form
 
         # lat, lon, start_time, end_time, duration
-        lat = args['lat']
-        lon = args['lon']
+        lat = g.user['lat']
+        lon = g.user['lon']
 
         # finding timezone
         tz = tzwhere.tzwhere(forceTZ=True)
@@ -205,7 +214,7 @@ def index():
 
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
-def shopping(storename=None):
+def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=None, task_userProds=None):
     print('Getting request for stores')
     # lat, lon, max_locations, k, categories, product
     lat = g.user['lat']
@@ -215,6 +224,8 @@ def shopping(storename=None):
     categories = ['Grocery']
     product = "Water"
     allStores = []
+    storeDB = get_stores_db()
+    task_productStocks = []
 
     if request.method == 'POST':
         args = request.form
@@ -224,12 +235,17 @@ def shopping(storename=None):
         for i in range(len(categories)):
             if (categories[i] == "Grocery Store"):
                 categories[i] = "Grocery"
-    elif 'storename' in request.args:
-        storename = request.args['storename']
+    elif 'task_storename' in request.args:
+        task_storename = request.args['task_storename']
+        task_storeaddr = request.args['task_storeaddr']
+        task_userProds = request.args.getlist('task_userProds')
+        print("\n\nUSER PRODUCTS:\n%s\n\n" % (task_userProds))
+        task_productStocks = storeDB.stores.find_one(
+            {'location': [{'lat' : request.args['task_lat']}, {'lon' : request.args['task_lon']}]})['stock']
 
     # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
-    db = get_stores_db()
+
     for store in storesArr:
         storeLat = str(store[1][0])
         storeLon = str(store[1][1])
@@ -239,7 +255,9 @@ def shopping(storename=None):
     # print("\n\nALLPRODUCTS\n%s\n\n"%(allProducts))
     return render_template('shopping.html', userLat=lat, userLon=lon,
     shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
-    storeLocs=allStores, storename=storename, req=request.method), 200
+    storeLocs=allStores, req=request.method,
+    task_storename=task_storename,task_storeaddr=task_storeaddr,
+    task_userProds=task_userProds,task_productStocks=task_productStocks), 200
 
 
 @app.route('/selectStore')
@@ -256,6 +274,7 @@ def selectStore():
     newProduct = store.pop("product")[0]
 
     db = get_db()
+    storeDB = get_stores_db()
 
     # print("\n\nnewProduct\n%s" % (newProduct))
     # print(store)
@@ -264,10 +283,19 @@ def selectStore():
         # print("\n\nNEW STORE\n\n")
         # print(g.user)
         # print("\n\n")
+        registerStore(ObjectId(), storeLat, storeLon, product)
+        print("\n\nNEW STORE ADDED\n%s\n\n" % (storeDB.stores.find_one(
+            {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})))
         db.users.update_one({"_id": g.user["_id"]},
         {"$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
     else:
         # print("UPDATING PRODUCTS")
+        storeDB.stores.update_one(
+            {'location': [{'lat' : storeLat}, {'lon' : storeLon}]},
+            {"$addToSet" : {"stock": {'name': product, 'stock': 0, 'stockStr': "0"}}}
+        )
+        print("\n\nPRODUCT ADDED TO STORE\n%s\n\n" % (storeDB.stores.find_one(
+            {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})))
         db.users.update_one(
             {"_id": g.user["_id"]},
             {"$addToSet" : { "shoppingTasks.$[elem].product" : newProduct }},
@@ -287,14 +315,21 @@ def delete_shoppingTask():
     task_index = int(args['task_index'])
     db = get_db()
     task = g.user["shoppingTasks"][task_index]
+    task_userProds = [item["productName"] for item in task["product"]]
+    print("\n\nDELETED TASK:%s\n\n" % (task))
     task_id = task["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
     if ('tasks' in args):
-        print("\n\nTask:%s\n\n"%(task['name']))
-        return redirect(url_for('.shopping',storename=task['name']))
+        print("\n\nTask:%s\n\n"%(task))
+        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1]))
     return redirect(url_for('shopping'))
 
+@app.route('/update')
+def updateStore():
+    args = request.args
+    print(args)
+    return redirect(url_for('shopping'))
 
 @app.route('/update_settings', methods=("POST",))
 @login_required
@@ -376,7 +411,7 @@ def login():
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
         elif lat is "" or lon is "":
-            error = 'No location provided'
+            error = 'Please allow location access'
             # print("NEW LAT:", lat)
             # print("NEW LON:", lon)
         if error is None:

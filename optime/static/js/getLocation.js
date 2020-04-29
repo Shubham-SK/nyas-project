@@ -19,7 +19,8 @@ if (navigator.geolocation) {
 }
 
 function showPosition(position) {
-  alert("Location data recorded.");
+
   document.getElementById("lat").value = position.coords.latitude;
   document.getElementById("lon").value = position.coords.longitude;
+  alert("Location data recorded.");
 }

@@ -8,6 +8,7 @@
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
    </head>
    <body>
       <!-- Image and text -->
@@ -93,18 +94,42 @@
                           <div class="form group" style="width:50%">
                             <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
                             <div class="form group row py-md-2 justify-content-center">
-                              <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
-                                <!-- first option should be the one they are redirected here for -->
-                                <option value="Safeway" data-subtext="Address">Safeway</option>
-                                <option value="Sprouts" data-subtext="Address">Sprouts</option>
-                                <option value="CVS" data-subtext="Address">CVS</option>
-                              </select>
-                              <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
-                                <option data-subtext="{Product Name}">1-10</option>
-                                <option data-subtext="{Product Name}">10-25</option>
-                                <option data-subtext="{Product Name}">25-40</option>
-                                <option data-subtext="{Product Name}">40+</option>
-                              </select>
+                              <div class="form-group row">
+                                <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
+                                  <!-- first option should be the one they are redirected here for -->
+                                  <option value="Safeway" data-subtext="Address">Safeway</option>
+                                  <option value="Sprouts" data-subtext="Address">Sprouts</option>
+                                  <option value="CVS" data-subtext="Address">CVS</option>
+                                </select>
+                              </div>
+                              <div class="form-group justify-content-center row">
+                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
+                                  <option data-subtext="{Product Name}">1-10</option>
+                                  <option data-subtext="{Product Name}">10-25</option>
+                                  <option data-subtext="{Product Name}">25-40</option>
+                                  <option data-subtext="{Product Name}">40+</option>
+                                </select>
+                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
+                                  <option data-subtext="{Product Name}">1-10</option>
+                                  <option data-subtext="{Product Name}">10-25</option>
+                                  <option data-subtext="{Product Name}">25-40</option>
+                                  <option data-subtext="{Product Name}">40+</option>
+                                </select>
+                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
+                                  <option data-subtext="{Product Name}">1-10</option>
+                                  <option data-subtext="{Product Name}">10-25</option>
+                                  <option data-subtext="{Product Name}">25-40</option>
+                                  <option data-subtext="{Product Name}">40+</option>
+                                </select>
+                              </div>
+                              <div class="form-group row">
+                                <label class="text-muted" for="open-time-input">Opening Time</label>
+                                <input class="form-control" type="time" value="13:45:00" id="open-time-input">
+                              </div>
+                              <div class="form-group row">
+                                <label class="text-muted" for="open-time-input">Closing Time</label>
+                                <input class="form-control" type="time" value="13:45:00" id="open-time-input">
+                              </div>
                             </div>
                              <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Update</button>
                           </div>

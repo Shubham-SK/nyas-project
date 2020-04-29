@@ -55,9 +55,11 @@
                     <li class="nav-item" onclick="adjustSearchHeight()">
                       <a class="nav-link active" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">Find Stores</a>
                     </li>
+                    {% if task_storeaddr is not none %}
                     <li onclick="adjustUpdateHeight()" class="nav-item">
                       <a href="#pills-update" class="nav-link" id="pills-update-tab" data-toggle="pill" role="tab" aria-controls="pills-update" aria-selected="false">Update Stock</a>
                     </li>
+                    {% endif %}
                   </ul>
                   <div class="tab-content" id="shopping-form">
                     <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-findstores-tab">
@@ -84,12 +86,12 @@
                         </form>
                       </div>
                     </div>
+                    {% if task_storeaddr is not none %}
                     <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-updatestock-tab">
-                      <h4 class="pb-3" id="demotext">Update stock for {{ storename }}</h4>
+                      <h4 class="pb-3" id="demotext">Update stock for {{ task_storename }}</h4>
                       <p class="text-muted">Please update the stocks of the products that <br> you remember to the best of your ability.</p>
-                      <form action="/shopping" method="post">
-                        <input type="hidden" id="lat" name="lat" value="">
-                        <input type="hidden" id="lon" name="lon" value="">
+                      <form action="/update" method="get">
+
                         <div class="d-flex justify-content-center">
                           <div class="form group" style="width:50%">
                             <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
@@ -97,38 +99,33 @@
                               <div class="form-group row">
                                 <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
                                   <!-- first option should be the one they are redirected here for -->
-                                  <option value="Safeway" data-subtext="Address">Safeway</option>
-                                  <option value="Sprouts" data-subtext="Address">Sprouts</option>
-                                  <option value="CVS" data-subtext="Address">CVS</option>
+                                  <option value="{{ task_storename }}" data-subtext= "{{ task_storeaddr.split(',')[0] }}">{{ task_storename }}</option>
+                                  {% for item in shoppingTasks %}
+                                  <option value="{{ item.name }},{{ item.location[0] }},{{ item.location[1] }}" data-subtext="{{ item.storeAddress.split(',')[0] }}">{{ item.name }}</option>
+                                  {% endfor %}
                                 </select>
                               </div>
+                              <input type="hidden" id="lat" name="lat" value="{{ task_lat }}">
+                              <input type="hidden" id="lon" name="lon" value="{{ task_lon }}">
                               <div class="form-group justify-content-center row">
-                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
-                                  <option data-subtext="{Product Name}">1-10</option>
-                                  <option data-subtext="{Product Name}">10-25</option>
-                                  <option data-subtext="{Product Name}">25-40</option>
-                                  <option data-subtext="{Product Name}">40+</option>
+                                {% for product in task_product.stock %}
+                                {% if product.name in task_userProds %}
+                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}" required>
+                                  <option data-subtext="{{ product.name }}">1-10</option>
+                                  <option data-subtext="{{ product.name }}">10-25</option>
+                                  <option data-subtext="{{ product.name }}">25-40</option>
+                                  <option data-subtext="{{ product.name }}">40+</option>
                                 </select>
-                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
-                                  <option data-subtext="{Product Name}">1-10</option>
-                                  <option data-subtext="{Product Name}">10-25</option>
-                                  <option data-subtext="{Product Name}">25-40</option>
-                                  <option data-subtext="{Product Name}">40+</option>
-                                </select>
-                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock" title="{name: stock}" required>
-                                  <option data-subtext="{Product Name}">1-10</option>
-                                  <option data-subtext="{Product Name}">10-25</option>
-                                  <option data-subtext="{Product Name}">25-40</option>
-                                  <option data-subtext="{Product Name}">40+</option>
-                                </select>
+                                {% endif %}
+                                {% endfor %}
                               </div>
                               <div class="form-group row">
                                 <label class="text-muted" for="open-time-input">Opening Time</label>
-                                <input class="form-control" type="time" value="13:45:00" id="open-time-input">
+                                <input class="form-control" type="time" value="{{ task_product.hours.open }}:00" name="open" id="open-time-input">
                               </div>
                               <div class="form-group row">
                                 <label class="text-muted" for="open-time-input">Closing Time</label>
-                                <input class="form-control" type="time" value="13:45:00" id="open-time-input">
+                                <input class="form-control" type="time" value="{{ task_product.hours.close }}:00" name="close" id="open-time-input">
                               </div>
                             </div>
                              <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Update</button>
@@ -136,6 +133,7 @@
                         </div>
                       </form>
                     </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -143,8 +141,13 @@
 
             <script>
             function changeStoreName() {
-              var selected = document.getElementById("storename").value;
-              document.getElementById("demotext").innerHTML = "Update stock for " + selected;
+              var selected = document.getElementById("storename").value.split(',');
+              var storeName = selected[0];
+              var storeLat = selected[1];
+              var storeLon = selected[2];
+              document.getElementById("demotext").innerHTML = "Update stock for " + storeName;
+              url = "http://localhost:5000/shopping/refresh?name=" + storeName + "&lat=" + storeLat + "&lon=" + storeLon;
+              window.location.replace(url);
             }
             function adjustSearchHeight() {
               // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
@@ -199,7 +202,7 @@
             <div class="col">
               {% if product %}
                 <h3>Recommended stores for "{{ product }}"</h3>
-                <p class="lead">Choose from the stores below.</p>
+                <p class="lead">Choose from the stores below. Stores are filtered based on the number of <br> COVID-19 cases in the surrounding area, stock of your product, and distance.</p>
                 {% else %}
                 <h3>Stores Near You</h3>
                 <p class="lead">Make a search above to find stores with your desired product.</p>

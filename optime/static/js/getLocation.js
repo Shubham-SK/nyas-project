@@ -14,12 +14,13 @@ function setDates() {
 
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(showPosition);
-  alert("Location data recorded.");
 } else {
   alert("Geolocation is not supported by this browser.");
 }
 
 function showPosition(position) {
+
   document.getElementById("lat").value = position.coords.latitude;
   document.getElementById("lon").value = position.coords.longitude;
+  alert("Location data recorded.");
 }

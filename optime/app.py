@@ -222,7 +222,7 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
     max_locations = 20
     k = 3
     categories = ['Grocery']
-    product = "Water"
+    product = None
     allStores = []
     storeDB = get_stores_db()
     task_product = {}
@@ -261,7 +261,7 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
     storeLocs=allStores, req=request.method,
     task_storename=task_storename,task_storeaddr=task_storeaddr,
     task_userProds=task_userProds,task_product=task_product,
-    task_lat=task_lat,task_lon=task_lon), 200
+    task_lat=task_lat,task_lon=task_lon, product=product), 200
 
 
 @app.route('/selectStore')

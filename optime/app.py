@@ -27,14 +27,11 @@ app.secret_key = SECRET_KEY
 weather = climacell.Weather()
 
 productStorage = {
+    "No record" : -1,
     "1-10" : 10,
     "10-25" : 25,
     "25-40" : 40,
-    "40+" : 50,
-    10 : "1-10",
-    25 : "10-25",
-    40 : "25-40",
-    50 : "40+"}
+    "40+" : 50}
 
 def login_required(view):
     'Use as a decorator with pages where login is required'
@@ -80,8 +77,8 @@ def registerStore(id, lat, lon, product):
     db.stores.insert_one(
         {'_id': id,
          'location': [{'lat' : lat}, {'lon' : lon}],
-         'stock': [{'name': product, 'stock': 0, 'stockStr': "0"}],
-         'hours': {'open': '0:00', 'close': '0:00'}})
+         'stock': [{'name': product, 'stock': -1, 'stockStr': "No record"}],
+         'hours': {'open': '00:00', 'close': '00:00'}})
     print("\n\nINSERTING STORE\n%s\n\n" % (db.stores.find_one({"_id": id})))
 
 def getAllProducts():
@@ -309,7 +306,7 @@ def selectStore():
         # print("UPDATING PRODUCTS")
         storeDB.stores.update_one(
             {'location': [{'lat' : storeLat}, {'lon' : storeLon}], 'stock.name': {'$ne': newProduct["productName"]}},
-            {"$addToSet" : {"stock": {'name': newProduct["productName"], 'stock': 0, 'stockStr': "0"}}}
+            {"$addToSet" : {"stock": {'name': newProduct["productName"], 'stock': -1, 'stockStr': "No record"}}}
         )
 
         # storeDB.stores.update_one(
@@ -365,24 +362,29 @@ def delete_shoppingTask():
 @app.route('/update')
 def updateStore():
     args = request.args.to_dict()
-    location = [{'lat' : args['lat']}, {'lon' : args['lon']}]
-    hours = {'open': args['open'], 'close': args['close']}
-    args.pop('lat')
-    args.pop('lon')
-    args.pop('open')
-    args.pop('close')
-    args.pop('category')
+    # The minimum number of parameters is 1 (the store name)
+    if (len(args) > 1):
+        location = [{'lat' : args['lat']}, {'lon' : args['lon']}]
+        # [:5] to always store 'HH:MM' instead of 'HH:MM:00'
+        hours = {'open': args['open'][:5], 'close': args['close'][:5]}
+        args.pop('lat')
+        args.pop('lon')
+        args.pop('open')
+        args.pop('close')
+        args.pop('category')
 
-    newStocks = []
-    for stock in args:
-        print("\n\nStock: %s\n\n" % (stock.split(':')))
-        newStocks.append({'name':stock.split(':')[1], 'stock':productStorage[args[stock]], 'stockStr': args[stock]})
+        newStocks = []
+        for stock in args:
+            if (args[stock] == ''):
+                args[stock] = "No record"
+            print("\n\nStock: %s\n\n" % (stock.split(':')))
+            newStocks.append({'name':stock.split(':')[1], 'stock':productStorage[args[stock]], 'stockStr': args[stock]})
 
-    storeDB = get_stores_db()
-    storeDB.stores.update_one({"location": location}, {
-                        "$set": {"hours": hours, "stock": newStocks}})
-    print("\n\nNEW STORE DATA\n%s\n\n" % (storeDB.stores.find_one(
-        {'location': location})))
+        storeDB = get_stores_db()
+        storeDB.stores.update_one({"location": location}, {
+                            "$set": {"hours": hours, "stock": newStocks}})
+        print("\n\nNEW STORE DATA\n%s\n\n" % (storeDB.stores.find_one(
+            {'location': location})))
     return redirect(url_for('shopping'))
 
 @app.route('/update_settings', methods=("POST",))

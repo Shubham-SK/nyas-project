@@ -57,7 +57,7 @@
                     </li>
                     {% if task_storeaddr is not none %}
                     <li onclick="adjustUpdateHeight()" class="nav-item">
-                      <a href="#pills-update" class="nav-link" id="pills-update-tab" data-toggle="pill" role="tab" aria-controls="pills-update" aria-selected="false">Update Stock</a>
+                      <a href="#pills-update" class="nav-link" id="pills-update-tab" data-toggle="pill" role="tab" aria-controls="pills-update" aria-selected="false">Update Info</a>
                     </li>
                     {% endif %}
                   </ul>
@@ -88,8 +88,8 @@
                     </div>
                     {% if task_storeaddr is not none %}
                     <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-updatestock-tab">
-                      <h4 class="pb-3" id="demotext">Update stock for {{ task_storename }}</h4>
-                      <p class="text-muted">Please update the stocks of the products that <br> you remember to the best of your ability.</p>
+                      <h4 class="pb-3" id="demotext">Update info for {{ task_storename }}</h4>
+                      <p class="text-muted">Please update the stocks of the products that <br> you remember and store hours to the best of your ability.</p>
                       <form action="/update" method="get">
 
                         <div class="d-flex justify-content-center">
@@ -110,7 +110,7 @@
                               <div class="form-group justify-content-center row">
                                 {% for product in task_product.stock %}
                                 {% if product.name in task_userProds %}
-                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}" required>
+                                <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}">
                                   <option data-subtext="{{ product.name }}">1-10</option>
                                   <option data-subtext="{{ product.name }}">10-25</option>
                                   <option data-subtext="{{ product.name }}">25-40</option>
@@ -145,7 +145,7 @@
               var storeName = selected[0];
               var storeLat = selected[1];
               var storeLon = selected[2];
-              document.getElementById("demotext").innerHTML = "Update stock for " + storeName;
+              document.getElementById("demotext").innerHTML = "Update info for " + storeName;
               url = "http://localhost:5000/shopping/refresh?name=" + storeName + "&lat=" + storeLat + "&lon=" + storeLon;
               window.location.replace(url);
             }
@@ -230,9 +230,7 @@
           </div>
         </div>
       </div>
-
    </body>
-   <!-- <script type="text/javascript" src="static/js/getLocation.js"></script> -->
    <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>
    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

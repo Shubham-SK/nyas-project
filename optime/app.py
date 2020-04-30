@@ -242,6 +242,11 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
         task_product = storeDB.stores.find_one(
             {'location': [{'lat' : task_lat}, {'lon' : task_lon}]})
         print("\n\nUSER PRODUCTS:\n%s\n\n" % (task_product))
+    if 'update' in request.args:
+        update = 'true'
+        print('oren', request.args['update'])
+    else:
+        update = 'false'
 
     # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
@@ -258,7 +263,7 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
     storeLocs=allStores, req=request.method,
     task_storename=task_storename,task_storeaddr=task_storeaddr,
     task_userProds=task_userProds,task_product=task_product,
-    task_lat=task_lat,task_lon=task_lon, product=product), 200
+    task_lat=task_lat,task_lon=task_lon, product=product, update=update), 200
 
 
 @app.route('/selectStore')
@@ -356,7 +361,7 @@ def delete_shoppingTask():
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
     if ('tasks' in args):
         print("\n\nTask:%s\n\n"%(task))
-        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1]))
+        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
     return redirect(url_for('shopping'))
 
 @app.route('/update')

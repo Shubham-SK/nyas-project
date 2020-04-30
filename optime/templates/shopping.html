@@ -46,6 +46,8 @@
           </div>
         </div>
 
+        <p hidden id="update" value="{{ update }}"></p>
+
         <div class="container-fluid mt-5">
           <div class="row">
             <div class="col-md mb-5">
@@ -53,7 +55,7 @@
                 <div class="card-body border-white rounded shadow">
                   <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" onclick="adjustSearchHeight()">
-                      <a class="nav-link active" id="pills-search-tab" data-toggle="pill" href="#pills-search" role="tab" aria-controls="pills-search" aria-selected="true">Find Stores</a>
+                      <a href="#pills-search" class="nav-link active" id="pills-search-tab" data-toggle="pill" role="tab" aria-controls="pills-search" aria-selected="true">Find Stores</a>
                     </li>
                     {% if task_storeaddr is not none %}
                     <li onclick="adjustUpdateHeight()" class="nav-item">
@@ -157,6 +159,9 @@
               // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
               setTimeout(() => { var height = (parseInt(document.getElementById("shopping-form").offsetHeight)+100).toString(); document.getElementById("tabular-view").style.height = height+"px";}, 200);
             }
+            if(document.getElementById("update").getAttribute("value") == "true"){
+                setTimeout(() => { document.getElementById("pills-update-tab").click()}, 200);
+            }
             </script>
 
             <div class="col-md mb-5">
@@ -202,7 +207,8 @@
             <div class="col">
               {% if product %}
                 <h3>Recommended stores for "{{ product }}"</h3>
-                <p class="lead">Choose from the stores below. Stores are filtered based on the number of <br> COVID-19 cases in the surrounding area, stock of your product, and distance.</p>
+                                <p class="text-muted">Stores are filtered based on the number of COVID-19 cases in  <br>  the surrounding area, stock of your product, and distance.</p>
+                <p class="lead">Choose from the stores below. </p>
                 {% else %}
                 <h3>Stores Near You</h3>
                 <p class="lead">Make a search above to find stores with your desired product.</p>

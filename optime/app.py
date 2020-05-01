@@ -122,11 +122,13 @@ def scheduling():
 
         # local start time
         start_time_local = datetime.strptime(args['start'],
-                                             '%Y-%m-%d').astimezone(pytz.timezone(local))
+                                             '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
         now_time_local = datetime.now(pytz.timezone(local))
+        print("\n\n START TIME LOCAL: %s\n\n" % (start_time_local.strftime('%c')))
+        print("\n\n NOW TIME LOCAL: %s\n\n" % (now_time_local.strftime('%c')))
 
         # if the user specified today as the starting date
-        if start_time_local.strftime('%x') == now_time_local.strftime('%x'):
+        if start_time_local < now_time_local:
             start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
                               timedelta(seconds=10))
         else:
@@ -134,14 +136,15 @@ def scheduling():
 
         # local end time
         end_time_local = datetime.strptime(args['end'],
-                                           '%Y-%m-%d').astimezone(pytz.timezone(local))
+                                           '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
         end_time_utc = end_time_local.astimezone(pytz.utc)
 
         if (end_time_utc < start_time_utc):
             (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
             (start_time_local, end_time_local) = swap(
                 start_time_local, end_time_local)
-
+        print("\n\n START TIME UTC: %s\n\n" % (start_time_utc.strftime('%c')))
+        print("\n\n END TIME UTC: %s\n\n" % (end_time_utc.strftime('%c')))
         # print(f'utc times: {start_time_utc} {end_time_utc}')
         # print(f'local times: {start_time_local} {end_time_local}')
 

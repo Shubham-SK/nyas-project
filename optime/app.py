@@ -20,7 +20,6 @@ from store_filter import get_safest_stores
 
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
-# app.config.from_object('config')
 app.config.from_pyfile('instance/config.py')
 app.secret_key = SECRET_KEY
 
@@ -38,15 +37,6 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            # parsed_url = urllib.parse.urlparse(url_for("login"))
-            # query = urllib.parse.parse_qs(parsed_url.query)
-            # query["next"] = request.url
-            # query_string = urllib.parse.urlencode(query)
-            # new_url = urllib.parse.urlunparse(
-            #     (parsed_url.scheme, parsed_url.netloc, parsed_url.path,
-            #      parsed_url.params, query_string, parsed_url.fragment)
-            # )
-
             return redirect(url_for("login", next=request.url))
         return view(**kwargs)
 
@@ -68,10 +58,18 @@ def get_stores_db():
 
 
 def swap(item, item1):
+    """
+    Used to swap the time window for scheduling if the user specifies
+    an end time that is before the start time
+    """
     return (item1, item)
 
 
 def registerStore(id, lat, lon, product):
+    """
+    Insert a new store into the databse
+    """
+
     # Product storage: 1-10 = 10, 10-25 = 25, 25-40 = 40, 40+ = 50
     db = get_stores_db()
     db.stores.insert_one(
@@ -79,9 +77,14 @@ def registerStore(id, lat, lon, product):
          'location': [{'lat' : lat}, {'lon' : lon}],
          'stock': [{'name': product, 'stock': -1, 'stockStr': "No record"}],
          'hours': {'open': '00:00', 'close': '00:00'}})
-    print("\n\nINSERTING STORE\n%s\n\n" % (db.stores.find_one({"_id": id})))
+
 
 def getAllProducts():
+    """
+    Get all the products the user wants to buy across all stores
+    Returns a 2D array where each subarray represents the user's products for that shopping task
+    """
+
     allProducts = []
     for task in g.user['shoppingTasks']:
         products = []
@@ -91,7 +94,12 @@ def getAllProducts():
         allProducts.append(products)
     return allProducts
 
+
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
+    """
+    Construct/return a dictionary representing a shopping task to be inserted in the database
+    """
+
     storeDict = {}
     storeDict['_id'] = id
     storeDict['name'] = name
@@ -105,102 +113,14 @@ def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product
     return storeDict
 
 
-@app.route('/scheduling', methods=['GET', 'POST'])
-@login_required
-def scheduling():
-    'Give the best time to go out'
-    if request.method == 'POST':
-        args = request.form
-
-        # lat, lon, start_time, end_time, duration
-        lat = g.user['lat']
-        lon = g.user['lon']
-
-        # finding timezone
-        tz = tzwhere.tzwhere(forceTZ=True)
-        local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
-
-        # local start time
-        start_time_local = datetime.strptime(args['start'],
-                                             '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
-        now_time_local = datetime.now(pytz.timezone(local))
-        print("\n\n START TIME LOCAL: %s\n\n" % (start_time_local.strftime('%c')))
-        print("\n\n NOW TIME LOCAL: %s\n\n" % (now_time_local.strftime('%c')))
-
-        # if the user specified today as the starting date
-        if start_time_local < now_time_local:
-            start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
-                              timedelta(seconds=10))
-        else:
-            start_time_utc = start_time_local.astimezone(pytz.utc)
-
-        # local end time
-        end_time_local = datetime.strptime(args['end'],
-                                           '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
-        end_time_utc = end_time_local.astimezone(pytz.utc)
-
-        if (end_time_utc < start_time_utc):
-            (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
-            (start_time_local, end_time_local) = swap(
-                start_time_local, end_time_local)
-        print("\n\n START TIME UTC: %s\n\n" % (start_time_utc.strftime('%c')))
-        print("\n\n END TIME UTC: %s\n\n" % (end_time_utc.strftime('%c')))
-        # print(f'utc times: {start_time_utc} {end_time_utc}')
-        # print(f'local times: {start_time_local} {end_time_local}')
-
-        count = args['count']
-        duration = int(args['duration'])
-        name = args['name']
-
-        if count == 'Minutes':
-            duration *= 60
-        elif count == 'Hours':
-            duration *= 3600
-        elif count == 'Days':
-            duration *= 86400
-
-        bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
-                                                   end_time_utc, duration)
-
-        # bestStartTime = bestStartTime.strftime('%c')
-        # bestEndTime = bestEndTime.strftime('%c')
-
-        bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
-        bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
-
-        task = {
-            "_id": ObjectId(),
-            "name": name,
-            "start_time": bestStartTime,
-            "end_time": bestEndTime,
-        }
-
-        db = get_db()
-        db.users.update_one({"_id": g.user["_id"]}, {
-            "$push": {"items": task}})
-
-        return redirect(url_for('scheduling'))
-        # print("insertion", g.user['items'])
-
-    return render_template('scheduling.html', tasks=g.user['items']), 200
-
-
-@app.route('/scheduling/delete_task')
-def delete_task():
-    args = request.args
-    task_index = int(args['task_index'])
-    db = get_db()
-    task_id = g.user["items"][task_index]["_id"]
-    db.users.update_one({"_id": g.user["_id"]},
-                        {"$pull": {"items": {"_id": task_id}}})
-    if ('tasks' in args):
-        return redirect("/#personal-tasks")
-    return redirect(url_for('scheduling'))
-
-
+############### HOME/LOGIN ###############
 @app.route('/index')
 @app.route('/')
 def index():
+    """
+    Serve the home page, which displays the users personal and shopping tasks
+    """
+
     if g.user is None:
         return render_template('index.html')
     else:
@@ -209,195 +129,16 @@ def index():
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
                                allProducts=getAllProducts(),
-                               lenshoppingtasks=len(g.user['shoppingTasks']))  # , userLat=g.user["lat"], userLon=g.user["lon"])
+                               lenshoppingtasks=len(g.user['shoppingTasks']))
 
-
-@app.route('/shopping', methods=['GET', 'POST'])
-@login_required
-def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=None, task_userProds=None):
-    print('Getting request for stores')
-    # lat, lon, max_locations, k, categories, product
-    lat = g.user['lat']
-    lon = g.user['lon']
-    max_locations = 20
-    k = 3
-    categories = ['Grocery']
-    product = None
-    allStores = []
-    storeDB = get_stores_db()
-    task_product = {}
-
-    if request.method == 'POST':
-        args = request.form
-        categories = args.getlist('category')
-        product = args['product']
-        print(args)
-        for i in range(len(categories)):
-            if (categories[i] == "Grocery Store"):
-                categories[i] = "Grocery"
-    elif 'task_storename' in request.args:
-        task_storename = request.args['task_storename']
-        task_storeaddr = request.args['task_storeaddr']
-        task_lat = request.args['task_lat']
-        task_lon = request.args['task_lon']
-        task_userProds = request.args.getlist('task_userProds')
-
-        task_product = storeDB.stores.find_one(
-            {'location': [{'lat' : task_lat}, {'lon' : task_lon}]})
-        print("\n\nUSER PRODUCTS:\n%s\n\n" % (task_product))
-    if 'update' in request.args:
-        update = 'true'
-        print('oren', request.args['update'])
-    else:
-        update = 'false'
-
-    # ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
-    storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
-
-    for store in storesArr:
-        storeLat = str(store[1][0])
-        storeLon = str(store[1][1])
-        allStores.append(constructStore(lat, lon, ObjectId(), store[0], storeLat, storeLon, store[2], product))
-
-    allProducts = getAllProducts()
-    # print("\n\nALLPRODUCTS\n%s\n\n"%(allProducts))
-    return render_template('shopping.html', userLat=lat, userLon=lon,
-    shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
-    storeLocs=allStores, req=request.method,
-    task_storename=task_storename,task_storeaddr=task_storeaddr,
-    task_userProds=task_userProds,task_product=task_product,
-    task_lat=task_lat,task_lon=task_lon, product=product, update=update), 200
-
-
-@app.route('/selectStore')
-def selectStore():
-    params = []
-    for i in request.args:
-        params.append(request.args[i])
-        # print(request.args[i])
-    # print("\n\nstore request received. ID=%s\n\n" % (params))
-    allLocs = [list(task.values())[3] for task in g.user['shoppingTasks']]
-    print("\n\nstore request received. allLocs=%s\n\n" % (allLocs))
-    lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
-    store = constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)
-    newProduct = store.pop("product")[0]
-
-    db = get_db()
-    storeDB = get_stores_db()
-
-    # print("\n\nnewProduct\n%s" % (newProduct))
-    # print(store)
-    # print("\n\n")
-    if ([storeLat, storeLon] not in allLocs):
-        db.users.update_one({"_id": g.user["_id"]},
-        {"$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
-    else:
-        db.users.update_one(
-            {"_id": g.user["_id"]},
-            {"$addToSet" : { "shoppingTasks.$[elem].product" : newProduct }},
-            upsert=True,
-            array_filters=[ {"elem.location" : [storeLat,storeLon]}]
-        )
-    print("\n\nTASK ADDED\n%s\n\n" % (g.user))
-
-    storeVal = storeDB.stores.find_one(
-        {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})
-    if (storeVal == None):
-        # print("\n\nNEW STORE\n\n")
-        # print(g.user)
-        # print("\n\n")
-        registerStore(ObjectId(), storeLat, storeLon, product)
-        print("\n\nNEW STORE ADDED\n%s\n\n" % (storeDB.stores.find_one(
-            {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})))
-
-    else:
-        # print("UPDATING PRODUCTS")
-        storeDB.stores.update_one(
-            {'location': [{'lat' : storeLat}, {'lon' : storeLon}], 'stock.name': {'$ne': newProduct["productName"]}},
-            {"$addToSet" : {"stock": {'name': newProduct["productName"], 'stock': -1, 'stockStr': "No record"}}}
-        )
-
-        # storeDB.stores.update_one(
-        #     {'location': [{'lat' : storeLat}, {'lon' : storeLon}]},
-        #     {"$addToSet" : {"stock": {'$elem.name': product, 'stock': 0, 'stockStr': "0"}}},
-        #     upsert=True,
-        #     array_filters=[ {"elem.name" : product}]
-        # )
-        print("\n\nPRODUCT ADDED TO STORE\n%s\n\n" % (storeDB.stores.find_one(
-            {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})))
-
-    # print("\n\nSHOPPING TASK ADDED\n\n")
-    # print(g.user)
-    # print("\n\n\n\n\n\n\n\n\n\n\n\n")
-
-    return redirect(url_for('shopping'))
-
-@app.route('/shopping/refresh')
-def refreshProdSelections():
-    args = request.args
-
-    storeName = args['name']
-    storeLat = args['lat']
-    storeLon = args['lon']
-    task_userProds = []
-    task_storeaddr = ""
-
-    # task_storename=None, task_storeaddr=None, task_lat=None, task_lon=None, task_userProds=None
-
-    for t in g.user['shoppingTasks']:
-        if (t['location'] == [storeLat, storeLon]):
-            task_userProds = [item["productName"] for item in t["product"]]
-            task_storeaddr = t['storeAddress']
-    print("REQUEST TO CHANGE STORE RECEIVED: %s" % (task_userProds))
-    return redirect(url_for('.shopping',task_storename=storeName,task_storeaddr=task_storeaddr, task_userProds=task_userProds, task_lat=storeLat, task_lon=storeLon))
-
-@app.route('/shopping/delete_task')
-def delete_shoppingTask():
-    args = request.args
-    task_index = int(args['task_index'])
-    db = get_db()
-    task = g.user["shoppingTasks"][task_index]
-    task_userProds = [item["productName"] for item in task["product"]]
-    print("\n\nDELETED TASK:%s\n\n" % (task))
-    task_id = task["_id"]
-    db.users.update_one({"_id": g.user["_id"]},
-                        {"$pull": {"shoppingTasks": {"_id": task_id}}})
-    if ('tasks' in args):
-        print("\n\nTask:%s\n\n"%(task))
-        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
-    return redirect(url_for('shopping'))
-
-@app.route('/update')
-def updateStore():
-    args = request.args.to_dict()
-    # The minimum number of parameters is 1 (the store name)
-    if (len(args) > 1):
-        location = [{'lat' : args['lat']}, {'lon' : args['lon']}]
-        # [:5] to always store 'HH:MM' instead of 'HH:MM:00'
-        hours = {'open': args['open'][:5], 'close': args['close'][:5]}
-        args.pop('lat')
-        args.pop('lon')
-        args.pop('open')
-        args.pop('close')
-        args.pop('category')
-
-        newStocks = []
-        for stock in args:
-            if (args[stock] == ''):
-                args[stock] = "No record"
-            print("\n\nStock: %s\n\n" % (stock.split(':')))
-            newStocks.append({'name':stock.split(':')[1], 'stock':productStorage[args[stock]], 'stockStr': args[stock]})
-
-        storeDB = get_stores_db()
-        storeDB.stores.update_one({"location": location}, {
-                            "$set": {"hours": hours, "stock": newStocks}})
-        print("\n\nNEW STORE DATA\n%s\n\n" % (storeDB.stores.find_one(
-            {'location': location})))
-    return redirect(url_for('shopping'))
 
 @app.route('/update_settings', methods=("POST",))
 @login_required
 def update_settings():
+    """
+    Update the user's phone number in the database for task notification purposes
+    """
+
     phone_number = request.form.get("phone_number")
     if phone_number is None:
         return "No phone number given"
@@ -415,6 +156,10 @@ def update_settings():
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
+    """
+    Register a user based on a username, password, email address, and location
+    """
+
     error = None
     if request.method == 'POST':
         print('Getting post request for register')
@@ -458,6 +203,10 @@ def register():
 
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
+    """
+    Validate that the user inputted the correct information, login the user
+    """
+
     print('Getting request for login')
     error = None
     if request.method == 'POST':
@@ -466,8 +215,6 @@ def login():
         lat = request.form.get('lat')
         lon = request.form.get('lon')
         db = get_db()
-        print(db)
-        print(f"lat lon {lat} {lon}")
 
         user = db.users.find_one({'email': email})
         if user is None:
@@ -476,8 +223,6 @@ def login():
             error = 'Incorrect password.'
         elif lat is "" or lon is "":
             error = 'Please allow location access'
-            # print("NEW LAT:", lat)
-            # print("NEW LON:", lon)
         if error is None:
             session.clear()
             session['user_id'] = str(user['_id'])
@@ -487,7 +232,6 @@ def login():
             db.users.update_one({'email': email}, newLat)
             db.users.update_one({'email': email}, newLon)
 
-            # print(db.users)
             if "next" in request.args:
                 return redirect(request.args["next"])
             else:
@@ -501,12 +245,14 @@ def login():
     else:
         form_action = url_for('login')
     return (render_template('login.html', error=error,
-                            form_action=form_action),
-            200)
+                            form_action=form_action),200)
 
 
 @app.before_request
 def load_logged_in_user():
+    """
+    Initialize the user's session
+    """
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -518,8 +264,284 @@ def load_logged_in_user():
 
 @app.route('/auth/logout')
 def logout():
+    """
+    Logout the user
+    """
     session.clear()
     return redirect(url_for('index'))
+
+
+############### SCHEDULING ###############
+@app.route('/scheduling', methods=['GET', 'POST'])
+@login_required
+def scheduling():
+    """
+    Give the best time to go out based on a time window and duration
+    """
+
+    if request.method == 'POST':
+        args = request.form
+
+        # lat, lon, start_time, end_time, duration
+        lat = g.user['lat']
+        lon = g.user['lon']
+
+        # finding timezone
+        tz = tzwhere.tzwhere(forceTZ=True)
+        local = tz.tzNameAt(float(lat), float(lon), forceTZ=True)
+
+        # local start time
+        start_time_local = datetime.strptime(args['start'],
+                                             '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
+        now_time_local = datetime.now(pytz.timezone(local))
+
+        # if the user specified today as the starting date
+        if start_time_local < now_time_local:
+            start_time_utc = (datetime.utcnow().replace(tzinfo=pytz.utc) +
+                              timedelta(seconds=10))
+        else:
+            start_time_utc = start_time_local.astimezone(pytz.utc)
+
+        # local end time
+        end_time_local = datetime.strptime(args['end'],
+                                           '%Y-%m-%d').replace(tzinfo=pytz.timezone(local))
+        end_time_utc = end_time_local.astimezone(pytz.utc)
+
+        if (end_time_utc < start_time_utc):
+            (start_time_utc, end_time_utc) = swap(start_time_utc, end_time_utc)
+            (start_time_local, end_time_local) = swap(
+                start_time_local, end_time_local)
+
+        count = args['count']
+        duration = int(args['duration'])
+        name = args['name']
+
+        if count == 'Minutes':
+            duration *= 60
+        elif count == 'Hours':
+            duration *= 3600
+        elif count == 'Days':
+            duration *= 86400
+
+        bestStartTime, bestEndTime = window_slider(lat, lon, start_time_utc,
+                                                   end_time_utc, duration)
+        bestStartTime = bestStartTime.astimezone(pytz.timezone(local))
+        bestEndTime = bestEndTime.astimezone(pytz.timezone(local))
+
+        task = {
+            "_id": ObjectId(),
+            "name": name,
+            "start_time": bestStartTime,
+            "end_time": bestEndTime,
+        }
+
+        db = get_db()
+        db.users.update_one({"_id": g.user["_id"]}, {
+            "$push": {"items": task}})
+
+        return redirect(url_for('scheduling'))
+    return render_template('scheduling.html', tasks=g.user['items']), 200
+
+
+@app.route('/scheduling/delete_task')
+def delete_task():
+    """
+    Delete the user's personal task from the database by index
+    """
+
+    args = request.args
+    task_index = int(args['task_index'])
+    db = get_db()
+    task_id = g.user["items"][task_index]["_id"]
+    db.users.update_one({"_id": g.user["_id"]},
+                        {"$pull": {"items": {"_id": task_id}}})
+    if ('tasks' in args):
+        return redirect("/#personal-tasks")
+    return redirect(url_for('scheduling'))
+
+
+############### SHOPPING ###############
+@app.route('/shopping', methods=['GET', 'POST'])
+@login_required
+def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=None, task_userProds=None):
+    """
+    Process user's search request for stores, manage redirects for deleting a task,
+    selecting a store, and crowdsourcing
+    """
+
+    print('Getting request for stores')
+    # lat, lon, max_locations, k, categories, product
+    lat = g.user['lat']
+    lon = g.user['lon']
+    max_locations = 20
+    k = 3
+    categories = ['Grocery']
+    product = None
+    allStores = []
+    storeDB = get_stores_db()
+    task_product = {}
+
+    if request.method == 'POST':
+        args = request.form
+        categories = args.getlist('category')
+        product = args['product']
+
+        for i in range(len(categories)):
+            if (categories[i] == "Grocery Store"):
+                categories[i] = "Grocery"
+    elif 'task_storename' in request.args:
+        task_storename = request.args['task_storename']
+        task_storeaddr = request.args['task_storeaddr']
+        task_lat = request.args['task_lat']
+        task_lon = request.args['task_lon']
+        task_userProds = request.args.getlist('task_userProds')
+
+        task_product = storeDB.stores.find_one(
+            {'location': [{'lat' : task_lat}, {'lon' : task_lon}]})
+
+    if 'update' in request.args:
+        update = 'true'
+    else:
+        update = 'false'
+
+    # Sample store: ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
+    storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
+
+    for store in storesArr:
+        storeLat = str(store[1][0])
+        storeLon = str(store[1][1])
+        allStores.append(constructStore(lat, lon, ObjectId(), store[0], storeLat, storeLon, store[2], product))
+
+    allProducts = getAllProducts()
+
+    return render_template('shopping.html', userLat=lat, userLon=lon,
+    shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
+    storeLocs=allStores, req=request.method,
+    task_storename=task_storename,task_storeaddr=task_storeaddr,
+    task_userProds=task_userProds,task_product=task_product,
+    task_lat=task_lat,task_lon=task_lon, product=product, update=update), 200
+
+
+@app.route('/selectStore')
+def selectStore():
+    """
+    Process the user's request to add a store to their shopping tasks
+    - Register/update a store with the product specified
+    - Update the user's shopping tasks with the product they want
+    """
+
+    params = []
+    for i in request.args:
+        params.append(request.args[i])
+
+    allLocs = [list(task.values())[3] for task in g.user['shoppingTasks']]
+
+    lat, lon, id, name, storeLat, storeLon, storeAddress, product = params
+    store = constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)
+    newProduct = store.pop("product")[0]
+
+    db = get_db()
+    storeDB = get_stores_db()
+
+    if ([storeLat, storeLon] not in allLocs):
+        db.users.update_one({"_id": g.user["_id"]},
+        {"$push": {"shoppingTasks": constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product)}})
+    else:
+        db.users.update_one(
+            {"_id": g.user["_id"]},
+            {"$addToSet" : { "shoppingTasks.$[elem].product" : newProduct }},
+            upsert=True,
+            array_filters=[ {"elem.location" : [storeLat,storeLon]}]
+        )
+
+    storeVal = storeDB.stores.find_one(
+        {'location': [{'lat' : storeLat}, {'lon' : storeLon}]})
+    if (storeVal == None):
+        # The user's store is not in the database
+        registerStore(ObjectId(), storeLat, storeLon, product)
+
+    else:
+        # The user's store is in the database, and the products array needs to be updated
+        storeDB.stores.update_one(
+            {'location': [{'lat' : storeLat}, {'lon' : storeLon}], 'stock.name': {'$ne': newProduct["productName"]}},
+            {"$addToSet" : {"stock": {'name': newProduct["productName"], 'stock': -1, 'stockStr': "No record"}}}
+        )
+
+    return redirect(url_for('shopping'))
+
+
+@app.route('/shopping/refresh')
+def refreshProdSelections():
+    """
+    Refresh the product stock fields if the user changes which store
+    they would like to input data for
+    """
+
+    args = request.args
+
+    storeName = args['name']
+    storeLat = args['lat']
+    storeLon = args['lon']
+    task_userProds = []
+    task_storeaddr = ""
+
+    for t in g.user['shoppingTasks']:
+        if (t['location'] == [storeLat, storeLon]):
+            task_userProds = [item["productName"] for item in t["product"]]
+            task_storeaddr = t['storeAddress']
+
+    return redirect(url_for('.shopping',task_storename=storeName,task_storeaddr=task_storeaddr, task_userProds=task_userProds, task_lat=storeLat, task_lon=storeLon, update="true"))
+
+
+@app.route('/shopping/delete_task')
+def delete_shoppingTask():
+    """
+    Delete the user's shopping task from the database by index
+    """
+
+    args = request.args
+    task_index = int(args['task_index'])
+    db = get_db()
+    task = g.user["shoppingTasks"][task_index]
+    task_userProds = [item["productName"] for item in task["product"]]
+
+    task_id = task["_id"]
+    db.users.update_one({"_id": g.user["_id"]},
+                        {"$pull": {"shoppingTasks": {"_id": task_id}}})
+    if ('tasks' in args):
+        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
+    return redirect(url_for('shopping'))
+
+
+@app.route('/update')
+def updateStore():
+    """
+    Update the stores database with crowdsourced store information
+    """
+
+    args = request.args.to_dict()
+    # The minimum number of parameters is 1 (the store name)
+    if (len(args) > 1):
+        location = [{'lat' : args['lat']}, {'lon' : args['lon']}]
+        # [:5] to always store 'HH:MM' instead of 'HH:MM:00'
+        hours = {'open': args['open'][:5], 'close': args['close'][:5]}
+        args.pop('lat')
+        args.pop('lon')
+        args.pop('open')
+        args.pop('close')
+        args.pop('category')
+
+        newStocks = []
+        for stock in args:
+            if (args[stock] == ''):
+                args[stock] = "No record"
+
+            newStocks.append({'name':stock.split(':')[1], 'stock':productStorage[args[stock]], 'stockStr': args[stock]})
+
+        storeDB = get_stores_db()
+        storeDB.stores.update_one({"location": location}, {
+                            "$set": {"hours": hours, "stock": newStocks}})
+    return redirect(url_for('shopping'))
 
 
 if __name__ == '__main__':

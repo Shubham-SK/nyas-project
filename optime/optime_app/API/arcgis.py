@@ -2,7 +2,7 @@
 Calls Arcgis API and Obtains Store Location Data
 """
 import requests
-from instance import config
+from .instance import config
 import urllib
 
 class Arcgis():

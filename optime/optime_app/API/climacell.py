@@ -3,7 +3,7 @@ Calls the ClimaCell Weather API & Obtains Forecast Data.
 """
 import urllib
 import requests
-from instance import config
+from .instance import config
 
 class Weather:
     """

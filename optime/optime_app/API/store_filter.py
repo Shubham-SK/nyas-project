@@ -1,8 +1,8 @@
 """
 Uses API data from Google and NYTimes to find the safest stores
 """
-from corona import Cases
-from arcgis import Arcgis
+from .corona import Cases
+from .arcgis import Arcgis
 from uszipcode import SearchEngine
 
 STORES = Arcgis()

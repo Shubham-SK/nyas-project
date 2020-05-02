@@ -10,7 +10,7 @@ htmlcov/
 dist/
 build/
 *.egg-info/
-optime/instance/
+optime/optime_app/API/instance/
 
 .mypy_cache
 venv/

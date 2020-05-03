@@ -1,116 +1,109 @@
-{% extends "base.html" %}
+{% extends "two_column.html" %}
 
 {% block title %}
 Scheduling
 {% endblock %}
 
-{% block body %}
-<div class="container-fluid p-5 mb-5">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
-        <h2>Scheduling</h2>
-        <p class="lead">Find the safest time to leave the house.</p>
-      </div>
-    </div>
-  </div>
-  <div class="container-fluid mt-5">
-    <div class="row">
-      <div class="col-md-5 mb-5">
-        <div class="card text-center text-dark bg-white rounded shadow">
-          <div class="card-header text-white bg-dark">
-            Let's schedule your tasks.
-          </div>
-          <div class="card-body">
-            <h2 class="card-title">Scheduler</h2>
-            <form id="form_id" action="/scheduling" method="post" name="myform">
-              <input type="hidden" id="lat" name="lat" value="">
-              <input type="hidden" id="lon" name="lon" value="">
-              <p class="card-text text-muted">How long do you want to go out for?</p>
-              <div class="slidecontainer">
-                <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
-                <br>
-                <p id="val" style="display:inline-block;margin-right:10px;"></p>
-                <select class="selectpicker" data-width="fit" id="form_action" name="count" title="Units" required>
-                  <option data-content="<span class='badge badge-secondary'>Minutes</span>">Minutes</option>
-                  <option data-content="<span class='badge badge-info'>Hours</span>">Hours</option>
-                  <option data-content="<span class='badge badge-primary'>Days</span>">Days</option>
-                </select>
-              </div>
-              <script>
-              var slider = document.getElementById("myRange");
-              var output = document.getElementById("val");
-              output.innerHTML = slider.value;
+{% block page_title %}
+Scheduling
+{% endblock %}
 
-              slider.oninput = function() {
-                output.innerHTML = this.value;
-              }
-              </script>
-              <br>
-              <h5>Time Window</h5>
-              <div class="d-flex justify-content-center">
-                <div class="form group">
-                  <div class="form group row py-md-2">
-                    <label for="start">Start</label>
-                    <input class="form-control" type="date" id="start" name="start" required>
-                  </div>
-                  <div class="form group row py-md-2">
-                    <label for="end">End</label>
-                    <input class="form-control" type="date" id="end" name="end" required>
-                  </div>
-                  <div class="form group row py-md-2">
-                    <label for="name">Name</label>
-                    <input class="form-control" type="text" id="name" name="name" required>
-                  </div>
-                  <br>
-                </div>
-              </div>
-              <button class="btn btn-primary shadow">Submit</button>
-            </div>
-            <p id="demo"></p>
-          </form>
-          <div class="card-footer bg-dark text-white">
-            ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
-          </div>
-        </div>
-      </div>
-      <div class="col-md d-none d-md-block mb-5">
-        <div class="rounded shadow" style="width:100%; display:block; height:690px; overflow-y:scroll; overflow-x:scroll;">
-          <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Start Time</th>
-                <th scope="col">End Time</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <style>
-            .font-icon-white{
-              color: #ffffff;
-            }
-            .font-icon-white:hover{
-              color: #cccccc;
-            }
-            </style>
-            <tbody>
-              {% for item in tasks %}
-              <tr>
-                <th scope="row">{{ loop.index }}</th>
-                <td>{{ item.name }}</td>
-                <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
-                <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+{% block page_description %}
+Find the safest time to leave the house.
+{% endblock %}
+
+{% block column_one %}
+<div class="card text-center text-dark bg-white rounded shadow">
+  <div class="card-header text-white bg-dark">
+    Let's schedule your tasks.
   </div>
-  <script>
-  setDates();
-  </script>
-  {% endblock %}
+  <div class="card-body">
+    <h2 class="card-title">Scheduler</h2>
+    <form id="form_id" action="/scheduling" method="post" name="myform">
+      <input type="hidden" id="lat" name="lat" value="">
+      <input type="hidden" id="lon" name="lon" value="">
+      <p class="card-text text-muted">How long do you want to go out for?</p>
+      <div class="slidecontainer">
+        <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
+        <br>
+        <p id="val" style="display:inline-block;margin-right:10px;"></p>
+        <select class="selectpicker" data-width="fit" id="form_action" name="count" title="Units" required>
+          <option data-content="<span class='badge badge-secondary'>Minutes</span>">Minutes</option>
+          <option data-content="<span class='badge badge-info'>Hours</span>">Hours</option>
+          <option data-content="<span class='badge badge-primary'>Days</span>">Days</option>
+        </select>
+      </div>
+      <script>
+      var slider = document.getElementById("myRange");
+      var output = document.getElementById("val");
+      output.innerHTML = slider.value;
+
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+      }
+      </script>
+      <br>
+      <h5>Time Window</h5>
+      <div class="d-flex justify-content-center">
+        <div class="form group">
+          <div class="form group row py-md-2">
+            <label for="start">Start</label>
+            <input class="form-control" type="date" id="start" name="start" required>
+          </div>
+          <div class="form group row py-md-2">
+            <label for="end">End</label>
+            <input class="form-control" type="date" id="end" name="end" required>
+          </div>
+          <div class="form group row py-md-2">
+            <label for="name">Name</label>
+            <input class="form-control" type="text" id="name" name="name" required>
+          </div>
+          <br>
+        </div>
+      </div>
+      <button class="btn btn-primary shadow">Submit</button>
+    </div>
+    <p id="demo"></p>
+  </form>
+  <div class="card-footer bg-dark text-white">
+    ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
+  </div>
+</div>
+{% endblock %}
+{% block column_two %}
+<div class="rounded shadow" style="width:100%; display:block; height:690px; overflow-y:scroll; overflow-x:scroll;">
+  <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">End Time</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <style>
+    .font-icon-white{
+      color: #ffffff;
+    }
+    .font-icon-white:hover{
+      color: #cccccc;
+    }
+    </style>
+    <tbody>
+      {% for item in tasks %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ item.name }}</td>
+        <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+        <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
+        <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>
+setDates();
+</script>
+{% endblock %}

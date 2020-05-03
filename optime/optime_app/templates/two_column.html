@@ -5,4 +5,26 @@ Dashboard
 {% endblock %}
 
 {% block body %}
+<div class="container-fluid p-5 mb-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
+        <h2>{% block page_title %}{% endblock %}</h2>
+        <p class="lead">{% block page_description %}{% endblock %}</p>
+      </div>
+    </div>
+  </div>
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-md mb-5">
+      {% block column_one %}{% endblock %}
+    </div>
+    <div class="col-md d-none d-md-block mb-5">
+      {% block column_two %}{% endblock %}
+    </div>
+  </div>
+</div>
+{% block options %}
+{% endblock %}
+</div>
 {% endblock %}

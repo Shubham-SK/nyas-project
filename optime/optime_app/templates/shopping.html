@@ -103,7 +103,9 @@
                                   <!-- first option should be the one they are redirected here for -->
                                   <option value="{{ task_storename }}" data-subtext= "{{ task_storeaddr.split(',')[0] }}">{{ task_storename }}</option>
                                   {% for item in shoppingTasks %}
+                                  {% if ( (item.location[0] != task_lat) and (item.location[1] != task_lon) ) %}
                                   <option value="{{ item.name }},{{ item.location[0] }},{{ item.location[1] }}" data-subtext="{{ item.storeAddress.split(',')[0] }}">{{ item.name }}</option>
+                                  {% endif %}
                                   {% endfor %}
                                 </select>
                               </div>

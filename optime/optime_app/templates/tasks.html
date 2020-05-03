@@ -64,7 +64,7 @@ Dashboard
             <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
           </div>
           <div class="card-footer bg-white text-center border-white text-white">
-            <a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary">Mark as Complete</a>
+            <a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-success"><i class="fas fa-check"></i> Mark as Complete</a>
           </div>
         </div>
       </div>
@@ -100,8 +100,30 @@ Dashboard
             <p class="card-text">{{ allProducts[loop.index0]|join(', ') }}</p>
           </div>
           <div class="card-footer border-white bg-white">
-            <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
-            <a class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a>
+            <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+            <!-- ACTIVATOR -->
+            <a class="btn btn-sm btn-success mb-2 text-white" data-toggle="modal" data-target="#update_choice"><i class="fas fa-check"></i> Mark as complete</a>
+            <!-- MODAL -->
+            <div class="modal fade" id="update_choice" tabindex="-1" role="dialog" aria-labelledby="update_choice" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header text-center border-white">
+                    <h5 class="modal-title" id="exampleModalLabel"><strong>Help us out?</strong></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <img src="/static/img/babbu.png" width="300px">
+                    <p class="mt-3 text-center">Thanks to the contributions of other shoppers, we were able to give you this store recommendation. <br> <strong>Fill out the form to return the favor!</strong></p>
+                  </div>
+                  <div class="modal-footer border-white">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">I'll Pass</button>
+                    <button type="button" class="btn btn-primary">Take me to the form</button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a> -->
           </div>
         </div>

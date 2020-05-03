@@ -34,13 +34,13 @@ Find the safest time to leave the house.
         </select>
       </div>
       <script>
-      var slider = document.getElementById("myRange");
-      var output = document.getElementById("val");
-      output.innerHTML = slider.value;
+        var slider = document.getElementById("myRange");
+        var output = document.getElementById("val");
+        output.innerHTML = slider.value;
 
-      slider.oninput = function() {
-        output.innerHTML = this.value;
-      }
+        slider.oninput = function() {
+          output.innerHTML = this.value;
+        }
       </script>
       <br>
       <h5>Time Window</h5>
@@ -62,17 +62,16 @@ Find the safest time to leave the house.
         </div>
       </div>
       <button class="btn btn-primary shadow">Submit</button>
-    </div>
-    <p id="demo"></p>
-  </form>
+    </form>
+  </div>
   <div class="card-footer bg-dark text-white">
     ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
   </div>
 </div>
 {% endblock %}
 {% block column_two %}
-<div class="rounded shadow" style="width:100%; display:block; height:690px; overflow-y:scroll; overflow-x:scroll;">
-  <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
+<div class="rounded shadow" id="tabular-view">
+  <table class="table table-dark table-striped table-bordered table-hover table text-center">
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -82,14 +81,6 @@ Find the safest time to leave the house.
         <th scope="col">Actions</th>
       </tr>
     </thead>
-    <style>
-    .font-icon-white{
-      color: #ffffff;
-    }
-    .font-icon-white:hover{
-      color: #cccccc;
-    }
-    </style>
     <tbody>
       {% for item in tasks %}
       <tr>
@@ -104,6 +95,6 @@ Find the safest time to leave the house.
   </table>
 </div>
 <script>
-setDates();
+  setDates();
 </script>
 {% endblock %}

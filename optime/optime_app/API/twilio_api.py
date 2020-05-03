@@ -1,6 +1,6 @@
 import twilio
 from twilio.rest import Client
-from instance import config
+from .instance import config
 
 # Your Account SID from twilio.com/console
 account_sid = config.TWILIO_SID

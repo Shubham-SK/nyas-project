@@ -6,7 +6,7 @@ from datetime import timedelta
 from datetime import datetime as dt
 import pytz
 import dateutil.parser as parser
-from climacell import Weather
+from .climacell import Weather
 import numpy as np
 
 WEATHER = Weather()

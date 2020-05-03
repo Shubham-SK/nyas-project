@@ -1,154 +1,116 @@
-<!DOCTYPE html>
-<html>
-   <head>
-      <title>OPTIME - scheduling</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="shortcut icon" href="static/img/favicon.ico" type="image/x-icon"/>
-      <!-- Include CSS File Here -->
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-   </head>
-   <body>
-      <!-- Image and text -->
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #e3f2fd;">
-         <a class="navbar-brand" href="{{ url_for('index') }}">
-         <img src="static/img/optime.png" height="30" width="30" class="d-inline-block align-top" alt="">
-         OPTIME.
-         </a>
-         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon"></span>
-         </button>
-         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-               <li class="nav-item active">
-                  <a class="nav-link" href="#">Scheduling<span class="sr-only">(current)</span></a>
-               </li>
-               <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('shopping') }}">Shopping</a>
-               </li>
-            </ul>
-            {% if g.user is none %}
-            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('login') }}">Log In</a>
-            {% else %}
-            <a class="btn btn-secondary btn-sm my-2 my-sm-0" href="{{ url_for('logout') }}">Log Out</a>
-            {% endif %}
-         </div>
-      </nav>
-      <div class="container-fluid p-5 mb-5">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
-              <h2>Scheduling</h2>
-              <p class="lead">Find the safest time to leave the house.</p>
-            </div>
-          </div>
-        </div>
-      <div class="container-fluid mt-5">
-        <div class="row">
-         <div class="col-md-5 mb-5">
-            <div class="card text-center text-dark bg-white rounded shadow">
-               <div class="card-header text-white bg-dark">
-                  Let's schedule your tasks.
-               </div>
-               <div class="card-body">
-                  <h2 class="card-title">Scheduler</h2>
-                  <form id="form_id" action="/scheduling" method="post" name="myform">
-                     <input type="hidden" id="lat" name="lat" value="">
-                     <input type="hidden" id="lon" name="lon" value="">
-                     <p class="card-text text-muted">How long do you want to go out for?</p>
-                     <div class="slidecontainer">
-                        <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
-                        <br>
-                        <p id="val" style="display:inline-block;margin-right:10px;"></p>
-                        <select class="selectpicker" data-width="fit" id="form_action" name="count" title="Units" required>
-                           <option data-content="<span class='badge badge-secondary'>Minutes</span>">Minutes</option>
-                           <option data-content="<span class='badge badge-info'>Hours</span>">Hours</option>
-                           <option data-content="<span class='badge badge-primary'>Days</span>">Days</option>
-                        </select>
-                     </div>
-                     <script>
-                        var slider = document.getElementById("myRange");
-                        var output = document.getElementById("val");
-                        output.innerHTML = slider.value;
+{% extends "base.html" %}
 
-                        slider.oninput = function() {
-                          output.innerHTML = this.value;
-                        }
-                     </script>
-                     <br>
-                     <h5>Time Window</h5>
-                     <div class="d-flex justify-content-center">
-                       <div class="form group">
-                          <div class="form group row py-md-2">
-                             <label for="start">Start</label>
-                             <input class="form-control" type="date" id="start" name="start" required>
-                          </div>
-                          <div class="form group row py-md-2">
-                             <label for="end">End</label>
-                             <input class="form-control" type="date" id="end" name="end" required>
-                          </div>
-                          <div class="form group row py-md-2">
-                             <label for="name">Name</label>
-                             <input class="form-control" type="text" id="name" name="name" required>
-                          </div>
-                          <br>
-                       </div>
-                   </div>
-                     <button class="btn btn-primary shadow">Submit</button>
-               </div>
-                <p id="demo"></p>
-               </form>
-               <div class="card-footer bg-dark text-white">
-                 ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
-               </div>
-            </div>
-         </div>
-         <div class="col-md d-none d-md-block mb-5">
-            <div class="rounded shadow" style="width:100%; display:block; height:690px; overflow-y:scroll; overflow-x:scroll;">
-               <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
-                  <thead>
-                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Start Time</th>
-                        <th scope="col">End Time</th>
-                        <th scope="col">Actions</th>
-                     </tr>
-                  </thead>
-                  <style>
-                    .font-icon-white{
-                      color: #ffffff;
-                    }
-                    .font-icon-white:hover{
-                      color: #cccccc;
-                    }
-                  </style>
-                  <tbody>
-                    {% for item in tasks %}
-                    <tr>
-                      <th scope="row">{{ loop.index }}</th>
-                      <td>{{ item.name }}</td>
-                      <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
-                      <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-                      <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-               </table>
-             </div>
-         </div>
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-5 mb-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
+        <h2>Scheduling</h2>
+        <p class="lead">Find the safest time to leave the house.</p>
       </div>
     </div>
-      <!-- <button onclick="getLocation()">Get Location</button> -->
-   </body>
-   <script type="text/javascript" src="static/js/main.js"></script>
-   <script>
-     setDates();
-   </script>
-   <script src="https://kit.fontawesome.com/3dd1f15415.js" crossorigin="anonymous"></script>
-   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-</html>
+  </div>
+  <div class="container-fluid mt-5">
+    <div class="row">
+      <div class="col-md-5 mb-5">
+        <div class="card text-center text-dark bg-white rounded shadow">
+          <div class="card-header text-white bg-dark">
+            Let's schedule your tasks.
+          </div>
+          <div class="card-body">
+            <h2 class="card-title">Scheduler</h2>
+            <form id="form_id" action="/scheduling" method="post" name="myform">
+              <input type="hidden" id="lat" name="lat" value="">
+              <input type="hidden" id="lon" name="lon" value="">
+              <p class="card-text text-muted">How long do you want to go out for?</p>
+              <div class="slidecontainer">
+                <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
+                <br>
+                <p id="val" style="display:inline-block;margin-right:10px;"></p>
+                <select class="selectpicker" data-width="fit" id="form_action" name="count" title="Units" required>
+                  <option data-content="<span class='badge badge-secondary'>Minutes</span>">Minutes</option>
+                  <option data-content="<span class='badge badge-info'>Hours</span>">Hours</option>
+                  <option data-content="<span class='badge badge-primary'>Days</span>">Days</option>
+                </select>
+              </div>
+              <script>
+              var slider = document.getElementById("myRange");
+              var output = document.getElementById("val");
+              output.innerHTML = slider.value;
+
+              slider.oninput = function() {
+                output.innerHTML = this.value;
+              }
+              </script>
+              <br>
+              <h5>Time Window</h5>
+              <div class="d-flex justify-content-center">
+                <div class="form group">
+                  <div class="form group row py-md-2">
+                    <label for="start">Start</label>
+                    <input class="form-control" type="date" id="start" name="start" required>
+                  </div>
+                  <div class="form group row py-md-2">
+                    <label for="end">End</label>
+                    <input class="form-control" type="date" id="end" name="end" required>
+                  </div>
+                  <div class="form group row py-md-2">
+                    <label for="name">Name</label>
+                    <input class="form-control" type="text" id="name" name="name" required>
+                  </div>
+                  <br>
+                </div>
+              </div>
+              <button class="btn btn-primary shadow">Submit</button>
+            </div>
+            <p id="demo"></p>
+          </form>
+          <div class="card-footer bg-dark text-white">
+            ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
+          </div>
+        </div>
+      </div>
+      <div class="col-md d-none d-md-block mb-5">
+        <div class="rounded shadow" style="width:100%; display:block; height:690px; overflow-y:scroll; overflow-x:scroll;">
+          <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <style>
+            .font-icon-white{
+              color: #ffffff;
+            }
+            .font-icon-white:hover{
+              color: #cccccc;
+            }
+            </style>
+            <tbody>
+              {% for item in tasks %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+                <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
+                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  setDates();
+  </script>
+  {% endblock %}

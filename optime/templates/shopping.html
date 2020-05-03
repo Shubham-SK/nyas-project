@@ -51,42 +51,6 @@
         <div class="container-fluid mt-5">
           <div class="row">
             <div class="col-md mb-5">
-              <div id="tabular-view" class="rounded shadow" style="width:100%; height:400px; display:block; overflow-y:scroll; overflow-x:scroll;">
-                 <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
-                    <thead>
-                       <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Store Name</th>
-                          <th scope="col">Address</th>
-                          <th scope="col">Product</th>
-                          <th scope="col">Actions</th>
-                       </tr>
-                    </thead>
-                    <style>
-                      .font-icon-white{
-                        color: #ffffff;
-                      }
-                      .font-icon-white:hover{
-                        color: #cccccc;
-                      }
-                    </style>
-                    <tbody>
-                      {% for item in shoppingTasks %}
-                      {% set splitAddr = item.storeAddress.split(',') %}
-                      <tr>
-                        <th scope="row">{{ loop.index }}</th>
-                        <td>{{ item.name }}</td>
-                        <td>{{ splitAddr[0] }}</td>
-                        <td>{{ allProducts[loop.index0]|join(', ') }}</td>
-                        <td class="bg-primary"><a href="/shopping/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                 </table>
-               </div>
-            </div>
-            
-            <div class="col-md mb-5">
               <div class="card border-white text-center">
                 <div class="card-body border-white rounded shadow">
                   <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
@@ -102,7 +66,7 @@
                   <div class="tab-content" id="shopping-form">
                     <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-findstores-tab">
                         <h4 class="pb-3">Find Stores</h4>
-                        <p class="text-muted">Search for a product and select from <br> the options below to add to your tasks.</p>
+                        <p class="text-muted">Search for a product and select from the <br> options below to add to your tasks.</p>
                         <div class="form group">
                         <form action="/shopping" method="post">
                           <input type="hidden" id="lat" name="lat" value="">
@@ -177,6 +141,42 @@
               </div>
             </div>
 
+            <div class="col-md d-none d-md-block mb-5">
+              <div id="tabular-view" class="rounded shadow" style="width:100%; height:400px; display:block; overflow-y:scroll; overflow-x:scroll;">
+                 <table class="table table-dark table-striped table-bordered table-hover table text-center" style="">
+                    <thead>
+                       <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Store Name</th>
+                          <th scope="col">Address</th>
+                          <th scope="col">Product</th>
+                          <th scope="col">Actions</th>
+                       </tr>
+                    </thead>
+                    <style>
+                      .font-icon-white{
+                        color: #ffffff;
+                      }
+                      .font-icon-white:hover{
+                        color: #cccccc;
+                      }
+                    </style>
+                    <tbody>
+                      {% for item in shoppingTasks %}
+                      {% set splitAddr = item.storeAddress.split(',') %}
+                      <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ item.name }}</td>
+                        <td>{{ splitAddr[0] }}</td>
+                        <td>{{ allProducts[loop.index0]|join(', ') }}</td>
+                        <td class="bg-primary"><a href="/shopping/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                 </table>
+               </div>
+            </div>
+
             <script>
             function changeStoreName() {
               var selected = document.getElementById("storename").value.split(',');
@@ -209,7 +209,7 @@
             <div class="col">
               {% if product %}
                 <h3>Recommended stores for "{{ product }}"</h3>
-                                <p class="text-muted">Stores are filtered based on the number of COVID-19 cases in  <br>  the surrounding area, stock of your product, and distance.</p>
+                <p class="text-muted">Stores are filtered based on the number of COVID-19 cases in  <br>  the surrounding area, stock of your product, and distance.</p>
                 <p class="lead">Choose from the stores below. </p>
                 {% else %}
                 <h3>Stores Near You</h3>

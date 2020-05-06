@@ -3,7 +3,7 @@ from .app import *
 ############### SHOPPING ###############
 @app.route('/shopping', methods=['GET', 'POST'])
 @login_required
-def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=None, task_userProds=None):
+def shopping():
     """
     Process user's search request for stores, manage redirects for deleting a task,
     selecting a store, and crowdsourcing
@@ -17,32 +17,19 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
     k = 3
     categories = ['Grocery']
     product = None
+    scroll = None
     allStores = []
     storeDB = get_stores_db()
-    task_product = {}
 
     if request.method == 'POST':
         args = request.form
         categories = args.getlist('category')
         product = args['product']
+        scroll = 'search-results'
 
         for i in range(len(categories)):
             if (categories[i] == "Grocery Store"):
                 categories[i] = "Grocery"
-    elif 'task_storename' in request.args:
-        task_storename = request.args['task_storename']
-        task_storeaddr = request.args['task_storeaddr']
-        task_lat = request.args['task_lat']
-        task_lon = request.args['task_lon']
-        task_userProds = request.args.getlist('task_userProds')
-
-        task_product = storeDB.stores.find_one(
-            {'location': [{'lat' : task_lat}, {'lon' : task_lon}]})
-
-    if 'update' in request.args:
-        update = 'true'
-    else:
-        update = 'false'
 
     # Sample store: ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
@@ -56,10 +43,7 @@ def shopping(task_storename=None, task_storeaddr=None, task_lat=None, task_lon=N
 
     return render_template('shopping.html', userLat=lat, userLon=lon,
     shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
-    storeLocs=allStores, req=request.method,
-    task_storename=task_storename,task_storeaddr=task_storeaddr,
-    task_userProds=task_userProds,task_product=task_product,
-    task_lat=task_lat,task_lon=task_lon, product=product, update=update), 200
+    storeLocs=allStores, req=request.method, product=product, scroll=scroll), 200
 
 
 @app.route('/selectStore')
@@ -110,29 +94,6 @@ def selectStore():
     return redirect(url_for('shopping'))
 
 
-@app.route('/shopping/refresh')
-def refreshProdSelections():
-    """
-    Refresh the product stock fields if the user changes which store
-    they would like to input data for
-    """
-
-    args = request.args
-
-    storeName = args['name']
-    storeLat = args['lat']
-    storeLon = args['lon']
-    task_userProds = []
-    task_storeaddr = ""
-
-    for t in g.user['shoppingTasks']:
-        if (t['location'] == [storeLat, storeLon]):
-            task_userProds = [item["productName"] for item in t["product"]]
-            task_storeaddr = t['storeAddress']
-
-    return redirect(url_for('.shopping',task_storename=storeName,task_storeaddr=task_storeaddr, task_userProds=task_userProds, task_lat=storeLat, task_lon=storeLon, update="true"))
-
-
 @app.route('/shopping/delete_task')
 def delete_shoppingTask():
     """
@@ -143,13 +104,14 @@ def delete_shoppingTask():
     task_index = int(args['task_index'])
     db = get_db()
     task = g.user["shoppingTasks"][task_index]
-    task_userProds = [item["productName"] for item in task["product"]]
 
     task_id = task["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
-    if ('tasks' in args):
-        return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
+
+    if ('passVal' in args):
+        return redirect(url_for('index'))
+
     return redirect(url_for('shopping'))
 
 
@@ -158,7 +120,7 @@ def updateStore():
     """
     Update the stores database with crowdsourced store information
     """
-
+    print("\n\nUPDATE RECIEVED")
     args = request.args.to_dict()
     # The minimum number of parameters is 1 (the store name)
     if (len(args) > 1):
@@ -169,7 +131,7 @@ def updateStore():
         args.pop('lon')
         args.pop('open')
         args.pop('close')
-        args.pop('category')
+        task_index = args.pop('task_index')
 
         newStocks = []
         for stock in args:
@@ -181,4 +143,5 @@ def updateStore():
         storeDB = get_stores_db()
         storeDB.stores.update_one({"location": location}, {
                             "$set": {"hours": hours, "stock": newStocks}})
-    return redirect(url_for('shopping'))
+
+    return redirect(url_for('.delete_shoppingTask',task_index=task_index,passVal=True))

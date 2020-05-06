@@ -13,7 +13,6 @@ function setDates() {
 }
 
 function getLocation() {
-
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
   } else {
@@ -26,3 +25,9 @@ function showPosition(position) {
   document.getElementById("lon").value = position.coords.longitude;
   alert("Location data recorded.");
 }
+
+// function adjustSearchHeight() {
+//   // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
+//   alert(document.getElementById("find-stores-form").offsetHeight);
+//   // setTimeout(() => { var height = (parseInt(document.getElementById("shopping-form").offsetHeight)+100).toString(); document.getElementById("tabular-view").style.height = height+"px";}, 200);
+// }

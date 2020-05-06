@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "nav_base.html" %}
 
 {% block title %}
 Dashboard
@@ -56,7 +56,7 @@ Dashboard
     <div class="row bg-light rounded pt-3">
       {% if tasks %}
       {% for item in tasks %}
-      <div class="col-md-3 mb-3">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
         <div class="card text-center border-white shadow" style="height:100%">
           <img src="/static/img/gradient.png" class="card-img-top" alt="...">
           <div class="card-body">
@@ -64,13 +64,13 @@ Dashboard
             <p class="card-text text-center">{{ item.start_time.strftime('%b %-d %-I:%M %p') }} to {{ item.end_time.strftime('%b %-d %-I:%M %p') }}.</p>
           </div>
           <div class="card-footer bg-white text-center border-white text-white">
-            <a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary">Mark as Complete</a>
+            <a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-primary">Mark as Complete</a>
           </div>
         </div>
       </div>
       {% endfor %}
       {% else %}
-      <div class="col-md-3 mb-3">
+      <div class="col-md-3 col-sm-3 col-xs-3 mb-3">
         <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
           <div class="card-body">
             <h5 class="card-title">No Tasks</h5>
@@ -91,17 +91,72 @@ Dashboard
     <div class="row bg-light rounded pt-3">
       {% if shoppingTasks %}
       {% for item in shoppingTasks %}
-      <div class="col-md-3 mb-3">
-        <div class="card border-white bg-white shadow text-center" style="height:100%">
+      {% set index = loop.index0 %}
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
+        <div class="card bg-white border-white shadow text-center" style="height:100%">
           <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
             <p class="card-text">{{ item.storeAddress }}</p>
-            <p class="card-text">{{ allProducts[loop.index0]|join(', ') }}</p>
+            <p class="card-text">{{ allProducts[index]|join(', ') }}</p>
           </div>
           <div class="card-footer border-white bg-white">
-            <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-primary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
-            <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a>
+            <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank">Directions</a>
+            <!-- ACTIVATOR -->
+            <a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ index }}"><i class="fas fa-check"></i> Mark as complete</a>
+            <!-- MODAL -->
+            <div class="modal fade" id="update_choice{{ index }}" tabindex="-1" role="dialog" aria-labelledby="update_choice" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <form action="/update" method="get">
+                    <input type="hidden" id="task_index" name="task_index" value="{{ index }}">
+                    <input type="hidden" id="lat" name="lat" value="{{ item.location[0] }}">
+                    <input type="hidden" id="lon" name="lon" value="{{ item.location[1] }}">
+                    <div class="modal-header text-center">
+                      <h5 class="modal-title" id="exampleModalLabel">Update info for <span class="badge badge-primary">{{ item.name }}</span></h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p class="text-muted">Please update the stocks of the products that <br> you remember and store hours to the best of your ability.</p>
+                      <div class="d-flex justify-content-center">
+                        <div class="form group" style="width:50%">
+                          <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
+                          <div class="form group row py-md-2 justify-content-center">
+                            <div class="form-group justify-content-center row">
+                              {% for product in allStores[index].stock %}
+                              {% if product.name in allProducts[index] %}
+                              <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}">
+                                <option data-subtext="{{ product.name }}">1-10</option>
+                                <option data-subtext="{{ product.name }}">10-25</option>
+                                <option data-subtext="{{ product.name }}">25-40</option>
+                                <option data-subtext="{{ product.name }}">40+</option>
+                              </select>
+                              {% endif %}
+                              {% endfor %}
+                            </div>
+                            <div class="form-group row">
+                              <label class="text-muted" for="open-time-input">Opening Time</label>
+                              <input class="form-control" type="time" value="{{ allStores[index].hours.open }}:00" name="open" id="open-time-input">
+                            </div>
+                            <div class="form-group row">
+                              <label class="text-muted" for="open-time-input">Closing Time</label>
+                              <input class="form-control" type="time" value="{{ allStores[index].hours.close }}:00" name="close" id="open-time-input">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <a href="/shopping/delete_task?task_index={{ index }}&passVal=True" type="button" class="btn btn-secondary">I'll Pass</a>
+                      <button class="btn btn-primary shadow" type="submit">Update</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <!-- <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a> -->
           </div>
         </div>
       </div>

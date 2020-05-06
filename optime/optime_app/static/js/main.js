@@ -1,3 +1,4 @@
+var location_recorded = false;
 function setDates() {
   var today = new Date();
   todayStr = today.getFullYear() + '-' + ('0' + (today.getMonth()+1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
@@ -23,7 +24,20 @@ function getLocation() {
 function showPosition(position) {
   document.getElementById("lat").value = position.coords.latitude;
   document.getElementById("lon").value = position.coords.longitude;
-  alert("Location data recorded.");
+  // alert("Location data recorded.");
+    location_recorded = true;
+}
+
+function checkLocation() {
+    if (location_recorded) {
+        document.querySelector("#login_form").submit();
+    } else {
+        console.log("location not found");
+    }
+}
+
+function waitForLocation() {
+    window.setInterval(checkLocation, 300);
 }
 
 // function adjustSearchHeight() {

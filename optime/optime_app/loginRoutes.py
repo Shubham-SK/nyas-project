@@ -1,5 +1,6 @@
 from .app import *
 
+
 ############### HOME/LOGIN ###############
 @app.route('/index')
 @app.route('/')
@@ -97,12 +98,14 @@ def login():
 
     print('Getting request for login')
     error = None
+    print("Gettingreqf")
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         lat = request.form.get('lat')
         lon = request.form.get('lon')
         db = get_db()
+        print(f"lat:{lat}, lon:{lon}")
 
         user = db.users.find_one({'email': email})
         if user is None:
@@ -133,7 +136,7 @@ def login():
     else:
         form_action = url_for('login')
     return (render_template('login.html', error=error,
-                            form_action=form_action),200)
+                            form_action=form_action), 200)
 
 
 @app.before_request

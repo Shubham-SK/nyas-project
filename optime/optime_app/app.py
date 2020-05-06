@@ -90,6 +90,13 @@ def getAllProducts():
         allProducts.append(products)
     return allProducts
 
+def getAllStores():
+    allStores = []
+    storeDB = get_stores_db()
+    for task in g.user['shoppingTasks']:
+        allStores.append(storeDB.stores.find_one(
+            {'location': [{'lat' : task['location'][0]}, {'lon' : task['location'][1]}]}))
+    return allStores
 
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):
     """

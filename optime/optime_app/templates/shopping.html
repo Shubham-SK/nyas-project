@@ -83,7 +83,7 @@ Find the safest stores near you with the products you want.
 </script> -->
 
 {% block options %}
-<div class="container-fluid">
+<div class="container-fluid" id="search-results">
   <div class="row">
     <div class="col">
       {% if product %}
@@ -119,6 +119,9 @@ Find the safest stores near you with the products you want.
 {% endblock %}
 
 {% block script %}
+{% if scroll %}
 <script type="text/javascript">
+  document.getElementById('{{ scroll }}').scrollIntoView();
 </script>
+{% endif %}
 {% endblock %}

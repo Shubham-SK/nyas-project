@@ -16,6 +16,7 @@ def index():
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
                                allProducts=getAllProducts(),
+                               allStores=getAllStores(),
                                lenshoppingtasks=len(g.user['shoppingTasks']))
 
 

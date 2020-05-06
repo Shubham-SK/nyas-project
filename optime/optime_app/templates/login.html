@@ -21,7 +21,7 @@
             </div>
             <div class="card-body">
                <h2 class="card-title">Sign In</h2>
-               <form class="form-signin" method="post" action="{{ form_action }}">
+               <form class="form-signin" method="post" action="{{ form_action }}" id="login_form">
                   <input type="hidden" id="lat" name="lat" value="">
                   <input type="hidden" id="lon" name="lon" value="">
                   <label for="inputEmail" class="sr-only">Email</label>
@@ -34,7 +34,7 @@
                      <input type="checkbox" value="remember-me"> Remember me
                      </label>
                   </div>
-                  <button class="btn btn-primary" type="submit" href="{{ url_for('index') }}">Sign in</button>
+                  <button class="btn btn-primary" type="button" onclick="waitForLocation()">Sign in</button>
                </form>
             </div>
             <p>Don't have an account? <a href="{{ url_for('register') }}" style="text-decoration: none;">Register</a></p>

@@ -9,7 +9,6 @@ from pymongo import MongoClient
 from tzwhere import tzwhere
 from werkzeug.security import check_password_hash, generate_password_hash
 
-
 from .API.climacell import Weather
 from .API.instance.config import SECRET_KEY
 from .API.scheduling import schedule, window_slider

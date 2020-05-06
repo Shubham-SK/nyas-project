@@ -12,100 +12,37 @@ Shopping
 Find the safest stores near you with the products you want.
 {% endblock %}
 
-<p hidden id="update" value="{{ update }}"></p>
 {% block column_one %}
-<div class="card border-white text-center">
+<div class="card border-white text-center" id="find-stores-form" style="height: 345px;">
   <div class="card-body border-white rounded shadow">
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-      <li class="nav-item" onclick="adjustSearchHeight()">
-        <a href="#pills-search" class="nav-link active" id="pills-search-tab" data-toggle="pill" role="tab" aria-controls="pills-search" aria-selected="true">Find Stores</a>
-      </li>
-      {% if task_storeaddr is not none %}
-      <li onclick="adjustUpdateHeight()" class="nav-item">
-        <a href="#pills-update" class="nav-link" id="pills-update-tab" data-toggle="pill" role="tab" aria-controls="pills-update" aria-selected="false">Update Info</a>
-      </li>
-      {% endif %}
-    </ul>
-    <div class="tab-content" id="shopping-form">
-      <div class="tab-pane fade show active" id="pills-search" role="tabpanel" aria-labelledby="pills-findstores-tab">
-        <h4 class="pb-3">Find Stores</h4>
-        <p class="text-muted">Search for a product and select from the <br> options below to add to your tasks.</p>
-        <div class="form group">
-          <form action="/shopping" method="post">
-            <input type="hidden" id="lat" name="lat" value="">
-            <input type="hidden" id="lon" name="lon" value="">
-            <div class="d-flex justify-content-center">
-              <div class="form-group" style="width:50%">
-                <div class="form group row py-md-2 justify-content-center">
-                  <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
-                    <option data-content="<span class='badge badge-info'>Pharmacy</span>">Pharmacy</option>
-                    <option data-content="<span class='badge badge-primary'>Grocery Store</span>">Grocery Store</option>
-                  </select>
-                </div>
-                <div class="form group row py-md-2">
-                  <input class="form-control mr-sm-2 text-center mb-3" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
-                </div>
-                <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Search</button>
-              </div>
+    <h4 class="pb-3">Find Stores</h4>
+      <p class="text-muted">Search for a product and choose a store below.</p>
+    <div class="form group">
+      <form action="/shopping" method="post">
+        <input type="hidden" id="lat" name="lat" value="">
+        <input type="hidden" id="lon" name="lon" value="">
+        <div class="d-flex justify-content-center">
+          <div class="form-group" style="width:50%">
+            <div class="form group row py-md-2 justify-content-center">
+              <select id="category" class="selectpicker pb-3" name="category" multiple title="Category" required>
+                <option data-content="<span class='badge badge-info'>Pharmacy</span>">Pharmacy</option>
+                <option data-content="<span class='badge badge-primary'>Grocery Store</span>">Grocery Store</option>
+              </select>
             </div>
-          </form>
-        </div>
-      </div>
-      {% if task_storeaddr is not none %}
-      <div class="tab-pane fade" id="pills-update" role="tabpanel" aria-labelledby="pills-updatestock-tab">
-        <h4 class="pb-3" id="demotext">Update info for {{ task_storename }}</h4>
-        <p class="text-muted">Please update the stocks of the products that <br> you remember and store hours to the best of your ability.</p>
-        <form action="/update" method="get">
-          <div class="d-flex justify-content-center">
-            <div class="form group" style="width:50%">
-              <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
-              <div class="form group row py-md-2 justify-content-center">
-                <div class="form-group row">
-                  <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
-                    <!-- first option should be the one they are redirected here for -->
-                    <option value="{{ task_storename }}" data-subtext= "{{ task_storeaddr.split(',')[0] }}">{{ task_storename }}</option>
-                    {% for item in shoppingTasks %}
-                    {% if ( (item.location[0] != task_lat) and (item.location[1] != task_lon) ) %}
-                    <option value="{{ item.name }},{{ item.location[0] }},{{ item.location[1] }}" data-subtext="{{ item.storeAddress.split(',')[0] }}">{{ item.name }}</option>
-                    {% endif %}
-                    {% endfor %}
-                  </select>
-                </div>
-                <input type="hidden" id="lat" name="lat" value="{{ task_lat }}">
-                <input type="hidden" id="lon" name="lon" value="{{ task_lon }}">
-                <div class="form-group justify-content-center row">
-                  {% for product in task_product.stock %}
-                  {% if product.name in task_userProds %}
-                  <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}">
-                    <option data-subtext="{{ product.name }}">1-10</option>
-                    <option data-subtext="{{ product.name }}">10-25</option>
-                    <option data-subtext="{{ product.name }}">25-40</option>
-                    <option data-subtext="{{ product.name }}">40+</option>
-                  </select>
-                  {% endif %}
-                  {% endfor %}
-                </div>
-                <div class="form-group row">
-                  <label class="text-muted" for="open-time-input">Opening Time</label>
-                  <input class="form-control" type="time" value="{{ task_product.hours.open }}:00" name="open" id="open-time-input">
-                </div>
-                <div class="form-group row">
-                  <label class="text-muted" for="open-time-input">Closing Time</label>
-                  <input class="form-control" type="time" value="{{ task_product.hours.close }}:00" name="close" id="open-time-input">
-                </div>
-              </div>
-              <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Update</button>
+            <div class="form group row py-md-2">
+              <input class="form-control mr-sm-2 text-center mb-3" type="search" placeholder="Search For Products" name="product" aria-label="Search" required>
             </div>
+            <button class="btn btn-sm btn-primary my-2 my-sm-0 shadow" type="submit">Search</button>
           </div>
-        </form>
-      </div>
-      {% endif %}
+        </div>
+      </form>
     </div>
   </div>
 </div>
 {% endblock %}
+
 {% block column_two %}
-<div id="tabular-view" class="rounded shadow">
+<div id="tabular-view" class="rounded shadow" style="height:345px;">
   <table class="table table-dark table-striped table-bordered table-hover table text-center">
     <thead>
       <tr>
@@ -131,29 +68,20 @@ Find the safest stores near you with the products you want.
   </table>
 </div>
 {% endblock %}
-<script>
-  function changeStoreName() {
-    var selected = document.getElementById("storename").value.split(',');
-    var storeName = selected[0];
-    var storeLat = selected[1];
-    var storeLon = selected[2];
-    document.getElementById("demotext").innerHTML = "Update info for " + storeName;
-    url = "http://localhost:5000/shopping/refresh?name=" + storeName + "&lat=" + storeLat + "&lon=" + storeLon;
-    window.location.replace(url);
-  }
-  function adjustSearchHeight() {
-    // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
-    setTimeout(() => { var height = (parseInt(document.getElementById("shopping-form").offsetHeight)+100).toString(); document.getElementById("tabular-view").style.height = height+"px";}, 200);
-  }
-  function adjustUpdateHeight() {
-    // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
-    setTimeout(() => { var height = (parseInt(document.getElementById("shopping-form").offsetHeight)+100).toString(); document.getElementById("tabular-view").style.height = height+"px";}, 200);
-  }
-  if(document.getElementById("update").getAttribute("value") == "true"){
-    setTimeout(() => { document.getElementById("pills-update-tab").click()}, 200);
-    adjustUpdateHeight();
-  }
-</script>
+
+<!-- <script>
+// function changeStoreName() {
+//   var selected = document.getElementById("storename").value.split(',');
+//   var storeName = selected[0];
+//   var storeLat = selected[1];
+//   var storeLon = selected[2];
+//   document.getElementById("demotext").innerHTML = "Update info for " + storeName;
+//   url = "http://localhost:5000/shopping/refresh?name=" + storeName + "&lat=" + storeLat + "&lon=" + storeLon;
+//   window.location.replace(url);
+// }
+}
+</script> -->
+
 {% block options %}
 <div class="container-fluid">
   <div class="row">
@@ -188,4 +116,9 @@ Find the safest stores near you with the products you want.
     {% endfor %}
   </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+</script>
 {% endblock %}

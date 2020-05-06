@@ -92,8 +92,8 @@ Dashboard
       {% if shoppingTasks %}
       {% for item in shoppingTasks %}
       {% set index = loop.index0 %}
-      <div class="col-md-3 mb-3">
-        <div class="card bg-white shadow text-center" style="height:100%">
+      <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-6 mb-3">
+        <div class="card bg-white border-white shadow text-center" style="height:100%">
           <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
@@ -113,7 +113,7 @@ Dashboard
                     <input type="hidden" id="lat" name="lat" value="{{ item.location[0] }}">
                     <input type="hidden" id="lon" name="lon" value="{{ item.location[1] }}">
                     <div class="modal-header text-center">
-                      <h5 class="modal-title" id="exampleModalLabel"><strong>Update info for {{ item.name }}</strong></h5>
+                      <h5 class="modal-title" id="exampleModalLabel">Update info for <span class="badge badge-primary">{{ item.name }}</span></h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>

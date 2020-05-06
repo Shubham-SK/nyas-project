@@ -110,8 +110,6 @@ def delete_shoppingTask():
     task_id = task["_id"]
     db.users.update_one({"_id": g.user["_id"]},
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
-    # if ('tasks' in args):
-    #     return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
 
     if ('passVal' in args):
         return redirect(url_for('index'))

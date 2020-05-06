@@ -17,6 +17,7 @@ def index():
                                number=g.user['phone_number'],
                                lentasks=len(g.user['items']),
                                allProducts=getAllProducts(),
+                               allStores=getAllStores(),
                                lenshoppingtasks=len(g.user['shoppingTasks']))
 
 
@@ -111,7 +112,7 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-        elif lat is "" or lon is "":
+        elif lat == "" or lon == "":
             error = 'Please allow location access'
         if error is None:
             session.clear()

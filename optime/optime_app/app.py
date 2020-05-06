@@ -9,7 +9,6 @@ from pymongo import MongoClient
 from tzwhere import tzwhere
 from werkzeug.security import check_password_hash, generate_password_hash
 
-
 from .API.climacell import Weather
 from .API.instance.config import SECRET_KEY
 from .API.scheduling import schedule, window_slider
@@ -90,6 +89,15 @@ def getAllProducts():
                 products.append(value)
         allProducts.append(products)
     return allProducts
+
+
+def getAllStores():
+    allStores = []
+    storeDB = get_stores_db()
+    for task in g.user['shoppingTasks']:
+        allStores.append(storeDB.stores.find_one(
+            {'location': [{'lat' : task['location'][0]}, {'lon' : task['location'][1]}]}))
+    return allStores
 
 
 def constructStore(lat, lon, id, name, storeLat, storeLon, storeAddress, product):

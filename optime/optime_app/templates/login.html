@@ -13,6 +13,10 @@ Our services require access to your location data, we promise to keep it safe.
 {% endblock %}
 
 {% block form %}
+
+<noscript>This web page requires JavaScript.
+    <a href="http://enable-javascript.com">Click here for information on how to enable JavaScript</a>
+</noscript>
 <form class="form-signin" method="post" action="{{ form_action }}" id="login_form">
   <input type="hidden" id="lat" name="lat" value="">
   <input type="hidden" id="lon" name="lon" value="">

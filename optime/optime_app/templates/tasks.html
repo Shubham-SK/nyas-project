@@ -91,25 +91,29 @@ Dashboard
     <div class="row bg-light rounded pt-3">
       {% if shoppingTasks %}
       {% for item in shoppingTasks %}
+      {% set index = loop.index0 %}
       <div class="col-md-3 mb-3">
         <div class="card bg-white shadow text-center" style="height:100%">
           <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
             <p class="card-text">{{ item.storeAddress }}</p>
-            <p class="card-text">{{ allProducts[loop.index0]|join(', ') }}</p>
+            <p class="card-text">{{ allProducts[index]|join(', ') }}</p>
           </div>
           <div class="card-footer border-white bg-white">
             <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
             <!-- ACTIVATOR -->
-            <a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" data-target="#update_choice"><i class="fas fa-check"></i> Mark as complete</a>
+            <a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ index }}"><i class="fas fa-check"></i> Mark as complete</a>
             <!-- MODAL -->
-            <div class="modal fade" id="update_choice" tabindex="-1" role="dialog" aria-labelledby="update_choice" aria-hidden="true">
+            <div class="modal fade" id="update_choice{{ index }}" tabindex="-1" role="dialog" aria-labelledby="update_choice" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                   <form action="/update" method="get">
+                    <input type="hidden" id="task_index" name="task_index" value="{{ index }}">
+                    <input type="hidden" id="lat" name="lat" value="{{ item.location[0] }}">
+                    <input type="hidden" id="lon" name="lon" value="{{ item.location[1] }}">
                     <div class="modal-header text-center">
-                      <h5 class="modal-title" id="exampleModalLabel"><strong>Update info for { task_storename }</strong></h5>
+                      <h5 class="modal-title" id="exampleModalLabel"><strong>Update info for {{ item.name }}</strong></h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
@@ -120,38 +124,32 @@ Dashboard
                         <div class="form group" style="width:50%">
                           <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
                           <div class="form group row py-md-2 justify-content-center">
-                            <div class="form-group row">
-                              <select id="storename" data-show-subtext="true" onchange="changeStoreName()" class="selectpicker pb-3" name="category" required>
-                                <!-- first option should be the one they are redirected here for -->
-                                <option value="{ task_storename }" data-subtext= "{ task_storeaddr.split(',')[0] }">{ task_storename }</option>
-                                <option value="{ item.name },{ item.location[0] },{ item.location[1] }" data-subtext="{ item.storeAddress.split(',')[0] }">{ item.name }</option>
-                              </select>
-                            </div>
-                            <input type="hidden" id="lat" name="lat" value="{ task_lat }">
-                            <input type="hidden" id="lon" name="lon" value="{ task_lon }">
                             <div class="form-group justify-content-center row">
-                              <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{ product.name }" title="{ product.name }: { product.stockStr }">
-                                <option data-subtext="{ product.name }">1-10</option>
-                                <option data-subtext="{ product.name }">10-25</option>
-                                <option data-subtext="{ product.name }">25-40</option>
-                                <option data-subtext="{ product.name }">40+</option>
+                              {% for product in allStores[index].stock %}
+                              {% if product.name in allProducts[index] %}
+                              <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}">
+                                <option data-subtext="{{ product.name }}">1-10</option>
+                                <option data-subtext="{{ product.name }}">10-25</option>
+                                <option data-subtext="{{ product.name }}">25-40</option>
+                                <option data-subtext="{{ product.name }}">40+</option>
                               </select>
-
+                              {% endif %}
+                              {% endfor %}
                             </div>
                             <div class="form-group row">
                               <label class="text-muted" for="open-time-input">Opening Time</label>
-                              <input class="form-control" type="time" value="{ task_product.hours.open }:00" name="open" id="open-time-input">
+                              <input class="form-control" type="time" value="{{ allStores[index].hours.open }}:00" name="open" id="open-time-input">
                             </div>
                             <div class="form-group row">
                               <label class="text-muted" for="open-time-input">Closing Time</label>
-                              <input class="form-control" type="time" value="{ task_product.hours.close }:00" name="close" id="open-time-input">
+                              <input class="form-control" type="time" value="{{ allStores[index].hours.close }}:00" name="close" id="open-time-input">
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">I'll Pass</button>
+                      <a href="/shopping/delete_task?task_index={{ index }}&passVal=True" type="button" class="btn btn-secondary">I'll Pass</a>
                       <button class="btn btn-primary shadow" type="submit">Update</button>
                     </div>
                   </form>

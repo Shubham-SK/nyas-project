@@ -150,6 +150,10 @@ def delete_shoppingTask():
                         {"$pull": {"shoppingTasks": {"_id": task_id}}})
     if ('tasks' in args):
         return redirect(url_for('.shopping',task_storename=task['name'],task_storeaddr=task['storeAddress'], task_userProds=task_userProds, task_lat=task['location'][0], task_lon=task['location'][1], update="true"))
+
+    if ('passVal' in args):
+        return redirect(url_for('index'))
+
     return redirect(url_for('shopping'))
 
 
@@ -158,7 +162,7 @@ def updateStore():
     """
     Update the stores database with crowdsourced store information
     """
-
+    print("\n\nUPDATE RECIEVED")
     args = request.args.to_dict()
     # The minimum number of parameters is 1 (the store name)
     if (len(args) > 1):
@@ -169,7 +173,7 @@ def updateStore():
         args.pop('lon')
         args.pop('open')
         args.pop('close')
-        args.pop('category')
+        task_index = args.pop('task_index')
 
         newStocks = []
         for stock in args:
@@ -181,4 +185,5 @@ def updateStore():
         storeDB = get_stores_db()
         storeDB.stores.update_one({"location": location}, {
                             "$set": {"hours": hours, "stock": newStocks}})
-    return redirect(url_for('shopping'))
+
+    return redirect(url_for('.delete_shoppingTask',task_index=task_index,passVal=True))

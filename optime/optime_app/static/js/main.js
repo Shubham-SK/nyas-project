@@ -30,6 +30,7 @@ function showPosition(position) {
 
 function checkLocation() {
     if (location_recorded) {
+        document.querySelector("#wait_msg").innerHTML = "Submitting...";
         document.querySelector("#login_form").submit();
     } else {
         console.log("location not found");
@@ -37,6 +38,8 @@ function checkLocation() {
 }
 
 function waitForLocation() {
+    document.querySelector("#wait_msg").hidden = false;
+    checkLocation();
     window.setInterval(checkLocation, 300);
 }
 

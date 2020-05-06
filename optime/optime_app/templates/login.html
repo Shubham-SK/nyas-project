@@ -25,8 +25,11 @@ Our services require access to your location data, we promise to keep it safe.
       <input type="checkbox" value="remember-me"> Remember me
     </label>
   </div>
-  <button class="btn btn-primary" type="button" onclick="waitForLocation()">Sign in</button>
-  <p id="wait_msg" hidden>Waiting until location is received...</p>
+  <button class="btn btn-primary" type="button" onclick="waitForLocation()">
+    <span id="loader" class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" hidden></span>
+    <span id="wait_msg">Sign In</span>
+  </button>
+  <!-- <p id="wait_msg" hidden>Waiting until location is received...</p> -->
 </form>
 <script>
 getLocation();

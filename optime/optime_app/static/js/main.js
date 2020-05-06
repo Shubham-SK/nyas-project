@@ -39,7 +39,7 @@ function checkLocation() {
 }
 
 function waitForLocation() {
-    document.querySelector("#wait_msg").innerHTML = "Awaiting location data...";
+    document.querySelector("#wait_msg").innerHTML = "Waiting for location data...";
     document.querySelector("#loader").hidden = false;
     checkLocation();
     window.setInterval(checkLocation, 300);

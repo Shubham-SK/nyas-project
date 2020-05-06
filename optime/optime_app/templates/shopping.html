@@ -106,7 +106,7 @@ Find the safest stores near you with the products you want.
           <p class="card-text">{{ item.storeAddress }}</p>
         </div>
         <div class="card-footer border-white bg-white">
-          <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank"><i class="fas fa-location-arrow"></i> Directions</a>
+          <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank"> Directions</a>
           {% if req == 'POST' %}
           <a href="{{ item.selectURL }}" class="btn btn-sm btn-primary mb-2"> Add to tasks </a>
           {% endif %}

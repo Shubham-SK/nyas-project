@@ -17,6 +17,7 @@ def shopping():
     k = 3
     categories = ['Grocery']
     product = None
+    scroll = None
     allStores = []
     storeDB = get_stores_db()
 
@@ -24,15 +25,11 @@ def shopping():
         args = request.form
         categories = args.getlist('category')
         product = args['product']
+        scroll = 'search-results'
 
         for i in range(len(categories)):
             if (categories[i] == "Grocery Store"):
                 categories[i] = "Grocery"
-
-    if 'update' in request.args:
-        update = 'true'
-    else:
-        update = 'false'
 
     # Sample store: ['Walmart', [37.72945007660575, -121.92957003664371], '9100 Alcosta Blvd, San Ramon, California, 94583']
     storesArr = get_safest_stores(lat, lon, max_locations, k, categories)
@@ -46,7 +43,7 @@ def shopping():
 
     return render_template('shopping.html', userLat=lat, userLon=lon,
     shoppingTasks=g.user['shoppingTasks'], allProducts=allProducts,
-    storeLocs=allStores, req=request.method, update=update, product=product), 200
+    storeLocs=allStores, req=request.method, product=product, scroll=scroll), 200
 
 
 @app.route('/selectStore')
@@ -95,6 +92,7 @@ def selectStore():
         )
 
     return redirect(url_for('shopping'))
+
 
 @app.route('/shopping/delete_task')
 def delete_shoppingTask():

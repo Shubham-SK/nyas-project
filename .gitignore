@@ -15,3 +15,5 @@ optime/optime_app/API/instance/
 .mypy_cache
 venv/
 .tags
+
+.vim/

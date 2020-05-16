@@ -47,16 +47,26 @@ Dashboard
       </div>
     </div>
   </div>
+
   <div class="container-fluid" id="personal-tasks">
     <div class="row mt-5">
       <div class="col">
         <h3>Your Personal Tasks</h3>
       </div>
+      <ul class="nav nav-pills" onclick="toggle()" style="float:right;">
+        <li class="nav-item">
+          <a class="nav-link" id="list-btn">List View</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" id="gallery-btn">Gallery View</a>
+        </li>
+      </ul>
     </div>
+
     <div class="row bg-light rounded pt-3">
       {% if tasks %}
       {% for item in tasks %}
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3" id="card-view">
         <div class="card text-center border-white shadow" style="height:100%">
           <img src="/static/img/gradient.png" class="card-img-top" alt="...">
           <div class="card-body">
@@ -69,6 +79,36 @@ Dashboard
         </div>
       </div>
       {% endfor %}
+
+      <div class="rounded shadow" id="tabular-view" style="height:315px">
+        <table class="table table-dark table-striped table-bordered table-hover table text-center">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Start Time</th>
+              <th scope="col">End Time</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in tasks %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td>{{ item.name }}</td>
+              <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+              <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
+              <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <script>
+        var tableView = document.getElementById("tabular-view");
+        tableView.style.display='none';
+      </script>
+
       {% else %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
         <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">

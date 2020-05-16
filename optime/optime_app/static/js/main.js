@@ -45,6 +45,24 @@ function waitForLocation() {
     window.setInterval(checkLocation, 300);
 }
 
+function toggle() {
+  var tableView = document.getElementById("tabular-view");
+  var cardView = document.getElementById("card-view");
+  var listToggle = document.getElementById("list-btn");
+  var galleryToggle = document.getElementById("gallery-btn");
+
+  if (tableView.style.display=='none') {
+    tableView.style.display='block';
+    cardView.style.display='none';
+    listToggle.className += " active";
+    galleryToggle.className = galleryToggle.className.replace(" active", "");
+  } else {
+    tableView.style.display='none';
+    cardView.style.display='block';
+    galleryToggle.className += " active";
+    listToggle.className = listToggle.className.replace(" active", "");
+  }
+}
 // function adjustSearchHeight() {
 //   // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
 //   alert(document.getElementById("find-stores-form").offsetHeight);

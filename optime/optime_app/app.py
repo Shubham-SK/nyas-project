@@ -14,6 +14,7 @@ from .API.instance.config import SECRET_KEY
 from .API.scheduling import schedule, window_slider
 from .API.store_filter import get_safest_stores
 
+
 app = Flask(__name__, static_url_path='/static')  # pylint: disable=C0103
 # Load third party secret keys
 app.config.from_pyfile('API/instance/config.py')

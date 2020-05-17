@@ -53,12 +53,12 @@ Dashboard
       <div class="col">
         <h3>Your Personal Tasks</h3>
       </div>
-      <ul class="nav nav-pills" onclick="toggle()" style="float:right;">
+      <ul class="nav nav-pills" style="float:right;">
         <li class="nav-item">
-          <a class="nav-link" id="list-btn">List View</a>
+          <a class="nav-link" id="list-btn" onclick="toggle()" >List View</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" id="gallery-btn">Gallery View</a>
+          <a class="nav-link active" id="gallery-btn" onclick="toggle()">Gallery View</a>
         </li>
       </ul>
     </div>
@@ -118,7 +118,7 @@ Dashboard
       {% endif %}
     </div>
   </div>
-  
+
   <div class="container-fluid" id="shopping-trips">
     <div class="row mt-5">
       <div class="col">
@@ -209,7 +209,7 @@ Dashboard
               <th scope="col">Store Name</th>
               <th scope="col">Address</th>
               <th scope="col">Product</th>
-              <th scope="col">Actions</th>
+              <th colspan="2" scope="colgroup">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -220,19 +220,15 @@ Dashboard
               <td>{{ item.name }}</td>
               <td>{{ splitAddr[0] }}</td>
               <td>{{ allProducts[loop.index0]|join(', ') }}</td>
-              <td class="bg-primary"><a href="/shopping/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+              <td class="bg-primary"><a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ loop.index0 }}"> Mark as complete</a></td>
+              <td class="bg-primary"><a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank">Directions</a></td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
 
-      <script>
-        var tableView = document.getElementById("tabular-view");
-        var tableViewShopping = document.getElementById("tabular-view-shopping");
-        tableView.style.display='none';
-        tableViewShopping.style.display='none';
-      </script>
+
 
       {% else %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
@@ -248,4 +244,14 @@ Dashboard
     </div>
   </div>
 </div>
+<script>
+  var tableView = document.getElementById("tabular-view");
+  var tableViewShopping = document.getElementById("tabular-view-shopping");
+  document.getElementById("gallery-btn").style.pointerEvents = 'none';
+
+  if (tableView)
+    tableView.style.display='none';
+  if (tableViewShopping)
+    tableViewShopping.style.display='none';
+</script>
 {% endblock %}

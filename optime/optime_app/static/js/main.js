@@ -48,26 +48,17 @@ function waitForLocation() {
 function showHide(table, card) {
   if (table == null) return;
 
-  if (table.hidden==true)
-  {
-    table.hidden=false;
-    card.hidden=true;
-    return table;
-  }
-  table.hidden=true;
-  card.hidden=false;
-
-  return card;
+  table.hidden=false;
+  card.hidden=true;
+  return table;
 }
 
 function toggleActive(on, off) {
   on.className += " active";
   off.className = off.className.replace(" active", "");
-  on.disabled = true;
-  off.disabled = false;
 }
 
-function toggle() {
+function toggle(toggleVal) {
   var tableView = document.getElementById("tabular-view-scheduling");
   var cardView = document.getElementById("card-view-scheduling");
   var tableViewShopping = document.getElementById("tabular-view-shopping");
@@ -75,8 +66,13 @@ function toggle() {
   var listToggle = document.getElementById("list-btn");
   var galleryToggle = document.getElementById("gallery-btn");
 
-  shown = showHide(tableView, cardView);
-  shownShop = showHide(tableViewShopping, cardViewShopping);
+  if (toggleVal == 'list') {
+    shown = showHide(tableView, cardView);
+    shownShop = showHide(tableViewShopping, cardViewShopping);
+  } else {
+    shown = showHide(cardView, tableView);
+    shownShop = showHide(cardViewShopping, tableViewShopping);
+  }
 
   if ((shown && shown.id.includes("tabular")) || (shownShop && shownShop.id.includes("tabular")))
     toggleActive(listToggle, galleryToggle);

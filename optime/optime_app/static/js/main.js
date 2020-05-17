@@ -68,8 +68,8 @@ function toggleActive(on, off) {
 }
 
 function toggle() {
-  var tableView = document.getElementById("tabular-view");
-  var cardView = document.getElementById("card-view");
+  var tableView = document.getElementById("tabular-view-scheduling");
+  var cardView = document.getElementById("card-view-scheduling");
   var tableViewShopping = document.getElementById("tabular-view-shopping");
   var cardViewShopping = document.getElementById("card-view-shopping");
   var listToggle = document.getElementById("list-btn");

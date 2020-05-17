@@ -53,17 +53,23 @@ Dashboard
       <div class="col">
         <h3>Your Personal Tasks</h3>
       </div>
-      <ul class="nav nav-pills" style="float:right;">
+      <!-- <ul class="nav nav-pills" style="float:right;">
         <li class="nav-item">
           <a class="nav-link" id="list-btn" onclick="toggle()" >List View</a>
         </li>
         <li class="nav-item">
           <a class="nav-link active" id="gallery-btn" onclick="toggle()">Gallery View</a>
         </li>
-      </ul>
+      </ul> -->
+      <div class="col">
+      <div class="btn-group" role="group" aria-label="Basic example" style="float:right;">
+        <button type="button" class="btn btn-secondary" onclick="toggle()"><i class="fas fa-bars"></i></button>
+        <button type="button" class="btn btn-secondary" onclick="toggle()"><i class="fas fa-table"></i></button>
+      </div>
+      </div>
     </div>
 
-    <div class="row bg-light rounded pt-3" id="card-view">
+    <div class="row bg-white rounded pt-3 mb-5" id="card-view-scheduling">
       {% if tasks %}
       {% for item in tasks %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
@@ -79,7 +85,6 @@ Dashboard
         </div>
       </div>
       {% endfor %}
-
       {% else %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
         <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
@@ -92,34 +97,35 @@ Dashboard
       </div>
       {% endif %}
     </div>
-    
-    <div class="row bg-light rounded pt-3" id="tabular-view" hidden>
-      <div class="rounded shadow" style="height:315px">
-        <table class="table table-dark table-striped table-bordered table-hover table text-center">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Start Time</th>
-              <th scope="col">End Time</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in tasks %}
-            <tr>
-              <th scope="row">{{ loop.index }}</th>
-              <td>{{ item.name }}</td>
-              <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
-              <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-              <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+
+    <div class="row bg-white rounded py-3" id="tabular-view-scheduling" hidden>
+      <div class="col">
+        <div class="rounded shadow" style="height:100%; width:100%">
+          <table class="table table-dark table-striped table-bordered table-hover table text-center">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in tasks %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+                <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
+                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
   </div>
 
   {% for item in shoppingTasks %}
@@ -187,7 +193,7 @@ Dashboard
     </div>
 
     <!-- GALLERY VIEW DIV -->
-    <div class="row bg-light rounded pt-3" id="card-view-shopping">
+    <div class="row bg-white rounded pt-3" id="card-view-shopping">
       {% if shoppingTasks %}
       {% for item in shoppingTasks %}
       {% set index = loop.index0 %}
@@ -222,32 +228,34 @@ Dashboard
     </div>
 
     <!-- TABLE VIEW DIV -->
-    <div class="row bg-light rounded pt-3" id="tabular-view-shopping" hidden>
-      <div class="rounded shadow" style="height:315px">
-        <table class="table table-dark table-striped table-bordered table-hover table text-center">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Store Name</th>
-              <th scope="col">Address</th>
-              <th scope="col">Product</th>
-              <th colspan="2" scope="colgroup">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in shoppingTasks %}
-            {% set splitAddr = item.storeAddress.split(',') %}
-            <tr>
-              <th scope="row">{{ loop.index }}</th>
-              <td>{{ item.name }}</td>
-              <td>{{ splitAddr[0] }}</td>
-              <td>{{ allProducts[loop.index0]|join(', ') }}</td>
-              <td class="bg-primary"><a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ loop.index0 }}"> Mark as complete</a></td>
-              <td class="bg-primary"><a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank">Directions</a></td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+    <div class="row bg-white rounded py-3" id="tabular-view-shopping" hidden>
+      <div class="col">
+        <div class="rounded shadow" style="height:100%; width:100%">
+          <table class="table table-dark table-striped table-bordered table-hover table text-center">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Store Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Product</th>
+                <th colspan="2" scope="colgroup">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in shoppingTasks %}
+              {% set splitAddr = item.storeAddress.split(',') %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ splitAddr[0] }}</td>
+                <td>{{ allProducts[loop.index0]|join(', ') }}</td>
+                <td class="bg-primary"><a data-toggle="modal" id="activator{{ index }}" class="btn btn-sm btn-outline-light" data-target="#update_choice{{ loop.index0 }}">Mark as Complete</a></td>
+                <td class="bg-primary"><a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-outline-light" target="_blank">Directions</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

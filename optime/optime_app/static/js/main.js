@@ -48,14 +48,14 @@ function waitForLocation() {
 function showHide(table, card) {
   if (table == null) return;
 
-  if (table.style.display=='none')
+  if (table.hidden==true)
   {
-    table.style.display='block';
-    card.style.display='none';
+    table.hidden=false;
+    card.hidden=true;
     return table;
   }
-  table.style.display='none';
-  card.style.display='block';
+  table.hidden=true;
+  card.hidden=false;
 
   return card;
 }

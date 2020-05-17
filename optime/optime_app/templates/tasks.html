@@ -63,10 +63,10 @@ Dashboard
       </ul>
     </div>
 
-    <div class="row bg-light rounded pt-3">
+    <div class="row bg-light rounded pt-3" id="card-view">
       {% if tasks %}
       {% for item in tasks %}
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3" id="card-view">
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
         <div class="card text-center border-white shadow" style="height:100%">
           <img src="/static/img/gradient.png" class="card-img-top" alt="...">
           <div class="card-body">
@@ -80,7 +80,21 @@ Dashboard
       </div>
       {% endfor %}
 
-      <div class="rounded shadow" id="tabular-view" style="height:315px">
+      {% else %}
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
+        <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
+          <div class="card-body">
+            <h5 class="card-title">No Tasks</h5>
+            <p class="card-text text-center">Looks like you don't have any personal tasks yet.</p>
+            <a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-outline-light">Make a Personal Task</a>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <div class="row bg-light rounded pt-3" id="tabular-view" hidden>
+      <div class="rounded shadow" style="height:315px">
         <table class="table table-dark table-striped table-bordered table-hover table text-center">
           <thead>
             <tr>
@@ -104,19 +118,8 @@ Dashboard
           </tbody>
         </table>
       </div>
-
-      {% else %}
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
-        <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">
-          <div class="card-body">
-            <h5 class="card-title">No Tasks</h5>
-            <p class="card-text text-center">Looks like you don't have any personal tasks yet.</p>
-            <a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-outline-light">Make a Personal Task</a>
-          </div>
-        </div>
-      </div>
-      {% endif %}
     </div>
+
   </div>
 
   {% for item in shoppingTasks %}
@@ -182,7 +185,7 @@ Dashboard
         <h3>Your Shopping Trips</h3>
       </div>
     </div>
-    
+
     <!-- GALLERY VIEW DIV -->
     <div class="row bg-light rounded pt-3" id="card-view-shopping">
       {% if shoppingTasks %}
@@ -219,7 +222,7 @@ Dashboard
     </div>
 
     <!-- TABLE VIEW DIV -->
-    <div class="row bg-light rounded pt-3" id="tabular-view-shopping">
+    <div class="row bg-light rounded pt-3" id="tabular-view-shopping" hidden>
       <div class="rounded shadow" style="height:315px">
         <table class="table table-dark table-striped table-bordered table-hover table text-center">
           <thead>
@@ -248,16 +251,5 @@ Dashboard
       </div>
     </div>
   </div>
-
 </div>
-<script>
-  var tableView = document.getElementById("tabular-view");
-  var tableViewShopping = document.getElementById("tabular-view-shopping");
-  document.getElementById("gallery-btn").style.pointerEvents = 'none';
-
-  if (tableView)
-  tableView.style.display='none';
-  if (tableViewShopping)
-  tableViewShopping.style.display='none';
-</script>
 {% endblock %}

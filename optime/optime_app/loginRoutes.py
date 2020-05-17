@@ -97,7 +97,7 @@ def register():
                  'validated': False
                  })
             send_verification_email(email, code)
-            return redirect(url_for('login'))
+            return redirect(url_for('login', error="Check your email to verify your account"))
         else:
             print(error)
 
@@ -195,7 +195,7 @@ def validate():
     """
     code = request.args.get("code")
     if code is None:
-        return render_template("email_verification_error.html",
+        return render_template("login.html",
                                error="Follow the link provided in your "
                                      "verification email.")
     else:
@@ -210,7 +210,7 @@ def validate():
         else:
             print(code)
             print(unescaped_code)
-            return render_template("email_verification_error.html",
+            return render_template("login.html",
                                    error="The code provided was incorrect. "
                                          "Make sure that the url was "
                                          "copied correctly.")

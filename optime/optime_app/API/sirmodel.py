@@ -14,12 +14,12 @@ import csv
 browser = webdriver.Safari()
 browser.get("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
 time.sleep(2) #adjust this based on how often you wanna webscrape tings.
-countydata = (browser.find_element_by_xpath("/html/body/pre").text).split('\n')[1:]#because the first entry is the format ting. 
+countydata = (browser.find_element_by_xpath("/html/body/pre").text).split('\n')[1:]#because the first entry is the format ting.
 #temp params
 '''
 countyname = "New York City"
 statename = "New York"
-population = 8399000 #for normalization of coounty population 
+population = 8399000 #for normalization of coounty population
 '''
 R0val = 1
 from census import Census
@@ -42,7 +42,7 @@ def CalcR0(countyname, statename):
     plotdata = []
     for data in countydata:
         data = data.split(',')
-        date = data[0]  
+        date = data[0]
         county = data[1]
         state = data[2]
         fips = data[3]
@@ -53,7 +53,7 @@ def CalcR0(countyname, statename):
             #print("date:",data[0])
             #print("county: ", data[1])
             #print("cases: ", data[4])
-            plotdata.append(int(data[4])) #cases data being appended -> infected 
+            plotdata.append(int(data[4])) #cases data being appended -> infected
     #print("ya so like wtf")
     #print(plotdata)
     ydata = plotdata
@@ -80,13 +80,13 @@ def CalcR0(countyname, statename):
 
         I0 = ydata[0]*k
         S0 = 1 - I0
-        R0 = 0 
+        R0 = 0
         N0 = [S0,I0,R0]
 
         param_init = [0.75, 0.75]
         param_init.append(k)
 
-        param = minimize(sse(model, N0, xdata, k, ydata, n), param_init, method="nelder-mead").x 
+        param = minimize(sse(model, N0, xdata, k, ydata, n), param_init, method="nelder-mead").x
         Nt = integrate.odeint(model, N0, xdata, args=tuple(param))
         #print(Nt)
         Nt = np.divide(Nt, k)
@@ -125,7 +125,7 @@ for county in counties:
         print(CalcR0(county[0], county[1]))
         data.append([county[0], county[1], R0val])
     except:
-        print("UMM YEAAA", county[0], county[1])   
+        print("UMM YEAAA", county[0], county[1])
 
 #CalcR0("Unknown", "Arizona")
 with open('R0vals.csv', 'w', newline='') as file:

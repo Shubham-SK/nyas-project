@@ -182,24 +182,29 @@ Dashboard
         </div>
       </div>
       <!-- END MODAL -->
+      {% endfor %}
 
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3" id="card-view-shopping">
-        <div class="card bg-white border-white shadow text-center" style="height:100%">
-          <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">{{ item.name }}</h5>
-            <p class="card-text">{{ item.storeAddress }}</p>
-            <p class="card-text">{{ allProducts[index]|join(', ') }}</p>
-          </div>
-          <div class="card-footer border-white bg-white">
-            <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank">Directions</a>
-            <!-- ACTIVATOR -->
-            <a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ index }}"> Mark as complete</a>
-            <!-- <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a> -->
+      <div class="container" id="card-view-shopping">
+        {% for item in shoppingTasks %}
+        {% set index = loop.index0 %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
+          <div class="card bg-white border-white shadow text-center" style="height:100%">
+            <img id="map" src="{{ item.storeStaticMap }}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.name }}</h5>
+              <p class="card-text">{{ item.storeAddress }}</p>
+              <p class="card-text">{{ allProducts[index]|join(', ') }}</p>
+            </div>
+            <div class="card-footer border-white bg-white">
+              <a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-secondary mb-2" target="_blank">Directions</a>
+              <!-- ACTIVATOR -->
+              <a class="btn btn-sm btn-primary mb-2 text-white" data-toggle="modal" id="activator{{ index }}" data-target="#update_choice{{ index }}"> Mark as complete</a>
+              <!-- <a href="/shopping/delete_task?task_index={{ loop.index - 1 }}&tasks=True" class="btn btn-sm btn-secondary mb-2"><i class="fas fa-location-arrow"></i> Mark as complete</a> -->
+            </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
 
       <div class="rounded shadow" id="tabular-view-shopping" style="height:315px">
         <table class="table table-dark table-striped table-bordered table-hover table text-center">
@@ -250,8 +255,8 @@ Dashboard
   document.getElementById("gallery-btn").style.pointerEvents = 'none';
 
   if (tableView)
-    tableView.style.display='none';
+  tableView.style.display='none';
   if (tableViewShopping)
-    tableViewShopping.style.display='none';
+  tableViewShopping.style.display='none';
 </script>
 {% endblock %}

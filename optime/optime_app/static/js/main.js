@@ -73,7 +73,7 @@ function toggle(toggleVal) {
     shown = showHide(cardView, tableView);
     shownShop = showHide(cardViewShopping, tableViewShopping);
   }
-
+  localStorage.view = toggleVal;
   if ((shown && shown.id.includes("tabular")) || (shownShop && shownShop.id.includes("tabular")))
     toggleActive(listToggle, galleryToggle);
   else

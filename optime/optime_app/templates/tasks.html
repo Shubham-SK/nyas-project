@@ -92,7 +92,7 @@ Dashboard
       </div>
       {% endif %}
     </div>
-    
+
     <div class="row bg-light rounded pt-3" id="tabular-view" hidden>
       <div class="rounded shadow" style="height:315px">
         <table class="table table-dark table-striped table-bordered table-hover table text-center">
@@ -112,7 +112,7 @@ Dashboard
               <td>{{ item.name }}</td>
               <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
               <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-              <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+              <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
             </tr>
             {% endfor %}
           </tbody>

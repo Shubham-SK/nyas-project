@@ -63,8 +63,8 @@ function showHide(table, card) {
 function toggleActive(on, off) {
   on.className += " active";
   off.className = off.className.replace(" active", "");
-  on.style.pointerEvents = 'none';
-  off.style.pointerEvents = 'auto';
+  on.disabled = true;
+  off.disabled = false;
 }
 
 function toggle() {

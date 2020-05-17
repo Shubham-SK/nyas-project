@@ -63,8 +63,8 @@ Dashboard
       </ul> -->
       <div class="col">
       <div class="btn-group" role="group" aria-label="Basic example" style="float:right;">
-        <button type="button" class="btn btn-secondary" onclick="toggle()"><i class="fas fa-bars"></i></button>
-        <button type="button" class="btn btn-secondary" onclick="toggle()"><i class="fas fa-table"></i></button>
+        <button type="button" class="btn btn-secondary" id="list-btn" onclick="toggle()"><i class="fas fa-bars"></i></button>
+        <button type="button" class="btn btn-secondary" id="gallery-btn" onclick="toggle()" disabled><i class="fas fa-table"></i></button>
       </div>
       </div>
     </div>
@@ -112,15 +112,23 @@ Dashboard
               </tr>
             </thead>
             <tbody>
+              {% if tasks|length == 0 %}
+              <tr>
+                <th scope="row">1</th>
+                <td>No personal tasks</td>
+                <td colspan="3" class="bg-primary"><a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-outline-light">Make a Personal Task</a></td>
+              </tr>
+              {% else %}
               {% for item in tasks %}
               <tr>
                 <th scope="row">{{ loop.index }}</th>
                 <td>{{ item.name }}</td>
                 <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
                 <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
-                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
               </tr>
               {% endfor %}
+              {% endif %}
             </tbody>
           </table>
         </div>
@@ -249,7 +257,7 @@ Dashboard
                 <td>{{ item.name }}</td>
                 <td>{{ splitAddr[0] }}</td>
                 <td>{{ allProducts[loop.index0]|join(', ') }}</td>
-                <td class="bg-primary"><a data-toggle="modal" id="activator{{ index }}" class="btn btn-sm btn-outline-light" data-target="#update_choice{{ loop.index0 }}">Mark as Complete</a></td>
+                <td class="bg-primary"><a href="" data-toggle="modal" id="activator{{ index }}" class="btn btn-sm btn-outline-light" data-target="#update_choice{{ loop.index0 }}">Mark as Complete</a></td>
                 <td class="bg-primary"><a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-outline-light" target="_blank">Directions</a></td>
               </tr>
               {% endfor %}

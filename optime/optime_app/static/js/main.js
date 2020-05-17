@@ -48,17 +48,23 @@ function waitForLocation() {
 function toggle() {
   var tableView = document.getElementById("tabular-view");
   var cardView = document.getElementById("card-view");
+  var tableViewShopping = document.getElementById("tabular-view-shopping");
+  var cardViewShopping = document.getElementById("card-view-shopping");
   var listToggle = document.getElementById("list-btn");
   var galleryToggle = document.getElementById("gallery-btn");
 
   if (tableView.style.display=='none') {
     tableView.style.display='block';
     cardView.style.display='none';
+    tableViewShopping.style.display='block';
+    cardViewShopping.style.display='none';
     listToggle.className += " active";
     galleryToggle.className = galleryToggle.className.replace(" active", "");
   } else {
     tableView.style.display='none';
     cardView.style.display='block';
+    tableViewShopping.style.display='none';
+    cardViewShopping.style.display='block';
     galleryToggle.className += " active";
     listToggle.className = listToggle.className.replace(" active", "");
   }

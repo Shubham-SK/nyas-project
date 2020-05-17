@@ -4,6 +4,10 @@
 Dashboard
 {% endblock %}
 
+{% block style %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block body %}
 <div class="container-fluid p-5">
   <div class="container-fluid">
@@ -52,8 +56,19 @@ Dashboard
       <div class="col">
         <h3>Your Personal Tasks</h3>
       </div>
+      <div class="col">
+      <div class="btn-group" role="group" aria-label="Basic example" style="float:right;">
+        <button type="button" class="btn btn-secondary" id="list-btn" data-toggle="tooltip" title="Table View" onclick="toggle('list')"><i class="fas fa-bars"></i></button>
+        <button type="button" class="btn btn-secondary active" id="gallery-btn" data-toggle="tooltip" title="Gallery View" onclick="toggle('gallery')"><i class="fas fa-table"></i></button>
+      </div>
+      </div>
     </div>
-    <div class="row bg-light rounded pt-3">
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({trigger:'hover'});
+    });
+    </script>
+    <div class="row bg-white rounded pt-3 mb-5" id="card-view-scheduling">
       {% if tasks %}
       {% for item in tasks %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
@@ -81,14 +96,110 @@ Dashboard
       </div>
       {% endif %}
     </div>
+
+    <div class="row bg-white rounded pt-3" id="tabular-view-scheduling" hidden>
+      <div class="col">
+        <div class="rounded shadow" style="height:100%; overflow-x:scroll">
+          <table class="table table-dark table-striped table-bordered table-hover table text-center">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">End Time</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if tasks|length == 0 %}
+              <tr>
+                <th scope="row">1</th>
+                <td>No personal tasks</td>
+                <td colspan="3" class="bg-primary"><a href="{{ url_for('scheduling') }}" class="btn btn-sm btn-outline-light">Make a Personal Task</a></td>
+              </tr>
+              {% else %}
+              {% for item in tasks %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ item.start_time.strftime('%x %-I:%M %p') }}</td>
+                <td>{{ item.end_time.strftime('%x %-I:%M %p') }}</td>
+                <td class="bg-primary"><a href="/scheduling/delete_task?task_index={{ loop.index - 1 }}&tasks=True"><i class="font-icon-white fas fa-trash-alt"></i></a></td>
+              </tr>
+              {% endfor %}
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
+  
+  {% for item in shoppingTasks %}
+  {% set index = loop.index0 %}
+  <!-- MODAL -->
+  <div class="modal fade" id="update_choice{{ index }}" tabindex="-1" role="dialog" aria-labelledby="update_choice" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content text-center">
+        <form action="/update" method="get">
+          <input type="hidden" id="task_index" name="task_index" value="{{ index }}">
+          <input type="hidden" id="lat" name="lat" value="{{ item.location[0] }}">
+          <input type="hidden" id="lon" name="lon" value="{{ item.location[1] }}">
+          <div class="modal-header text-center">
+            <h5 class="modal-title" id="exampleModalLabel">Update info for <span class="badge badge-primary">{{ item.name }}</span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="text-muted">Please update the stocks of the products that <br> you remember and store hours to the best of your ability.</p>
+            <div class="d-flex justify-content-center">
+              <div class="form group" style="width:50%">
+                <!-- ALLOW USER TO CHOOSE DIFFERENT STORE IF THEY WANT -->
+                <div class="form group row py-md-2 justify-content-center">
+                  <div class="form-group justify-content-center row">
+                    {% for product in allStores[index].stock %}
+                    {% if product.name in allProducts[index] %}
+                    <select id="stock" data-show-subtext="true" class="selectpicker pb-3" name="stock:{{ product.name }}" title="{{ product.name }}: {{ product.stockStr }}">
+                      <option data-subtext="{{ product.name }}">1-10</option>
+                      <option data-subtext="{{ product.name }}">10-25</option>
+                      <option data-subtext="{{ product.name }}">25-40</option>
+                      <option data-subtext="{{ product.name }}">40+</option>
+                    </select>
+                    {% endif %}
+                    {% endfor %}
+                  </div>
+                  <div class="form-group row">
+                    <label class="text-muted" for="open-time-input">Opening Time</label>
+                    <input class="form-control" type="time" value="{{ allStores[index].hours.open }}:00" name="open" id="open-time-input">
+                  </div>
+                  <div class="form-group row">
+                    <label class="text-muted" for="open-time-input">Closing Time</label>
+                    <input class="form-control" type="time" value="{{ allStores[index].hours.close }}:00" name="close" id="open-time-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="/shopping/delete_task?task_index={{ index }}&passVal=True" type="button" class="btn btn-secondary">I'll Pass</a>
+            <button class="btn btn-primary shadow" type="submit">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- END MODAL -->
+  {% endfor %}
   <div class="container-fluid" id="shopping-trips">
     <div class="row mt-5">
       <div class="col">
         <h3>Your Shopping Trips</h3>
       </div>
     </div>
-    <div class="row bg-light rounded pt-3">
+
+    <!-- GALLERY VIEW DIV -->
+    <div class="row bg-white rounded pt-3" id="card-view-shopping">
       {% if shoppingTasks %}
       {% for item in shoppingTasks %}
       {% set index = loop.index0 %}
@@ -174,6 +285,54 @@ Dashboard
       </div>
       {% endif %}
     </div>
+
+    <!-- TABLE VIEW DIV -->
+    <div class="row bg-white rounded pt-3" id="tabular-view-shopping" hidden>
+      <div class="col">
+        <div class="rounded shadow" style="height:100%; overflow-x:scroll">
+          <table class="table table-dark table-striped table-bordered table-hover table text-center">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Store Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Product</th>
+                <th colspan="2" scope="colgroup">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if shoppingTasks|length == 0 %}
+              <tr>
+                <th scope="row">1</th>
+                <td colspan="3">No trips</td>
+                <td colspan="2" class="bg-primary"><a href="{{ url_for('shopping') }}" class="btn btn-sm btn-outline-light">Add a Shopping Trip</a></td>
+              </tr>
+              {% else %}
+              {% for item in shoppingTasks %}
+              {% set splitAddr = item.storeAddress.split(',') %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ item.name }}</td>
+                <td>{{ splitAddr[0] }}</td>
+                <td>{{ allProducts[loop.index0]|join(', ') }}</td>
+                <td class="bg-primary"><a href="" data-toggle="modal" id="activator{{ index }}" class="btn btn-sm btn-outline-light" data-target="#update_choice{{ loop.index0 }}">Mark as Complete</a></td>
+                <td class="bg-primary"><a href="{{ item.storeGoogleMap }}" class="btn btn-sm btn-outline-light" target="_blank">Directions</a></td>
+              </tr>
+              {% endfor %}
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<script>
+  userView = localStorage.view;
+  if (userView == undefined)
+    userView = 'gallery';
+  toggle(userView);
+</script>
+
 {% endblock %}

@@ -52,7 +52,8 @@ class Cases:
         ---
         return: r0
         """
+        pass
 
 # Testing
-case = Cases()
-print(case.get_cases("New York",  "New York"))
+# case = Cases()
+# print(case.get_cases("New York",  "New York"))

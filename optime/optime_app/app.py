@@ -34,9 +34,22 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             return redirect(url_for("login", next=request.url))
+        elif not g.user["validated"]:
+            return redirect(url_for("validate", next=request.url))
         return view(**kwargs)
 
     return wrapped_view
+
+def only_login_required(view):
+    'Use as a decorator with pages where login is required'
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for("login", next=request.url))
+        return view(**kwargs)
+
+    return wrapped_view
+
 
 
 def get_db():

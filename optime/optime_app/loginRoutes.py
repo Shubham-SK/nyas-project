@@ -1,5 +1,11 @@
 from .app import *
+import string
+import random
+import smtplib
+from optime_app.API.instance import config
+import urllib
 
+smtp_server = smtplib.SMTP_SSL(host="smtp.gmail.com")
 
 ############### HOME/LOGIN ###############
 @app.route('/index')
@@ -11,6 +17,8 @@ def index():
 
     if g.user is None:
         return render_template('index.html')
+    elif not g.user["validated"]:
+        return redirect(url_for("validate"))
     else:
         return render_template('tasks.html', tasks=g.user['items'],
                                shoppingTasks=g.user['shoppingTasks'],
@@ -74,6 +82,8 @@ def register():
 
         if error is None:
             password_hash = generate_password_hash(password)
+            chars = string.ascii_letters + string.digits + string.punctuation
+            code = urllib.parse.quote(''.join(random.choice(chars) for i in range(32)), safe='')
             db.users.insert_one(
                 {'username': username,
                  'email': email,
@@ -82,13 +92,28 @@ def register():
                  'password': password_hash,
                  'items': [],
                  'shoppingTasks': [],
-                 'phone_number': ''})
+                 'phone_number': '',
+                 'code': code,
+                 'validated': False
+                 })
+            send_verification_email(email, code)
             return redirect(url_for('login'))
         else:
             print(error)
 
     return render_template('register.html', error=error)
 
+def send_verification_email(email, code):
+    gmail_user = config.GMAIL_USER
+    gmail_password = config.GMAIL_PASSWORD
+    link = f"{config.WEBSITE_LINK}/auth/validate?code={code}"
+    subject = "Email confirmation"
+    body_text = (f"Please confirm your email for Optime by following "
+                 f"this link: {link}")
+    email_text = (f"From: {gmail_user}\nTo: {email}\nSubject: {subject}"
+                  f"\n\n\n{body_text}")
+    smtp_server.login(gmail_user, gmail_password)
+    smtp_server.sendmail(gmail_user, email, email_text)
 
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
@@ -139,6 +164,7 @@ def login():
                             form_action=form_action), 200)
 
 
+
 @app.before_request
 def load_logged_in_user():
     """
@@ -160,3 +186,31 @@ def logout():
     """
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/auth/validate')
+@only_login_required
+def validate():
+    """
+    Validate email address
+    """
+    code = request.args.get("code")
+    if code is None:
+        return render_template("email_verification_error.html",
+                               error="Follow the link provided in your "
+                                     "verification email.")
+    else:
+        unescaped_code = urllib.parse.unquote(g.user["code"])
+        if unescaped_code == code:
+            db = get_db()
+            db.users.update_one({"_id": g.user["_id"]}, {"$set": {"validated": True}})
+            if next_url := request.args.get("next"):
+                return redirect(next_url)
+            else:
+                return redirect(url_for('index'))
+        else:
+            print(code)
+            print(unescaped_code)
+            return render_template("email_verification_error.html",
+                                   error="The code provided was incorrect. "
+                                         "Make sure that the url was "
+                                         "copied correctly.")

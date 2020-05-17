@@ -4,6 +4,10 @@
 Dashboard
 {% endblock %}
 
+{% block style %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block body %}
 <div class="container-fluid p-5">
   <div class="container-fluid">
@@ -63,12 +67,16 @@ Dashboard
       </ul> -->
       <div class="col">
       <div class="btn-group" role="group" aria-label="Basic example" style="float:right;">
-        <button type="button" class="btn btn-secondary" id="list-btn" onclick="toggle()"><i class="fas fa-bars"></i></button>
-        <button type="button" class="btn btn-secondary" id="gallery-btn" onclick="toggle()" disabled><i class="fas fa-table"></i></button>
+        <button type="button" class="btn btn-secondary" id="list-btn" data-toggle="tooltip" title="Table View" onclick="toggle()"><i class="fas fa-bars"></i></button>
+        <button type="button" class="btn btn-secondary" id="gallery-btn" data-toggle="tooltip" title="Gallery View" onclick="toggle()" disabled><i class="fas fa-table"></i></button>
       </div>
       </div>
     </div>
-
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip({trigger:'hover'});
+    });
+    </script>
     <div class="row bg-white rounded pt-3 mb-5" id="card-view-scheduling">
       {% if tasks %}
       {% for item in tasks %}

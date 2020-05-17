@@ -45,6 +45,45 @@ function waitForLocation() {
     window.setInterval(checkLocation, 300);
 }
 
+function showHide(table, card) {
+  if (table == null) return;
+
+  if (table.style.display=='none')
+  {
+    table.style.display='block';
+    card.style.display='none';
+    return table;
+  }
+  table.style.display='none';
+  card.style.display='block';
+
+  return card;
+}
+
+function toggleActive(on, off) {
+  on.className += " active";
+  off.className = off.className.replace(" active", "");
+  on.style.pointerEvents = 'none';
+  off.style.pointerEvents = 'auto';
+}
+
+function toggle() {
+  var tableView = document.getElementById("tabular-view");
+  var cardView = document.getElementById("card-view");
+  var tableViewShopping = document.getElementById("tabular-view-shopping");
+  var cardViewShopping = document.getElementById("card-view-shopping");
+  var listToggle = document.getElementById("list-btn");
+  var galleryToggle = document.getElementById("gallery-btn");
+
+  shown = showHide(tableView, cardView);
+  shownShop = showHide(tableViewShopping, cardViewShopping);
+
+  if ((shown && shown.id.includes("tabular")) || (shownShop && shownShop.id.includes("tabular")))
+    toggleActive(listToggle, galleryToggle);
+  else
+    toggleActive(galleryToggle, listToggle);
+}
+
 // function adjustSearchHeight() {
 //   // document.querySelector("tabular-view").style.height = `${document.querySelector("pills-update").clientHeight}px`;
 //   alert(document.getElementById("find-stores-form").offsetHeight);

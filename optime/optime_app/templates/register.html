@@ -22,12 +22,7 @@ Our services require access to your location data, we promise to keep it safe.
   <input type="text" id="inputUsername" name="username" class="form-control mb-2" placeholder="Username" required autofocus>
   <label for="inputPassword" class="sr-only">Password</label>
   <input type="password" id="inputPassword" name="password" class="form-control mb-2" placeholder="Password" required>
-  <small class="form-text text-muted">We'll never share your e-mail with anyone else.</small>
-  <div class="checkbox mb-3">
-    <label>
-      <input type="checkbox" value="remember-me"> Remember me
-    </label>
-  </div>
+  <small class="form-text text-muted mb-2">We'll never share your e-mail with anyone else.</small>
   <button class="btn btn-primary" type="submit" href="{{ url_for('register') }}">Register</button>
 </form>
 {% endblock %}

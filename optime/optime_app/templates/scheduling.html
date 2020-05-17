@@ -13,19 +13,17 @@ Find the safest time to leave the house.
 {% endblock %}
 
 {% block column_one %}
-<div class="card text-center text-dark bg-white rounded shadow">
-  <div class="card-header text-white bg-dark">
-    Let's schedule your tasks.
-  </div>
+<div class="card border-white text-center text-dark rounded shadow">
   <div class="card-body">
     <h2 class="card-title">Scheduler</h2>
     <form id="form_id" action="/scheduling" method="post" name="myform">
       <input type="hidden" id="lat" name="lat" value="">
       <input type="hidden" id="lon" name="lon" value="">
-      <p class="card-text text-muted">How long do you want to go out for?</p>
+      <p class="card-text text-muted">How long would you like to go out for?</p>
       <div class="slidecontainer">
-        <input type="range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
-        <br>
+        <div class="container" style="width: 50%">
+          <input type="range" class="custom-range" min="1" max="59" value="1" class="slider" id="myRange" name="duration" required>
+        </div>
         <p id="val" style="display:inline-block;margin-right:10px;"></p>
         <select class="selectpicker" data-width="fit" id="form_action" name="count" title="Units" required>
           <option data-content="<span class='badge badge-secondary'>Minutes</span>">Minutes</option>
@@ -43,7 +41,7 @@ Find the safest time to leave the house.
         }
       </script>
       <br>
-      <h5>Time Window</h5>
+      <p class="card-text text-muted">Between which dates would you like to go out?</p>
       <div class="d-flex justify-content-center">
         <div class="form group">
           <div class="form group row py-md-2">
@@ -64,14 +62,14 @@ Find the safest time to leave the house.
       <button class="btn btn-primary shadow">Submit</button>
     </form>
   </div>
-  <div class="card-footer bg-dark text-white">
+  <div class="card-footer border-white">
     ⚡ by <a href="https://www.climacell.co/" style="text-decoration: none;">Climacell</a> API
   </div>
 </div>
 {% endblock %}
 
 {% block column_two %}
-<div class="rounded shadow" id="tabular-view" style="height:665px">
+<div class="rounded shadow" id="tabular-view" style="height:640px">
   <table class="table table-dark table-striped table-bordered table-hover table text-center">
     <thead>
       <tr>

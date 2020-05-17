@@ -8,15 +8,15 @@ Dashboard
 <div class="container-fluid p-5">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md rounded shadow bg-dark p-5 m-2 text-white">
+      <div class="col-lg rounded shadow bg-dark p-5 m-2 text-white">
         <h2>Welcome {{ g.user['username'] }},</h2>
         <p class="lead">All your scheduled errands. All in one place.</p>
         <div class="btn-group-sm" role="group" aria-label="Basic example">
-          <a href="#personal-tasks"><input class="btn btn-outline-light mr-2 mb-2" type="button" value="Personal Tasks"></a>
-          <a href="#shopping-trips"><input class="btn btn-outline-light mb-2" type="button" value="Shopping Trips"></a>
+          <a href="#personal-tasks"><input class="btn btn-sm btn-outline-light mr-2 mb-2" type="button" value="Personal Tasks"></a>
+          <a href="#shopping-trips"><input class="btn btn-sm btn-outline-light mb-2" type="button" value="Shopping Trips"></a>
         </div>
       </div>
-      <div class="col-md rounded shadow bg-info p-5 m-2 text-white">
+      <div class="col-lg rounded shadow bg-info p-5 m-2 text-white">
         <h2>Task Data</h2>
         <div class="row">
           <div class="col">
@@ -29,7 +29,7 @@ Dashboard
           </div>
         </div>
       </div>
-      <div class="col-md rounded shadow bg-primary p-5 m-2 text-white">
+      <div class="col-lg rounded shadow bg-primary p-5 m-2 text-white">
         <h2>Notification Settings</h2>
         <p class="lead">We'll message you when tasks should be complete.</p>
         <form action="/update_settings" method="POST">
@@ -161,6 +161,7 @@ Dashboard
         </div>
       </div>
       {% endfor %}
+
       {% else %}
       <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-3">
         <div class="card text-center text-white border-primary bg-primary shadow" style="height:100%">

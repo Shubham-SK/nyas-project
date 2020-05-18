@@ -203,7 +203,8 @@ def validate():
         if unescaped_code == code:
             db = get_db()
             db.users.update_one({"_id": g.user["_id"]}, {"$set": {"validated": True}})
-            if next_url := request.args.get("next"):
+            next_url = request.args.get("next")
+            if next_url:
                 return redirect(next_url)
             else:
                 return redirect(url_for('index'))

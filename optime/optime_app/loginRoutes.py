@@ -49,7 +49,15 @@ def update_settings():
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
         return redirect(url_for('index'))
-
+@app.route('/auth/reset', methods=['GET', 'POST'])
+def reset():
+    """
+    When user forget the password, invoke this command.
+    """
+    #Forgot password request here
+    #invoke command forgot_password(email, code)
+    #code generated same wat as for register
+    code = 1
 
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
@@ -114,7 +122,16 @@ def send_verification_email(email, code):
                   f"\n\n\n{body_text}")
     smtp_server.login(gmail_user, gmail_password)
     smtp_server.sendmail(gmail_user, email, email_text)
-
+def forgot_password(email, code):
+    gmail_user = config.GMAIL_USER
+    gmail_password = config.GMAIL_PASSWORD
+    link = f"{config.WEBSITE_LINK}/auth/reset?code={code}"
+    subject = "Reset Password"
+    body_text = (f"Click the following link to reset your password: {link}")
+    email_text = (f"From: {gmail_user}\nTo: {email}\nSubject: {subject}"
+                  f"\n\n\n{body_text}")
+    smtp_server.login(gmail_user, gmail_password)
+    smtp_server.sendmail(gmail_user, email, email_text)
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     """

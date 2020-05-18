@@ -52,9 +52,7 @@ def update_settings():
 """
 @app.route('/auth/reset', methods=['GET', 'POST'])
 def reset():
-    """
-    When user forget the password, invoke this command.
-    """
+    #When user forget the password, invoke this commands
     #Forgot password request here
     #invoke command forgot_password(email, code)
     #code generated same wat as for register

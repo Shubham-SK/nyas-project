@@ -49,6 +49,7 @@ def update_settings():
         db.users.update_one({"_id": g.user["_id"]}, {
                             "$set": {"phone_number": phone_number}})
         return redirect(url_for('index'))
+"""
 @app.route('/auth/reset', methods=['GET', 'POST'])
 def reset():
     """
@@ -58,7 +59,7 @@ def reset():
     #invoke command forgot_password(email, code)
     #code generated same wat as for register
     code = 1
-
+"""
 @app.route('/auth/register', methods=['GET', 'POST'])
 def register():
     """

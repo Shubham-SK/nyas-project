@@ -121,6 +121,8 @@ def send_verification_email(email, code):
                   f"\n\n\n{body_text}")
     smtp_server.login(gmail_user, gmail_password)
     smtp_server.sendmail(gmail_user, email, email_text)
+
+
 def forgot_password(email, code):
     gmail_user = config.GMAIL_USER
     gmail_password = config.GMAIL_PASSWORD
@@ -131,6 +133,8 @@ def forgot_password(email, code):
                   f"\n\n\n{body_text}")
     smtp_server.login(gmail_user, gmail_password)
     smtp_server.sendmail(gmail_user, email, email_text)
+
+
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
     """
@@ -231,3 +235,7 @@ def validate():
                                    error="The code provided was incorrect. "
                                          "Make sure that the url was "
                                          "copied correctly.")
+@app.route("*")
+def 404page():
+    print("ya so like")
+    #return render_template("404page.html")

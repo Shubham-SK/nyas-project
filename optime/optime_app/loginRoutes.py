@@ -214,7 +214,13 @@ def validate():
     Validate email address
     """
     code = request.args.get("code")
-    if code is None:
+    if g.user["validated"]:
+        next_url = request.args.get("next")
+        if next_url:
+            return redirect(next_url)
+        else:
+            return redirect(url_for('index'))
+    elif code is None:
         return render_template("login.html",
                                error="Follow the link provided in your "
                                      "verification email.")

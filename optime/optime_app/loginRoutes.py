@@ -236,6 +236,6 @@ def validate():
                                          "Make sure that the url was "
                                          "copied correctly.")
 @app.route("*")
-def 404page():
+def page404():
     print("ya so like")
     #return render_template("404page.html")

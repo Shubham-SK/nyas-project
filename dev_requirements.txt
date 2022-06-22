@@ -20,7 +20,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 msgpack==1.0.0
 neovim==0.3.1
-numpy==1.18.3
+numpy==1.22.0
 parso==0.7.0
 pathlib-mate==1.0.0
 pexpect==4.8.0
